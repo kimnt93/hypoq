@@ -227,63 +227,6 @@ def build_vietnam_commodities():
 
     print(f"    - Saved vietnam_commodities_daily.parquet ({len(df_comm):,} daily observations x {len(df_comm.columns)} columns)")
 
-    # 3. Render PNG Overview Visualization (PNG ONLY, no PDF)
-    render_commodities_figure(df_comm)
-
-
-def render_commodities_figure(df):
-    print(">>> Rendering Vietnam Commodities Trajectories Figure (PNG ONLY)...")
-    df_pd = df.to_pandas()
-    df_pd["date"] = pl.Series(df_pd["date"]).str.to_date().to_pandas()
-
-    fig, axes = plt.subplots(2, 2, figsize=(15, 10), dpi=300)
-
-    # 1. Retail Fuel & Gasoline
-    ax1 = axes[0, 0]
-    ax1.plot(df_pd["date"], df_pd["fuel_ron95_zone1_vnd_l"], label="RON 95-III (VND/L)", color="#d62728", linewidth=1.8)
-    ax1.plot(df_pd["date"], df_pd["fuel_e5_ron92_zone1_vnd_l"], label="E5 RON 92 (VND/L)", color="#ff7f0e", linewidth=1.5, linestyle="--")
-    ax1.plot(df_pd["date"], df_pd["fuel_diesel_do_zone1_vnd_l"], label="Diesel DO 0.05S (VND/L)", color="#1f77b4", linewidth=1.5)
-    ax1.set_ylabel("Price (VND / Litre)", fontweight="bold")
-    ax1.set_title("(a) Retail Gasoline & Petroleum Fuel Cycles (Petrolimex & MOIT)", fontweight="bold", loc="left")
-    ax1.legend(loc="upper left", framealpha=0.95)
-
-    # 2. Construction Steel
-    ax2 = axes[0, 1]
-    ax2.plot(df_pd["date"], df_pd["steel_hoaphat_cb240_vnd_kg"], label="Thép Hòa Phát Cuộn CB240 (VND/kg)", color="#2ca02c", linewidth=1.8)
-    ax2.plot(df_pd["date"], df_pd["steel_hoaphat_d10_cb300_vnd_kg"], label="Thép Hòa Phát Vằn D10 (VND/kg)", color="#9467bd", linewidth=1.5, linestyle="--")
-    ax2.plot(df_pd["date"], df_pd["steel_pomina_cb240_vnd_kg"], label="Thép Pomina CB240 (VND/kg)", color="#8c564b", linewidth=1.5)
-    ax2.set_ylabel("Price (VND / kg)", fontweight="bold")
-    ax2.set_title("(b) Domestic Construction Steel Prices (SteelOnline & VSA)", fontweight="bold", loc="left")
-    ax2.legend(loc="upper left", framealpha=0.95)
-
-    # 3. Live Hog / Pork Prices
-    ax3 = axes[1, 0]
-    ax3.plot(df_pd["date"], df_pd["pork_live_hog_national_avg_vnd_kg"], label="Giá Heo Hơi Bình Quân (VND/kg)", color="#e377c2", linewidth=2.0)
-    ax3.plot(df_pd["date"], df_pd["pork_live_hog_north_vnd_kg"], label="Miền Bắc", color="#7f7f7f", linewidth=1.2, linestyle=":")
-    ax3.plot(df_pd["date"], df_pd["pork_live_hog_south_vnd_kg"], label="Miền Nam", color="#bcbd22", linewidth=1.2, linestyle="--")
-    ax3.set_ylabel("Price (VND / kg)", fontweight="bold")
-    ax3.set_title("(c) Live Hog & Pork Regional Prices (Anova Feed & MARD)", fontweight="bold", loc="left")
-    ax3.legend(loc="upper right", framealpha=0.95)
-
-    # 4. Agricultural Soft Commodities (Coffee & Rice)
-    ax4 = axes[1, 1]
-    ax4_twin = ax4.twinx()
-    l1 = ax4.plot(df_pd["date"], df_pd["coffee_robusta_daklak_vnd_kg"] / 1000.0, label="Cà Phê Robusta Đắk Lắk (k VND/kg)", color="#8c564b", linewidth=2.0)
-    l2 = ax4_twin.plot(df_pd["date"], df_pd["rice_export_5pct_broken_usd_ton"], label="Gạo XK 5% Tấm (USD/Tấn)", color="#17becf", linewidth=1.8, linestyle="--")
-    ax4.set_ylabel("Coffee Price (Thousand VND / kg)", fontweight="bold", color="#8c564b")
-    ax4_twin.set_ylabel("Export Rice (USD / Ton)", fontweight="bold", color="#17becf")
-    ax4.set_title("(d) Agricultural Commodities: Coffee & Export Rice (Vicofa & VFA)", fontweight="bold", loc="left")
-    
-    lines = l1 + l2
-    labels = [l.get_label() for l in lines]
-    ax4.legend(lines, labels, loc="upper left", framealpha=0.95)
-
-    plt.tight_layout()
-    png_path = os.path.join(OUT_DIR, "fig7_vietnam_commodity_prices.png")
-    fig.savefig(png_path, dpi=300)
-    plt.close(fig)
-    print("    - Saved fig7_vietnam_commodity_prices.png (PNG ONLY, no PDF)")
-
 
 if __name__ == "__main__":
     build_vietnam_commodities()

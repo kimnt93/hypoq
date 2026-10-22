@@ -29,8 +29,7 @@ make download
 # Validate integrity, schemas, and row counts across all 29 Parquet files
 make verify
 
-# Render empirical overview and distribution visualizations (PNG only)
-make visualize
+
 # Explore datasets interactively in your browser
 open index.html   # or python3 -m http.server 8000
 
@@ -95,30 +94,7 @@ For exact column schemas, mathematical formulas, and data provenance, see [`DATA
 
 ---
 
-## 3. Empirical Distribution Figures (`figures_overview/`)
-
-Visualized via `make visualize` (Output format: **PNG ONLY**, zero PDF):
-
-* **Figure 1**: [`fig1_shareholders_concentration.png`](./figures_overview/fig1_shareholders_concentration.png)  
-  *Cross-sectional shareholder concentration across key blue-chips (State/Institutional vs. Individual executives).*
-* **Figure 2**: [`fig2_corporate_structure_network.png`](./figures_overview/fig2_corporate_structure_network.png)  
-  *Corporate group hierarchy: Number of Subsidiaries (>50% control) vs. Affiliates/Associates (20-50% control).*
-* **Figure 3**: [`fig3_cumulative_foreign_flows.png`](./figures_overview/fig3_cumulative_foreign_flows.png)  
-  *Cumulative net foreign trading value (`GD NĐTNN` Mua/Bán Ròng Lũy Kế 2018–2026) across key blue-chips.*
-* **Figure 4**: [`fig4_order_imbalance_distribution.png`](./figures_overview/fig4_order_imbalance_distribution.png)  
-  *Kernel density estimation of daily order book supply-demand imbalance ($\text{OIB} = \frac{\text{Bid} - \text{Offer}}{\text{Bid} + \text{Offer}}$).*
-* **Figure 5**: [`fig5_charter_capital_events.png`](./figures_overview/fig5_charter_capital_events.png)  
-  *Breakdown of capital actions (Rights issues, share dividends, private placements) and share expansion.*
-* **Figure 6**: [`fig6_corporate_network_graph.png`](./figures_overview/fig6_corporate_network_graph.png)  
-  *Directed network graph of Vietnamese corporate cross-ownership, state control, and auditing relationships.*
-* **Figure 7**: [`fig7_vietnam_commodity_prices.png`](./figures_overview/fig7_vietnam_commodity_prices.png)  
-  *Domestic commodity trajectories: Petrolimex fuel cycles, Hòa Phát construction steel, regional live hog/pork, and Robusta coffee.*
-* **Figure 8**: [`fig8_etf_market_dynamics.png`](./figures_overview/fig8_etf_market_dynamics.png)  
-  *ETF asset trajectories, foreign premium to NAV across Diamond ETF, top constituent portfolio weights, and sector exposure.*
-
----
-
-## 4. Querying Datasets: Polars vs. Pandas Solutions
+## 3. Querying Datasets: Polars vs. Pandas Solutions
 
 ### A. Point-in-Time Alignment (Macro to Daily Market Data)
 * **Polars (Vectorized Zero-Copy)**:
@@ -175,7 +151,7 @@ Visualized via `make visualize` (Output format: **PNG ONLY**, zero PDF):
 
 ---
 
-## 5. Verified Data Sources & Reference Links
+## 4. Verified Data Sources & Reference Links
 
 1. **WiData Financial & Macro Engine**: High-frequency macroeconomic indicators, interbank market rates, SBV bills/OMO operations.  
    *URL*: [https://widata.vn/vi-mo/vn/pmi-san-xuat](https://widata.vn/vi-mo/vn/pmi-san-xuat) | [https://widata.vn/ket-qua-kinh-doanh](https://widata.vn/ket-qua-kinh-doanh)
@@ -196,7 +172,7 @@ Visualized via `make visualize` (Output format: **PNG ONLY**, zero PDF):
 
 ---
 
-## 6. License & Citations
+## 5. License & Citations
 
 All data processing scripts, schemas, and documentation are released under the MIT License:
 

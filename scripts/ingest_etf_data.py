@@ -431,59 +431,6 @@ def build_etf_portfolio_holdings():
     df_holdings.write_parquet(out_path)
     print(f"    - Saved vn_etf_portfolio_holdings_daily.parquet ({len(df_holdings)} constituent holding rows across top ETFs)")
 
-    # Render PNG Overview Chart
-    render_etf_figure(df_nav=pl.read_parquet(os.path.join(MARKET_DIR, "vn_etf_nav_aum_daily.parquet")), df_holdings=df_holdings)
-
-
-def render_etf_figure(df_nav, df_holdings):
-    print(">>> Rendering ETF Dynamics & Portfolio Holdings Figure (PNG ONLY)...")
-    df_pd = df_nav.to_pandas()
-    df_pd["date"] = pl.Series(df_pd["date"]).str.to_date().to_pandas()
-
-    fig, axes = plt.subplots(2, 2, figsize=(15, 10), dpi=300)
-
-    # 1. Total AUM Growth
-    ax1 = axes[0, 0]
-    for t in ["FUEVFVND", "E1VFVN30", "FUESSVFL"]:
-        sub = df_pd[df_pd["symbol"] == t]
-        if len(sub) > 0:
-            ax1.plot(sub["date"], sub["total_nav_bn_vnd"], label=f"{t} (AUM: {sub['total_nav_bn_vnd'].iloc[-1]:,.0f} B VND)", linewidth=2.0)
-    ax1.set_ylabel("Total AUM (Billion VND)", fontweight="bold")
-    ax1.set_title("(a) Total Net Asset Value (AUM) Trajectory Across Leading ETFs", fontweight="bold", loc="left")
-    ax1.legend(loc="upper left", framealpha=0.95)
-
-    # 2. Premium / Discount to NAV
-    ax2 = axes[0, 1]
-    for t in ["FUEVFVND", "E1VFVN30"]:
-        sub = df_pd[df_pd["symbol"] == t].tail(250)
-        ax2.plot(sub["date"], sub["premium_discount_pct"], label=f"{t} Premium/Discount (%)", linewidth=1.5)
-    ax2.axhline(0, color="black", linestyle="--", linewidth=1, alpha=0.7)
-    ax2.set_ylabel("Premium / Discount (%)", fontweight="bold")
-    ax2.set_title("(b) ETF Trading Premium to NAV (Diamond Foreign FOL Saturation)", fontweight="bold", loc="left")
-    ax2.legend(loc="upper left", framealpha=0.95)
-
-    # 3. FUEVFVND Diamond Top 8 Holdings
-    ax3 = axes[1, 0]
-    diamond = df_holdings.filter(pl.col("etf_symbol") == "FUEVFVND").sort("portfolio_weight_pct", descending=True).head(8).to_pandas()
-    ax3.barh(diamond["constituent_symbol"], diamond["portfolio_weight_pct"], color="#1f77b4", edgecolor="black", alpha=0.85)
-    ax3.invert_yaxis()
-    ax3.set_xlabel("Weight in ETF Portfolio (%)", fontweight="bold")
-    ax3.set_title("(c) DCVFMVN DIAMOND ETF (FUEVFVND): Top Constituent Weights", fontweight="bold", loc="left")
-
-    # 4. Sector Breakdown in E1VFVN30
-    ax4 = axes[1, 1]
-    sec_df = df_holdings.filter(pl.col("etf_symbol") == "E1VFVN30").group_by("sector").agg(pl.col("portfolio_weight_pct").sum()).to_pandas()
-    colors = plt.cm.tab10(np.linspace(0, 1, len(sec_df)))
-    ax4.pie(sec_df["portfolio_weight_pct"], labels=sec_df["sector"], autopct="%1.1f%%", startangle=140, colors=colors,
-            wedgeprops={"edgecolor": "black", "linewidth": 0.8})
-    ax4.set_title("(d) DCVFMVN30 ETF (E1VFVN30): Sector Exposure Breakdown", fontweight="bold")
-
-    plt.tight_layout()
-    png_path = os.path.join(OUT_DIR, "fig8_etf_market_dynamics.png")
-    fig.savefig(png_path, dpi=300)
-    plt.close(fig)
-    print("    - Saved fig8_etf_market_dynamics.png (PNG ONLY, no PDF)")
-
 
 def run_all():
     print("=" * 80)
