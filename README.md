@@ -62,8 +62,11 @@ vnresearch/data/
 │   ├── vn_industry_sectors_icb.parquet          # 185 rows x 7 cols | 185 ICB sector definitions & ticker lists
 │   ├── vn_sector_indices_daily.parquet          # 26,113 rows x 8 cols | 12 official sector indices daily OHLCV
 │   ├── vn_foreign_trading_daily.parquet         # 130,837 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Room)
-│   └── vn_order_supply_demand_daily.parquet     # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu)
+│   ├── vn_order_supply_demand_daily.parquet     # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu)
+│   ├── vn_etf_market_daily.parquet              # 22,377 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
+│   └── vn_etf_nav_aum_daily.parquet             # 18,512 rows x 10 cols | Daily Net Asset Value (NAV), AUM & Premium/Discount
 ├── market_structure/
+│   ├── vn_etf_portfolio_holdings_daily.parquet  # 58 rows x 8 cols | Daily ETF Constituent Creation Baskets (Danh mục hoán đổi)
 │   ├── vn_corporate_network_edges.parquet       # 4,803 rows x 12 cols | Corporate Network Directed Edges (Loans, Subs, Owners)
 │   ├── vn_corporate_network_nodes.parquet       # 3,473 rows x 8 cols | Corporate Network Nodes & Centrality (PageRank, Degree)
 │   ├── vn_shareholders_history.parquet          # 3,115 rows x 9 cols | Major Shareholders & Ownership History (Cổ đông lớn)
@@ -83,7 +86,7 @@ vnresearch/data/
     └── global_macro_daily.parquet               # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
 ```
 
-Total database volume: **30 Parquet files | 1,410,758 total rows | 15.75 MB on disk**.  
+Total database volume: **33 Parquet files | 1,451,705 total rows | 16.45 MB on disk**.  
 For exact column schemas, mathematical formulas, and data provenance, see [`DATA.md`](./DATA.md).
 
 ---
@@ -106,6 +109,8 @@ Visualized via `make visualize` (Output format: **PNG ONLY**, zero PDF):
   *Directed network graph of Vietnamese corporate cross-ownership, state control, and auditing relationships.*
 * **Figure 7**: [`fig7_vietnam_commodity_prices.png`](./figures_overview/fig7_vietnam_commodity_prices.png)  
   *Domestic commodity trajectories: Petrolimex fuel cycles, Hòa Phát construction steel, regional live hog/pork, and Robusta coffee.*
+* **Figure 8**: [`fig8_etf_market_dynamics.png`](./figures_overview/fig8_etf_market_dynamics.png)  
+  *ETF asset trajectories, foreign premium to NAV across Diamond ETF, top constituent portfolio weights, and sector exposure.*
 
 ---
 

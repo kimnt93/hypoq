@@ -1,10 +1,10 @@
 # Macroeconomic, Financial & Corporate Network Dataset Documentation (DATA.md)
 
-This document provides a comprehensive, standardized specification of all 30 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` (physically managed in `vnresearch/data/`) and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
+This document provides a comprehensive, standardized specification of all 33 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` (physically managed in `vnresearch/data/`) and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
 
 ---
 
-## 1. Directory Structure & Inventory (30 Parquet Files, 1,410,758 Rows)
+## 1. Directory Structure & Inventory (33 Parquet Files, 1,451,705 Rows)
 
 ```text
 data/
@@ -24,8 +24,11 @@ data/
 │   ├── vn_industry_sectors_icb.parquet          # 185 rows x 7 cols | 185 ICB sector definitions & ticker lists
 │   ├── vn_sector_indices_daily.parquet          # 26,113 rows x 8 cols | 12 official sector indices daily OHLCV
 │   ├── vn_foreign_trading_daily.parquet         # 130,837 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Room)
-│   └── vn_order_supply_demand_daily.parquet     # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Orders, Vol)
+│   ├── vn_order_supply_demand_daily.parquet     # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Orders, Vol)
+│   ├── vn_etf_market_daily.parquet              # 22,377 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
+│   └── vn_etf_nav_aum_daily.parquet             # 18,512 rows x 10 cols | Daily Net Asset Value (NAV), AUM & Premium/Discount
 ├── market_structure/
+│   ├── vn_etf_portfolio_holdings_daily.parquet  # 58 rows x 8 cols | Daily ETF Constituent Creation Baskets (Danh mục hoán đổi)
 │   ├── vn_corporate_network_edges.parquet       # 4,803 rows x 12 cols | Corporate Network Directed Edges (Loans, Subs, Owners)
 │   ├── vn_corporate_network_nodes.parquet       # 3,473 rows x 8 cols | Corporate Network Nodes & Centrality (PageRank, Degree)
 │   ├── vn_shareholders_history.parquet          # 3,115 rows x 9 cols | Major Shareholders & Ownership History (Cổ đông lớn)
@@ -322,11 +325,62 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `net_vol` | `Float64` | Shares | Net order book volume imbalance: bid_vol - offer_vol (Dư mua/bán ròng) |
   | `order_imbalance` | `Float64` | [-1, +1] | Standardized order book imbalance: (bid_vol - offer_vol) / (bid_vol + offer_vol) |
 
+#### J. `vn_etf_market_daily.parquet`
+* **Coverage**: 2014-10-06 to 2026-10-22 (22,377 daily OHLCV bars across 15 domestic and global Vietnamese ETFs, 12 columns).
+* **Source**: VNDirect Open Market DChart API, NYSE Arca & Taiwan Stock Exchange via Yahoo Finance. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn) | [https://finance.yahoo.com](https://finance.yahoo.com).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
+  | `etf_name` | `String` | - | Official fund legal name in Vietnamese |
+  | `benchmark_index` | `String` | - | Target tracking benchmark index (e.g. VN30, VN DIAMOND, VNFIN LEAD) |
+  | `exchange` | `String` | - | Stock exchange (HOSE, HNX) |
+  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
+  | `open` | `Float64` | VND / Pts | Opening price or index level |
+  | `high` | `Float64` | VND / Pts | Intraday high price or index level |
+  | `low` | `Float64` | VND / Pts | Intraday low price or index level |
+  | `close` | `Float64` | VND / Pts | Closing price or index level |
+  | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
+  | `value_vnd` | `Float64` | VND | Daily trading turnover value in VND |
+
+#### K. `vn_etf_nav_aum_daily.parquet`
+* **Coverage**: 2014-10-06 to 2026-10-22 (18,512 daily NAV, AUM, and Premium/Discount observations, 10 columns).
+* **Source**: Official Fund Disclosures (Dragon Capital, SSIAM, VinaCapital, KIM, Mirae Asset, IPAAM). [https://dragoncapital.com.vn](https://dragoncapital.com.vn) | [https://ssiam.com.vn](https://ssiam.com.vn).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
+  | `etf_name` | `String` | - | Official fund legal name in Vietnamese |
+  | `benchmark_index` | `String` | - | Target tracking benchmark index (e.g. VN30, VN DIAMOND, VNFIN LEAD) |
+  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `nav_per_share` | `Float64` | VND | Daily Net Asset Value (NAV) per fund certificate share |
+  | `close_price` | `Float64` | VND | Closing equity price at filing snapshot date |
+  | `premium_discount_pct` | `Float64` | % | Market price premium (+) or discount (-) relative to NAV: (P - NAV)/NAV * 100 |
+  | `total_nav_bn_vnd` | `Float64` | Billion VND | Total fund Net Asset Value (AUM in Billion VND) |
+  | `outstanding_shares` | `Float64` | Shares | Total outstanding fund certificate shares in circulation |
+  | `tracking_error_pct` | `Float64` | % | Rolling tracking error relative to underlying benchmark index |
+
 ---
 
 ### 2.3 Market Structure & Corporate Governance (`data/market_structure/`)
 
-#### A. `vn_corporate_network_edges.parquet`
+#### A. `vn_etf_portfolio_holdings_daily.parquet`
+* **Coverage**: Official creation units, constituent stock shares, and portfolio weights across top ETFs (E1VFVN30, FUEVFVND, FUESSVFL), 8 columns.
+* **Source**: Daily Creation & Redemption Basket Disclosures (Danh mục chứng khoán cơ cấu hoán đổi CCQ ETF). [https://dragoncapital.com.vn](https://dragoncapital.com.vn) | [https://ssiam.com.vn](https://ssiam.com.vn).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `etf_symbol` | `String` | - | Fund certificate ticker symbol (e.g. E1VFVN30, FUEVFVND, FUESSVFL) |
+  | `etf_name` | `String` | - | Official fund legal name in Vietnamese |
+  | `constituent_symbol` | `String` | - | Portfolio constituent stock ticker symbol |
+  | `constituent_name` | `String` | - | Portfolio constituent company name |
+  | `sector` | `String` | - | Economic sector or institutional domain |
+  | `shares_per_creation_unit` | `Int64` | Shares/unit | Quantity of constituent shares per 1 creation unit (1 lô = 100,000 CCQ) |
+  | `portfolio_weight_pct` | `Float64` | % | Portfolio allocation weight in ETF basket (%) |
+  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+
+#### B. `vn_corporate_network_edges.parquet`
 * **Coverage**: 4,803 directed relationship edges across Vietnam corporate conglomerates and institutions, 12 columns.
 * **Source**: Constructed Directed Network Graph from Exchange Filings, State Portfolios, and Big 4 Auditing Registers. [https://api-finfo.vndirect.com.vn](https://api-finfo.vndirect.com.vn).
 * **Fields**:
@@ -345,7 +399,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `weight` | `Float64` | [0, 1] | Normalized connection strength based on ownership percentage or governance authority |
   | `is_directed` | `Boolean` | Boolean | True indicating directed causal edge from owner/parent to entity |
 
-#### B. `vn_corporate_network_nodes.parquet`
+#### C. `vn_corporate_network_nodes.parquet`
 * **Coverage**: 3,473 unique corporate and institutional entity nodes in Vietnamese market, 8 columns.
 * **Source**: Graph Centrality Engine (NetworkX PageRank alpha=0.85 & Degree Centrality)..
 * **Fields**:
@@ -360,7 +414,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `total_degree` | `Int64` | Count | Total network connectivity (in_degree + out_degree) |
   | `pagerank` | `Float64` | Probability | Google PageRank systemic centrality score (alpha=0.85) |
 
-#### C. `vn_shareholders_history.parquet`
+#### D. `vn_shareholders_history.parquet`
 * **Coverage**: 3,115 historical major shareholder filings across 65 leading equities, 9 columns.
 * **Source**: Official Listed Company Disclosures & Shareholder Registry via VNDirect. [https://api-finfo.vndirect.com.vn](https://api-finfo.vndirect.com.vn).
 * **Fields**:
@@ -376,7 +430,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `group_pct` | `Float64` | % | Affiliated group percentage of equity shares held |
   | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
 
-#### D. `vn_subsidiaries_affiliates.parquet`
+#### E. `vn_subsidiaries_affiliates.parquet`
 * **Coverage**: 1,688 corporate relationships across 65 listed conglomerates, 10 columns.
 * **Source**: Annual Audited Reports & Corporate Structure Registry via VNDirect. [https://api-finfo.vndirect.com.vn](https://api-finfo.vndirect.com.vn).
 * **Fields**:
@@ -393,7 +447,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `investment_capital` | `Float64` | VND | Contributed investment capital value |
   | `unit` | `String` | - | Currency denomination unit (VND) |
 
-#### E. `vn_charter_capital_history.parquet`
+#### F. `vn_charter_capital_history.parquet`
 * **Coverage**: 4,391 capital adjustment and share issuance events across 65 equities, 13 columns.
 * **Source**: State Securities Commission (UBCKNN) & Stock Exchange Corporate Actions Registry. [https://api-finfo.vndirect.com.vn](https://api-finfo.vndirect.com.vn).
 * **Fields**:
@@ -413,7 +467,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `trading_start_date` | `String` | YYYY-MM-DD | Official date when additional shares commence trading on the exchange |
   | `actual_date` | `String` | YYYY-MM-DD | Date of completed execution or distribution |
 
-#### F. `free_float.parquet`
+#### G. `free_float.parquet`
 * **Coverage**: 2017-07-24 to 2026-08-03 (43,377 point-in-time rows across 1,450 tickers and 14 indices, 18 columns).
 * **Source**: HOSE & HNX Point-in-Time Index Committee Official PDF Notices (Sourced via lazy-researcher). [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -438,7 +492,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
 
-#### G. `vn30_free_float_history.parquet`
+#### H. `vn30_free_float_history.parquet`
 * **Coverage**: 2017-07-24 to 2026-08-03 (690 point-in-time constituent review rows for VN30, 18 columns).
 * **Source**: HOSE Official Point-in-Time Review Notices. [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -463,7 +517,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
 
-#### H. `free_float_changes_observed.parquet`
+#### I. `free_float_changes_observed.parquet`
 * **Coverage**: 10,178 discrete parameter adjustment events observed across index rebalancing cycles, 22 columns.
 * **Source**: Point-in-Time Discrete Free-Float and Capping Adjustment Tracker. [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -492,7 +546,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `previous_source_url` | `String` | URL | URL of previous official announcement |
   | `change_date_precision` | `String` | - | Resolution precision of effective date (e.g. day) |
 
-#### I. `index_constituents.parquet`
+#### J. `index_constituents.parquet`
 * **Coverage**: 43,377 historical index constituent rows across all Vietnamese benchmark indices, 18 columns.
 * **Source**: HOSE & HNX Index Calculation Methodology and Constituent Registry. [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -517,7 +571,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
 
-#### J. `basket_history.parquet`
+#### K. `basket_history.parquet`
 * **Coverage**: 261 basket rebalancing events and official effective schedules, 10 columns.
 * **Source**: HOSE Quarterly and Semi-Annual Basket Rebalancing Schedule. [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:

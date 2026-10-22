@@ -37,6 +37,7 @@ from scripts.ingest_corporate_and_microstructure import run_all as run_corporate
 from scripts.ingest_fundamentals import run_all as run_fundamentals
 from scripts.ingest_vietnam_commodities import build_vietnam_commodities
 from scripts.build_corporate_network import build_network as build_corporate_network
+from scripts.ingest_etf_data import run_all as run_etf
 from scripts.anymd_parser import parse_to_markdown
 from scripts.verify_datasets import verify
 
@@ -57,7 +58,9 @@ def run_download_all():
     # 3. Market OHLCV & Global Cross-Asset
     print("\n[Step 3/8] Ingesting Market & Global Cross-Asset Data...")
     build_market_data()
-    build_global_cross_asset()
+    # 3.1 Listed ETFs (Market OHLCV, NAV/AUM, Creation Baskets)
+    print("\n[Step 3.1] Ingesting Vietnamese ETFs (Market, NAV/AUM & Portfolios)...")
+    run_etf()
 
     # 4. Market Structure & Free Float
     print("\n[Step 4/8] Ingesting Free-Float & Index Basket Parameters...")
