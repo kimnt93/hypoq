@@ -3,8 +3,7 @@
 # Repository: https://github.com/kimnt93/vnresearch.git
 # ==============================================================================
 
-SHELL := /bin/bash
-PYTHON ?= $(shell which python3)
+PYTHON ?= $(shell if [ -f .venv/bin/python3 ]; then echo $$(pwd)/.venv/bin/python3; elif [ -f ../.venv/bin/python3 ]; then echo $$(cd .. && pwd)/.venv/bin/python3; else which python3; fi)
 ANYMD ?= $(shell which anymd || echo "/home/kim/.bun/bin/anymd")
 
 .PHONY: all download verify visualize parse-doc help clean
