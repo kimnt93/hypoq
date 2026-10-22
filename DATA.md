@@ -24,9 +24,11 @@ paper-hub/data/
 │   ├── vn_foreign_trading_daily.parquet     # 130,837 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Net, Room)
 │   └── vn_order_supply_demand_daily.parquet # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Bid/Offer Orders, Vol)
 ├── market_structure/
+│   ├── vn_corporate_network_edges.parquet   # 4,803 rows x 12 cols | Directed Network Graph Edges (Loans, Subs, Owners)
+│   ├── vn_corporate_network_nodes.parquet   # 3,473 rows x 8 cols | Network Nodes & Centrality (PageRank, Degree, Sector)
 │   ├── vn_shareholders_history.parquet      # 3,115 rows x 9 cols | Major Shareholders & Ownership History (Cổ đông lớn)
 │   ├── vn_subsidiaries_affiliates.parquet   # 1,688 rows x 10 cols | Subsidiaries & Affiliates (Công ty con & liên kết)
-│   ├── vn_charter_capital_history.parquet   # 4,391 rows x 12 cols | Historical Capital Changes & Issuances (Vốn điều lệ)
+│   ├── vn_charter_capital_history.parquet   # 4,391 rows x 13 cols | Historical Capital Changes & Issuances (Vốn điều lệ)
 │   ├── free_float.parquet                   # 43,377 rows x 18 cols | Historical free-float factor & capping factors (2017–2026)
 │   ├── vn30_free_float_history.parquet      # 690 rows x 18 cols | VN30-specific free float & index shares history
 │   ├── free_float_changes_observed.parquet  # 10,178 rows x 22 cols | Tracking every change in free-float parameters
@@ -402,6 +404,42 @@ paper-hub/data/
   | `effective_date` | `String` | Ex-rights / effective date |
   | `trading_start_date`| `String` | Date when new shares begin secondary trading |
   | `actual_date` | `String` | Date of final distribution |
+
+#### G. `vn_corporate_network_edges.parquet` (Cấu trúc Đồ thị Mạng lưới Doanh nghiệp & Liên kết Sở hữu)
+* **Coverage**: 4,803 directed relationship edges connecting Vietnamese listed companies, conglomerates, subsidiaries, major shareholders, state holding corporations, and auditors.
+* **Fields**:
+  | Column Name | Type | Description |
+  | :--- | :--- | :--- |
+  | `source_id` | `String` | Source entity identifier (e.g. `VIC`, `SCIC`, `VCB`, `KPMG`) |
+  | `source_name` | `String` | Source entity clean title |
+  | `source_type` | `String` | Entity category (`LISTED_EQUITY`, `STATE_OWNED_ENTITY`, `INSTITUTIONAL_INVESTOR`, `INDIVIDUAL_INSIDER`) |
+  | `target_id` | `String` | Target entity identifier (e.g. `VHM`, `HVN`, `CTG`) |
+  | `target_name` | `String` | Target entity clean title |
+  | `target_type` | `String` | Target category (`LISTED_EQUITY`, `SUBSIDIARY`, `ASSOCIATE`, `AUDITOR`, `PARENT_GROUP`) |
+  | `relationship_type` | `String` | Edge classification: `SUBSIDIARY_CONTROL` (>50%), `ASSOCIATE_AFFILIATE` (20-50%), `STATE_EQUITY_CONTROL`, `INSTITUTIONAL_BLOCK_HOLDING`, `INSIDER_MANAGEMENT_HOLDING`, `AUDITOR_SERVICE` |
+  | `ownership_pct` | `Float64` | Equity holding percentage (%) if reported |
+  | `capital_value_vnd`| `Float64` | Contributed capital value in VND if reported |
+  | `effective_date` | `String` | Point-in-time disclosure date (YYYY-MM-DD) |
+  | `weight` | `Float64` | Normalized connection weight $\in [0.05, 1.0]$ |
+  | `is_directed` | `Boolean` | True (Directed graph edge) |
+
+#### H. `vn_corporate_network_nodes.parquet` (Nút Mạng lưới & Chỉ số Trung tâm Graph Centrality)
+* **Coverage**: 3,473 unique corporate and institutional entities in the Vietnamese financial network.
+* **Network Centrality Metrics**:
+  * **PageRank Centrality ($PR$)**:
+    $$PR(u) = \frac{1 - d}{N} + d \sum_{v \in B_u} \frac{PR(v)}{L(v)}, \quad d = 0.85$$
+  * **Degree Centrality**: Incoming edges ($k_{\text{in}}$), Outgoing edges ($k_{\text{out}}$), and Total Connectivity ($k_{\text{tot}}$).
+* **Fields**:
+  | Column Name | Type | Description |
+  | :--- | :--- | :--- |
+  | `node_id` | `String` | Canonical node identifier |
+  | `node_name` | `String` | Entity official name |
+  | `node_type` | `String` | Entity type (`LISTED_EQUITY`, `SUBSIDIARY`, `ASSOCIATE`, `STATE_OWNED_ENTITY`, `AUDIT_FIRM`, `CORPORATE_AFFILIATE`, `INDIVIDUAL_OR_OTHER`) |
+  | `sector` | `String` | Economic sector or institutional domain |
+  | `in_degree` | `Int64` | Total incoming directed edges |
+  | `out_degree` | `Int64` | Total outgoing directed edges |
+  | `total_degree` | `Int64` | Total degree centrality ($k_{\text{in}} + k_{\text{out}}$) |
+  | `pagerank` | `Float64` | Google PageRank centrality score |
 ---
 
 ## 3. Data Loading Examples (Python & Polars)
@@ -489,9 +527,13 @@ daily_macro_aligned = daily_dates.join_asof(
 
 ---
 
-## 5. References & Data Provenance
+## 5. References & Verified Data Sources
 
-1. **WiData / WiChart Financial Platform**: Proprietary database aggregating Vietnam General Statistics Office (GSO), State Bank of Vietnam (SBV), and Ministry of Finance disclosures. [https://widata.vn](https://widata.vn)
-2. **VNDirect Securities Market Data Engine**: Streaming and historical open DChart TradingView endpoints. [https://vndirect.com.vn](https://vndirect.com.vn)
-3. **Federal Reserve Bank of St. Louis (FRED)**: Economic Data Repository for US Federal Reserve monetary policies, Treasuries, and money supply series. [https://fred.stlouisfed.org](https://fred.stlouisfed.org)
-4. **Yahoo Finance Open Financials**: Real-time and historical multi-asset pricing data. [https://finance.yahoo.com](https://finance.yahoo.com)
+1. **WiData / WiChart Financial Platform**: High-frequency macroeconomic series (Manufacturing PMI, CPI components, IIP), interbank rates, SBV bills/OMO operations, and market valuation multiples. [https://widata.vn/vi-mo/vn/pmi-san-xuat](https://widata.vn/vi-mo/vn/pmi-san-xuat) | [https://widata.vn/ket-qua-kinh-doanh](https://widata.vn/ket-qua-kinh-doanh)
+2. **State Bank of Vietnam (SBV / NHNN)**: Central bank reference exchange rates, policy refinancing rates, discount rates, and interbank transaction benchmarks. [https://www.sbv.gov.vn](https://www.sbv.gov.vn)
+3. **VNDirect Securities Financial Information Engine (Finfo Open API)**: Listed company registry, 4-tier ICB taxonomy, financial statements (TT200/TT202/TT49), financial ratios, daily order book supply/demand (`trading_statistics`), daily foreign trading (`foreigns`), shareholders, and corporate relationships. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn) | [https://www.vndirect.com.vn](https://www.vndirect.com.vn)
+4. **Ho Chi Minh Stock Exchange (HOSE) & Hanoi Stock Exchange (HNX)**: Official Point-in-Time constituent rebalancing announcements, free-float factors ($f$), capping factors ($c$), and outstanding index shares. [https://www.hsx.vn](https://www.hsx.vn) | [https://www.hnx.vn](https://www.hnx.vn)
+5. **Ministry of Finance (Bộ Tài chính)**: Statutory accounting circulars governing financial statement reporting lines (`TT200/2014/TT-BTC`, `TT202/2014/TT-BTC`, `TT334/2016/TT-BTC`, `TT199/2014/TT-BTC`). [https://mof.gov.vn](https://mof.gov.vn)
+6. **Federal Reserve Bank of St. Louis (FRED)**: Economic Data Repository for US Federal Reserve monetary policies, Treasuries, and money supply series. [https://fred.stlouisfed.org](https://fred.stlouisfed.org)
+7. **Yahoo Finance Open Financials Engine**: Global multi-asset pricing benchmarks: S&P 500 (`^GSPC`), US 10Y Yield (`^TNX`), US Dollar Index (`DX-Y.NYB`), WTI Crude Oil (`CL=F`), Gold (`GC=F`), VIX (`^VIX`), Bitcoin (`BTC-USD`), and USD/VND (`VND=X`). [https://finance.yahoo.com](https://finance.yahoo.com)
+8. **SylphxAI anymd**: High-speed native Rust document and PDF extraction engine for financial filings and regulatory disclosures. [https://github.com/SylphxAI/anymd](https://github.com/SylphxAI/anymd)

@@ -82,10 +82,9 @@ def render_figure1_shareholders_distribution():
     ax.legend(loc="lower right", framealpha=0.95)
     
     plt.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "fig1_shareholders_concentration.pdf"), format="pdf")
     fig.savefig(os.path.join(OUT_DIR, "fig1_shareholders_concentration.png"), dpi=300)
     plt.close(fig)
-    print("    - Saved fig1_shareholders_concentration.pdf / .png")
+    print("    - Saved fig1_shareholders_concentration.png (PNG only)")
 
 
 def render_figure2_subsidiaries_distribution():
@@ -131,10 +130,9 @@ def render_figure2_subsidiaries_distribution():
     ax.legend(loc="upper right", framealpha=0.95)
     
     plt.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "fig2_corporate_structure_network.pdf"), format="pdf")
     fig.savefig(os.path.join(OUT_DIR, "fig2_corporate_structure_network.png"), dpi=300)
     plt.close(fig)
-    print("    - Saved fig2_corporate_structure_network.pdf / .png")
+    print("    - Saved fig2_corporate_structure_network.png (PNG only)")
 
 
 def render_figure3_foreign_trading():
@@ -167,10 +165,9 @@ def render_figure3_foreign_trading():
     ax.legend(loc="upper left", ncol=2, framealpha=0.95)
     
     plt.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "fig3_cumulative_foreign_flows.pdf"), format="pdf")
     fig.savefig(os.path.join(OUT_DIR, "fig3_cumulative_foreign_flows.png"), dpi=300)
     plt.close(fig)
-    print("    - Saved fig3_cumulative_foreign_flows.pdf / .png")
+    print("    - Saved fig3_cumulative_foreign_flows.png (PNG only)")
 
 
 def render_figure4_supply_demand_imbalance():
@@ -200,10 +197,9 @@ def render_figure4_supply_demand_imbalance():
     ax.legend(loc="upper left", framealpha=0.95)
     
     plt.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "fig4_order_imbalance_distribution.pdf"), format="pdf")
     fig.savefig(os.path.join(OUT_DIR, "fig4_order_imbalance_distribution.png"), dpi=300)
     plt.close(fig)
-    print("    - Saved fig4_order_imbalance_distribution.pdf / .png")
+    print("    - Saved fig4_order_imbalance_distribution.png (PNG only)")
 
 
 def render_figure5_charter_capital_growth():
@@ -246,10 +242,9 @@ def render_figure5_charter_capital_growth():
     ax2.set_title("(b) Cumulative Capital Expansion Shares Across Selected Giants", fontweight="bold")
     
     plt.tight_layout()
-    fig.savefig(os.path.join(OUT_DIR, "fig5_charter_capital_events.pdf"), format="pdf")
     fig.savefig(os.path.join(OUT_DIR, "fig5_charter_capital_events.png"), dpi=300)
     plt.close(fig)
-    print("    - Saved fig5_charter_capital_events.pdf / .png")
+    print("    - Saved fig5_charter_capital_events.png (PNG only)")
 
 
 if __name__ == "__main__":
@@ -259,4 +254,12 @@ if __name__ == "__main__":
     render_figure3_foreign_trading()
     render_figure4_supply_demand_imbalance()
     render_figure5_charter_capital_growth()
-    print(">>> All 5 Dataset Overview Figures successfully rendered into figures_overview/!")
+    try:
+        try:
+            from build_corporate_network import build_network
+        except ImportError:
+            from scripts.build_corporate_network import build_network
+        build_network()
+    except Exception as e:
+        print(f"    ! Error building corporate network: {e}")
+    print(">>> All 6 Overview Figures rendered into figures_overview/ (PNG ONLY, no PDF)!")
