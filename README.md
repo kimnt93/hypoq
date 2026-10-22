@@ -52,7 +52,8 @@ vnresearch/data/
 │   ├── vietnam_monetary_daily.parquet           # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
 │   ├── vietnam_macro_monthly.parquet            # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
 │   ├── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
-│   └── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
+│   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
+│   └── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
 ├── market/
 │   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
@@ -82,7 +83,7 @@ vnresearch/data/
     └── global_macro_daily.parquet               # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
 ```
 
-Total database volume: **29 Parquet files | 1,408,473 total rows | 15.72 MB on disk**.  
+Total database volume: **30 Parquet files | 1,410,758 total rows | 15.75 MB on disk**.  
 For exact column schemas, mathematical formulas, and data provenance, see [`DATA.md`](./DATA.md).
 
 ---
@@ -103,6 +104,8 @@ Visualized via `make visualize` (Output format: **PNG ONLY**, zero PDF):
   *Breakdown of capital actions (Rights issues, share dividends, private placements) and share expansion.*
 * **Figure 6**: [`fig6_corporate_network_graph.png`](./figures_overview/fig6_corporate_network_graph.png)  
   *Directed network graph of Vietnamese corporate cross-ownership, state control, and auditing relationships.*
+* **Figure 7**: [`fig7_vietnam_commodity_prices.png`](./figures_overview/fig7_vietnam_commodity_prices.png)  
+  *Domestic commodity trajectories: Petrolimex fuel cycles, Hòa Phát construction steel, regional live hog/pork, and Robusta coffee.*
 
 ---
 

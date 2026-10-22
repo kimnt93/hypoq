@@ -35,6 +35,8 @@ from scripts.build_datasets import (
 )
 from scripts.ingest_corporate_and_microstructure import run_all as run_corporate_micro
 from scripts.ingest_fundamentals import run_all as run_fundamentals
+from scripts.ingest_vietnam_commodities import build_vietnam_commodities
+from scripts.build_corporate_network import build_network as build_corporate_network
 from scripts.anymd_parser import parse_to_markdown
 from scripts.verify_datasets import verify
 
@@ -44,10 +46,10 @@ def run_download_all():
     print("PAPER-HUB MASTER DATA DOWNLOAD & INGESTION PIPELINE")
     print("=" * 80)
 
-    # 1. Macro & Monetary
-    print("\n[Step 1/8] Ingesting Macroeconomic Series...")
+    # 1. Macro, Monetary & Vietnam Commodities
+    print("\n[Step 1/8] Ingesting Macroeconomic Series & Vietnam Commodities...")
     build_widata_macro()
-
+    build_vietnam_commodities()
     # 2. Corporate Financial Statements & Ratios (Fundamentals)
     print("\n[Step 2/9] Ingesting Corporate Financial Statements & Fundamental Ratios...")
     run_fundamentals()
@@ -68,6 +70,7 @@ def run_download_all():
     # 6. Corporate Structure, Shareholders, Foreign & Order Flow
     print("\n[Step 6/8] Ingesting Shareholders, Subsidiaries, Capital, Foreign & Cung Cầu...")
     run_corporate_micro()
+    build_corporate_network()
 
     # 7. anymd Document Processing Integration
     print("\n[Step 7/8] Processing Document Disclosures with anymd...")

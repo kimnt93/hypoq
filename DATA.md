@@ -13,7 +13,8 @@ data/
 │   ├── vietnam_monetary_daily.parquet           # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
 │   ├── vietnam_macro_monthly.parquet            # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
 │   ├── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
-│   └── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
+│   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
+│   └── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
 ├── market/
 │   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
@@ -51,7 +52,7 @@ data/
 Every dataset is documented in an identical, single-table format with standardized schema columns:
 `| Column Name | Type | Unit | Description |`
 
-### 2.1 Macroeconomic Data (`data/macro/`)
+### 2.1 Macroeconomic & Commodity Data (`data/macro/`)
 
 #### A. `vietnam_monetary_daily.parquet`
 * **Coverage**: 2011-01-03 to 2026-10-21 (5,471 daily observations, 16 columns).
@@ -96,7 +97,31 @@ Every dataset is documented in an identical, single-table format with standardiz
 | `fdi_registered_ttm` | `Float64` | Billion USD | Trailing 12-month registered Foreign Direct Investment |
 | `fdi_disbursed_ttm` | `Float64` | Billion USD | Trailing 12-month disbursed Foreign Direct Investment |
 
-#### C. `us_macro_daily.parquet`
+#### C. `vietnam_commodities_daily.parquet`
+* **Coverage**: 2017-08-24 to 2026-10-21 (2,285 daily observations across steel, pork, fuels, and agriculture, 17 columns).
+* **Source**: SteelOnline, Vietnam Steel Association (VSA), Anova Feed, MARD, Petrolimex & Ministry of Industry and Trade (MOIT). [https://steelonline.vn](https://steelonline.vn) | [https://www.petrolimex.com.vn](https://www.petrolimex.com.vn).
+* **Fields**:
+| Column Name | Type | Unit | Description |
+| :--- | :--- | :--- | :--- |
+| `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+| `steel_hoaphat_cb240_vnd_kg` | `Float64` | - | Reported field `steel_hoaphat_cb240_vnd_kg` |
+| `steel_hoaphat_d10_cb300_vnd_kg` | `Float64` | - | Reported field `steel_hoaphat_d10_cb300_vnd_kg` |
+| `steel_pomina_cb240_vnd_kg` | `Float64` | - | Reported field `steel_pomina_cb240_vnd_kg` |
+| `pork_live_hog_north_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_north_vnd_kg` |
+| `pork_live_hog_central_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_central_vnd_kg` |
+| `pork_live_hog_south_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_south_vnd_kg` |
+| `pork_live_hog_national_avg_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_national_avg_vnd_kg` |
+| `fuel_ron95_zone1_vnd_l` | `Float64` | - | Reported field `fuel_ron95_zone1_vnd_l` |
+| `fuel_e5_ron92_zone1_vnd_l` | `Float64` | - | Reported field `fuel_e5_ron92_zone1_vnd_l` |
+| `fuel_diesel_do_zone1_vnd_l` | `Float64` | - | Reported field `fuel_diesel_do_zone1_vnd_l` |
+| `fuel_kerosene_zone1_vnd_l` | `Float64` | - | Reported field `fuel_kerosene_zone1_vnd_l` |
+| `gas_lpg_12kg_cylinder_vnd` | `Float64` | - | Reported field `gas_lpg_12kg_cylinder_vnd` |
+| `coffee_robusta_daklak_vnd_kg` | `Float64` | - | Reported field `coffee_robusta_daklak_vnd_kg` |
+| `rice_ir50404_fresh_vnd_kg` | `Float64` | - | Reported field `rice_ir50404_fresh_vnd_kg` |
+| `rice_export_5pct_broken_usd_ton` | `Float64` | - | Reported field `rice_export_5pct_broken_usd_ton` |
+| `pepper_black_daklak_vnd_kg` | `Float64` | - | Reported field `pepper_black_daklak_vnd_kg` |
+
+#### D. `us_macro_daily.parquet`
 * **Coverage**: 1986-01-02 to 2026-10-21 (13,821 observations, 10 columns).
 * **Source**: Federal Reserve Bank of St. Louis (FRED), US Department of the Treasury. [https://fred.stlouisfed.org](https://fred.stlouisfed.org).
 * **Fields**:
@@ -113,7 +138,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 | `us_treasury_3m` | `Float64` | % / year | US 3-Month Treasury Bill Secondary Market Rate |
 | `us_m2_money_supply_yoy` | `Float64` | % YoY | US M2 Money Stock YoY Growth Rate |
 
-#### D. `vietnam_market_pe_daily.parquet`
+#### E. `vietnam_market_pe_daily.parquet`
 * **Coverage**: 2015-05-04 to 2026-10-21 (2,877 daily observations, 3 columns).
 * **Source**: WiData / Ho Chi Minh Stock Exchange (HOSE). [https://widata.vn](https://widata.vn).
 * **Fields**:
@@ -123,7 +148,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
 | `pe` | `Float64` | Multiple | Trailing 12-month Price-to-Earnings valuation multiple |
 
-#### E. `widata_macro_all_series.parquet`
+#### F. `widata_macro_all_series.parquet`
 * **Coverage**: 1970-01-01 to 2026-10-21 (204,426 rows across 107 macro series, 8 columns).
 * **Source**: WiData Macro Database Engine (107 primary series unpivoted). [https://widata.vn](https://widata.vn).
 * **Fields**:
