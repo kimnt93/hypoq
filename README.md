@@ -31,10 +31,11 @@ make verify
 
 # Render empirical overview and distribution visualizations (PNG only)
 make visualize
+# Explore datasets interactively in your browser
+open index.html   # or python3 -m http.server 8000
 
 # Parse any corporate report, regulatory PDF, or web document to clean Markdown
 make parse-doc FILE=path/to/report.pdf [PAGES=1-5]
-
 # Clean temporary download caches
 make clean
 ```
@@ -43,17 +44,20 @@ make clean
 
 ## 2. Complete Dataset Architecture & Inventory (`data/`)
 
-All 29 datasets are serialized in **Apache Parquet** format for zero-copy, high-speed analytical queries:
+All 36 datasets are serialized in **Apache Parquet** format for zero-copy, high-speed analytical queries:
 
 ```text
 vnresearch/data/
 ├── macro/
-│   ├── widata_macro_all_series.parquet          # 204,426 rows | 107 macro series unpivoted (1970–2026)
 │   ├── vietnam_monetary_daily.parquet           # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
 │   ├── vietnam_macro_monthly.parquet            # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
-│   ├── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
+│   ├── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── vietnam_trade_exports_monthly.parquet    # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
+│   ├── vietnam_fdi_sectors_monthly.parquet      # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
+│   ├── vietnam_sbv_policy_rates_daily.parquet   # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
 │   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
-│   └── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
+│   └── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
 ├── market/
 │   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
@@ -86,7 +90,7 @@ vnresearch/data/
     └── global_macro_daily.parquet               # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
 ```
 
-Total database volume: **33 Parquet files | 1,451,705 total rows | 16.45 MB on disk**.  
+Total database volume: **36 Parquet files | 1,254,222 total rows | 15.74 MB on disk**.  
 For exact column schemas, mathematical formulas, and data provenance, see [`DATA.md`](./DATA.md).
 
 ---

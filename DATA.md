@@ -1,20 +1,23 @@
 # Macroeconomic, Financial & Corporate Network Dataset Documentation (DATA.md)
 
-This document provides a comprehensive, standardized specification of all 33 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` (physically managed in `vnresearch/data/`) and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
+This document provides a comprehensive, standardized specification of all 36 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` (physically managed in `vnresearch/data/`) and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
 
 ---
 
-## 1. Directory Structure & Inventory (33 Parquet Files, 1,451,705 Rows)
+## 1. Directory Structure & Inventory (36 Parquet Files, 1,254,222 Rows)
 
 ```text
 data/
 ├── macro/
-│   ├── widata_macro_all_series.parquet          # 204,426 rows | 107 macro series unpivoted (1970–2026)
 │   ├── vietnam_monetary_daily.parquet           # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
 │   ├── vietnam_macro_monthly.parquet            # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
-│   ├── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
+│   ├── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── vietnam_trade_exports_monthly.parquet    # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
+│   ├── vietnam_fdi_sectors_monthly.parquet      # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
+│   ├── vietnam_sbv_policy_rates_daily.parquet   # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
 │   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
-│   └── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
+│   └── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
 ├── market/
 │   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
@@ -124,7 +127,47 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `rice_export_5pct_broken_usd_ton` | `Float64` | - | Reported field `rice_export_5pct_broken_usd_ton` |
   | `pepper_black_daklak_vnd_kg` | `Float64` | - | Reported field `pepper_black_daklak_vnd_kg` |
 
-#### D. `us_macro_daily.parquet`
+#### D. `vietnam_trade_exports_monthly.parquet`
+* **Coverage**: 2009-01-31 to 2026-09-30 (213 monthly observations across steel, coffee, and total exports, 8 columns).
+* **Source**: General Statistics Office & Ministry of Industry and Trade via WiData. [https://widata.vn](https://widata.vn).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `coffee_export_value_usd` | `Float64` | Billion USD | Coffee export turnover value (Cà phê) |
+  | `total_export_value_usd` | `Float64` | Billion USD | Total merchandise export turnover value of Vietnam |
+  | `steel_export_value_usd` | `Float64` | Billion USD | Iron and steel export turnover value (Sắt thép) |
+  | `steel_products_export_value_usd` | `Float64` | Billion USD | Products from iron and steel export turnover value (Sản phẩm từ sắt thép) |
+  | `total_export_growth_yoy` | `Float64` | % YoY | Total merchandise export value YoY growth percentage |
+  | `steel_export_growth_yoy` | `Float64` | % YoY | Iron and steel export value YoY growth percentage |
+  | `steel_products_export_growth_yoy` | `Float64` | % YoY | Products from iron and steel export value YoY growth percentage |
+
+#### E. `vietnam_fdi_sectors_monthly.parquet`
+* **Coverage**: 2011-12-31 to 2026-08-31 (173 monthly observations across 4 economic sectors, 5 columns).
+* **Source**: Ministry of Planning and Investment (MPI) & General Statistics Office via WiData. [https://widata.vn](https://widata.vn).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `fdi_real_estate_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Real Estate Activities |
+  | `fdi_manufacturing_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Manufacturing & Processing |
+  | `fdi_utilities_energy_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Electricity, Gas & Water |
+  | `fdi_science_technology_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Professional Science & Technology |
+
+#### F. `vietnam_sbv_policy_rates_daily.parquet`
+* **Coverage**: 2011-01-03 to 2026-10-21 (4,429 daily policy rate and required reserve observations, 6 columns).
+* **Source**: State Bank of Vietnam (SBV / NHNN) Policy Rate Bulletins. [https://www.sbv.gov.vn](https://www.sbv.gov.vn).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `discount_rate` | `Float64` | - | Reported field `discount_rate` |
+  | `refinancing_rate` | `Float64` | - | Reported field `refinancing_rate` |
+  | `capital_shortfall_lending_rate` | `Float64` | % / year | SBV lending rate for capital shortfall in interbank clearing |
+  | `required_reserve_rate_fx` | `Float64` | % / year | SBV interest rate on required reserve deposits in Foreign Currency |
+  | `required_reserve_rate_vnd` | `Float64` | % / year | SBV interest rate on required reserve deposits in VND |
+
+#### G. `us_macro_daily.parquet`
 * **Coverage**: 1986-01-02 to 2026-10-21 (13,821 observations, 10 columns).
 * **Source**: Federal Reserve Bank of St. Louis (FRED), US Department of the Treasury. [https://fred.stlouisfed.org](https://fred.stlouisfed.org).
 * **Fields**:
@@ -141,7 +184,21 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `us_treasury_3m` | `Float64` | % / year | US 3-Month Treasury Bill Secondary Market Rate |
   | `us_m2_money_supply_yoy` | `Float64` | % YoY | US M2 Money Stock YoY Growth Rate |
 
-#### E. `vietnam_market_pe_daily.parquet`
+#### H. `us_fed_balance_sheet_weekly.parquet`
+* **Coverage**: 1986-01-08 to 2026-10-14 (2,128 weekly observations of Federal Reserve assets, loans, and repo, 7 columns).
+* **Source**: Federal Reserve Board H.4.1 Factors Affecting Reserve Balances via FRED. [https://fred.stlouisfed.org](https://fred.stlouisfed.org).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `fed_total_assets_walcl` | `Float64` | - | Reported field `fed_total_assets_walcl` |
+  | `fed_treasury_securities_wshotsl` | `Float64` | Million USD | Treasury Securities Held Outright by the Federal Reserve |
+  | `fed_mbs_securities_wshomcb` | `Float64` | Million USD | Mortgage-Backed Securities (MBS) Held Outright by the Federal Reserve |
+  | `fed_loans_total_wdtgal` | `Float64` | Million USD | Total Loans Extended by the Federal Reserve (Discount Window, Credit Facilities) |
+  | `fed_reverse_repo_wlrral` | `Float64` | Million USD | Reverse Repurchase Agreements (RRP) Liabilities |
+  | `fed_commercial_bank_assets_wcblsa` | `Float64` | Billion USD | Total Commercial Bank Assets in the United States |
+
+#### I. `vietnam_market_pe_daily.parquet`
 * **Coverage**: 2015-05-04 to 2026-10-21 (2,877 daily observations, 3 columns).
 * **Source**: WiData / Ho Chi Minh Stock Exchange (HOSE). [https://widata.vn](https://widata.vn).
 * **Fields**:
@@ -150,21 +207,6 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `pe` | `Float64` | Multiple | Trailing 12-month Price-to-Earnings valuation multiple |
-
-#### F. `widata_macro_all_series.parquet`
-* **Coverage**: 1970-01-01 to 2026-10-21 (204,426 rows across 107 macro series, 8 columns).
-* **Source**: WiData Macro Database Engine (107 primary series unpivoted). [https://widata.vn](https://widata.vn).
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `series_id` | `String` | - | Unique macroeconomic series identifier in WiData database |
-  | `table_name` | `String` | - | Parent database table name in WiData schema |
-  | `column_name` | `String` | - | Original column field title |
-  | `time_frame` | `String` | - | Observation sampling frequency (daily, monthly, quarterly, yearly) |
-  | `value_type` | `String` | - | Value formatting type (value, percent, index) |
-  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `value` | `Float64` | Numeric | Reported observation value in original units |
 
 ---
 

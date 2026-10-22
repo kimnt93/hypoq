@@ -22,26 +22,29 @@ Whenever an agent receives the following user command:
    make verify
    ```
 4. Output a concise delta report summarizing:
-   - Total datasets audited (29 Parquet files)
-   - Total observation rows (1,408,473+ rows)
+   - Total datasets audited (36 Parquet files)
+   - Total observation rows (1,254,222+ rows)
    - Latest timestamp per market asset (e.g. `VNINDEX`, `VN30F1M`, `S&P 500`)
    - Any newly detected corporate events or rebalancing disclosures.
 
 ---
 
-## 2. Complete Dataset Architecture & Inventory (29 Parquet Datasets)
+## 2. Complete Dataset Architecture & Inventory (36 Parquet Datasets)
 
 All datasets are serialized in **Apache Parquet** format under `data/` (physically stored in `vnresearch/data/`):
 
 ```text
 data/
 ├── macro/
-│   ├── widata_macro_all_series.parquet          # 204,426 rows | 107 macro series unpivoted (1970–2026)
 │   ├── vietnam_monetary_daily.parquet           # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
 │   ├── vietnam_macro_monthly.parquet            # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
-│   ├── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
+│   ├── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── vietnam_trade_exports_monthly.parquet    # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
+│   ├── vietnam_fdi_sectors_monthly.parquet      # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
+│   ├── vietnam_sbv_policy_rates_daily.parquet   # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
 │   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
-│   └── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
+│   └── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
 ├── market/
 │   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
