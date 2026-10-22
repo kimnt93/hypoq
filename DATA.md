@@ -66,7 +66,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `gold_world_usd_adjusted` | `Float64` | USD/oz | International spot gold price adjusted to domestic basis |
   | `gold_sjc_domestic_vnd` | `Float64` | Million VND/tael | Domestic SJC physical gold buying price per tael |
   | `interbank_rate_on` | `Float64` | % / year | Overnight (ON) interbank offer rate |
@@ -89,7 +89,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `pmi_manufacturing` | `Float64` | Index (50=Neutral) | Vietnam Manufacturing Purchasing Managers' Index (S&P Global / GSO) |
   | `cpi_transport` | `Float64` | Index | CPI Transport component price index |
   | `cpi_food` | `Float64` | Index | CPI Food and foodstuffs component price index |
@@ -109,7 +109,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `steel_hoaphat_cb240_vnd_kg` | `Float64` | - | Reported field `steel_hoaphat_cb240_vnd_kg` |
   | `steel_hoaphat_d10_cb300_vnd_kg` | `Float64` | - | Reported field `steel_hoaphat_d10_cb300_vnd_kg` |
   | `steel_pomina_cb240_vnd_kg` | `Float64` | - | Reported field `steel_pomina_cb240_vnd_kg` |
@@ -133,7 +133,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `coffee_export_value_usd` | `Float64` | Billion USD | Coffee export turnover value (Cà phê) |
   | `total_export_value_usd` | `Float64` | Billion USD | Total merchandise export turnover value of Vietnam |
   | `steel_export_value_usd` | `Float64` | Billion USD | Iron and steel export turnover value (Sắt thép) |
@@ -148,7 +148,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `fdi_real_estate_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Real Estate Activities |
   | `fdi_manufacturing_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Manufacturing & Processing |
   | `fdi_utilities_energy_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Electricity, Gas & Water |
@@ -160,7 +160,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `discount_rate` | `Float64` | - | Reported field `discount_rate` |
   | `refinancing_rate` | `Float64` | - | Reported field `refinancing_rate` |
   | `capital_shortfall_lending_rate` | `Float64` | % / year | SBV lending rate for capital shortfall in interbank clearing |
@@ -173,7 +173,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `us_fed_total_assets_walcl` | `Float64` | Million USD | Federal Reserve Total Assets (Less Eliminations from Consolidation) |
   | `us_fed_funds_rate_dff` | `Float64` | % / year | Effective Federal Funds Rate (DFF) |
   | `us_sofr_volume` | `Float64` | Billion USD | Secured Overnight Financing Rate (SOFR) daily transaction volume |
@@ -190,7 +190,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `fed_total_assets_walcl` | `Float64` | - | Reported field `fed_total_assets_walcl` |
   | `fed_treasury_securities_wshotsl` | `Float64` | Million USD | Treasury Securities Held Outright by the Federal Reserve |
   | `fed_mbs_securities_wshomcb` | `Float64` | Million USD | Mortgage-Backed Securities (MBS) Held Outright by the Federal Reserve |
@@ -204,7 +204,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `pe` | `Float64` | Multiple | Trailing 12-month Price-to-Earnings valuation multiple |
 
@@ -219,8 +219,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `timestamp` | `Datetime[ms]` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
   | `open` | `Float64` | VND / Pts | Opening price or index level |
   | `high` | `Float64` | VND / Pts | Intraday high price or index level |
   | `low` | `Float64` | VND / Pts | Intraday low price or index level |
@@ -234,8 +234,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `timestamp` | `Datetime[ms]` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
   | `open` | `Float64` | VND / Pts | Opening price or index level |
   | `high` | `Float64` | VND / Pts | Intraday high price or index level |
   | `low` | `Float64` | VND / Pts | Intraday low price or index level |
@@ -249,8 +249,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `timestamp` | `Datetime[ms]` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
   | `open` | `Float64` | VND / Pts | Opening price or index level |
   | `high` | `Float64` | VND / Pts | Intraday high price or index level |
   | `low` | `Float64` | VND / Pts | Intraday low price or index level |
@@ -264,8 +264,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `timestamp` | `Datetime[ms]` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
   | `open` | `Float64` | VND / Pts | Opening price or index level |
   | `high` | `Float64` | VND / Pts | Intraday high price or index level |
   | `low` | `Float64` | VND / Pts | Intraday low price or index level |
@@ -285,7 +285,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `floor` | `String` | - | Trading venue / stock exchange (HOSE, HNX, UPCOM) |
   | `isin` | `String` | - | International Securities Identification Number (e.g. VN000000VCB4) |
   | `status` | `String` | - | Securities registration and listing status (e.g. listed) |
-  | `listed_date` | `String` | YYYY-MM-DD | Initial official public listing date |
+  | `listed_date` | `Date` | YYYY-MM-DD | Initial official public listing date |
   | `icb_level1_code` | `String` | - | ICB Level 1 Industry Code (e.g. 8000 Financials) |
   | `icb_level1_en` | `String` | - | ICB Level 1 English Name |
   | `icb_level1_vi` | `String` | - | ICB Level 1 Vietnamese Name |
@@ -322,8 +322,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `timestamp` | `Datetime[ms]` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
   | `open` | `Float64` | VND / Pts | Opening price or index level |
   | `high` | `Float64` | VND / Pts | Intraday high price or index level |
   | `low` | `Float64` | VND / Pts | Intraday low price or index level |
@@ -337,7 +337,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `floor` | `String` | - | Trading venue / stock exchange (HOSE, HNX, UPCOM) |
   | `buy_val` | `Float64` | VND | Foreign investor buy value (Giá trị mua nước ngoài) |
   | `sell_val` | `Float64` | VND | Foreign investor sell value (Giá trị bán nước ngoài) |
@@ -356,7 +356,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `floor` | `String` | - | Trading venue / stock exchange (HOSE, HNX, UPCOM) |
   | `bid_order` | `Float64` | Orders | Total number of buy orders placed during trading session |
   | `bid_vol` | `Float64` | Shares | Total buy order volume placed in the order book |
@@ -377,8 +377,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `etf_name` | `String` | - | Official fund legal name in Vietnamese |
   | `benchmark_index` | `String` | - | Target tracking benchmark index (e.g. VN30, VN DIAMOND, VNFIN LEAD) |
   | `exchange` | `String` | - | Stock exchange (HOSE, HNX) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `timestamp` | `Int64` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `timestamp` | `Datetime[ms]` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
   | `open` | `Float64` | VND / Pts | Opening price or index level |
   | `high` | `Float64` | VND / Pts | Intraday high price or index level |
   | `low` | `Float64` | VND / Pts | Intraday low price or index level |
@@ -395,7 +395,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `etf_name` | `String` | - | Official fund legal name in Vietnamese |
   | `benchmark_index` | `String` | - | Target tracking benchmark index (e.g. VN30, VN DIAMOND, VNFIN LEAD) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `nav_per_share` | `Float64` | VND | Daily Net Asset Value (NAV) per fund certificate share |
   | `close_price` | `Float64` | VND | Closing equity price at filing snapshot date |
   | `premium_discount_pct` | `Float64` | % | Market price premium (+) or discount (-) relative to NAV: (P - NAV)/NAV * 100 |
@@ -420,7 +420,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `sector` | `String` | - | Economic sector or institutional domain |
   | `shares_per_creation_unit` | `Int64` | Shares/unit | Quantity of constituent shares per 1 creation unit (1 lô = 100,000 CCQ) |
   | `portfolio_weight_pct` | `Float64` | % | Portfolio allocation weight in ETF basket (%) |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
 
 #### B. `vn_corporate_network_edges.parquet`
 * **Coverage**: 4,803 directed relationship edges across Vietnam corporate conglomerates and institutions, 12 columns.
@@ -437,7 +437,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `relationship_type` | `String` | - | Network edge classification (SUBSIDIARY_CONTROL, STATE_EQUITY_CONTROL, AUDITOR_SERVICE) |
   | `ownership_pct` | `Float64` | % | Direct percentage of equity shares held (%) if reported |
   | `capital_value_vnd` | `Float64` | VND | Contributed capital value in VND if reported |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
   | `weight` | `Float64` | [0, 1] | Normalized connection strength based on ownership percentage or governance authority |
   | `is_directed` | `Boolean` | Boolean | True indicating directed causal edge from owner/parent to entity |
 
@@ -470,7 +470,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `number_of_shares` | `Float64` | Shares | Total number of shares held at disclosure date |
   | `ownership_pct` | `Float64` | % | Reported major shareholder equity ownership percentage (%) |
   | `group_pct` | `Float64` | % | Affiliated group percentage of equity shares held |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
 
 #### E. `vn_subsidiaries_affiliates.parquet`
 * **Coverage**: 1,688 corporate relationships across 65 listed conglomerates, 10 columns.
@@ -483,7 +483,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `relation_name_vn` | `String` | - | Corporate entity title in Vietnamese |
   | `relation_name_en` | `String` | - | Corporate entity title in English |
   | `relation_id` | `Int64` | - | Unique corporate relation registry identifier |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
   | `year` | `String` | Year | Fiscal reporting year |
   | `ownership_pct` | `Float64` | % | Parent group equity ownership percentage (%) in corporate entity |
   | `investment_capital` | `Float64` | VND | Contributed investment capital value |
@@ -504,10 +504,10 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `price` | `Float64` | VND/share | Rights execution price or public offering price |
   | `ratio` | `Float64` | % | Rights issue allocation ratio or bonus share distribution percentage |
   | `number_of_shares` | `Float64` | Shares | Total number of shares held at disclosure date |
-  | `disclosure_date` | `String` | YYYY-MM-DD | Official public disclosure announcement date |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
-  | `trading_start_date` | `String` | YYYY-MM-DD | Official date when additional shares commence trading on the exchange |
-  | `actual_date` | `String` | YYYY-MM-DD | Date of completed execution or distribution |
+  | `disclosure_date` | `Date` | YYYY-MM-DD | Official public disclosure announcement date |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `trading_start_date` | `Date` | YYYY-MM-DD | Official date when additional shares commence trading on the exchange |
+  | `actual_date` | `Date` | YYYY-MM-DD | Date of completed execution or distribution |
 
 #### G. `free_float.parquet`
 * **Coverage**: 2017-07-24 to 2026-08-03 (43,377 point-in-time rows across 1,450 tickers and 14 indices, 18 columns).
@@ -515,12 +515,12 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `time` | `String` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
+  | `time` | `Datetime[ms]` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `index` | `String` | - | Index basket code (e.g. VN30, VN100, VNALLSHARE) |
   | `exchange` | `String` | - | Stock exchange (HOSE, HNX) |
   | `company_name` | `String` | - | Full corporate legal name in Vietnamese |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
   | `index_shares` | `Int64` | Shares | Total outstanding shares considered for index calculation (Q) |
   | `free_float_factor` | `Float64` | Ratio (0-1] | Exchange-calculated free-float ratio (f) rounded to regulatory bands |
   | `capping_factor` | `Float64` | Ratio (0-1] | Single-stock capping factor (c) ensuring compliance with concentration limits |
@@ -528,8 +528,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `source_url` | `String` | URL | Official exchange notice web URL |
   | `document_url` | `String` | URL | Direct download URL for official exchange PDF disclosure |
   | `source_sha256` | `String` | SHA-256 | Cryptographic hash of the source PDF document for audit reproducibility |
-  | `announced_at` | `String` | ISO UTC | Official public announcement timestamp |
-  | `retrieved_at` | `String` | ISO UTC | System retrieval and ingestion timestamp |
+  | `announced_at` | `Datetime[ms]` | ISO UTC | Official public announcement timestamp |
+  | `retrieved_at` | `Datetime[ms]` | ISO UTC | System retrieval and ingestion timestamp |
   | `availability_basis` | `String` | - | Point-in-Time availability justification (e.g. scheduled_notice) |
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
@@ -540,12 +540,12 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `time` | `String` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
+  | `time` | `Datetime[ms]` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `index` | `String` | - | Index basket code (e.g. VN30, VN100, VNALLSHARE) |
   | `exchange` | `String` | - | Stock exchange (HOSE, HNX) |
   | `company_name` | `String` | - | Full corporate legal name in Vietnamese |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
   | `index_shares` | `Int64` | Shares | Total outstanding shares considered for index calculation (Q) |
   | `free_float_factor` | `Float64` | Ratio (0-1] | Exchange-calculated free-float ratio (f) rounded to regulatory bands |
   | `capping_factor` | `Float64` | Ratio (0-1] | Single-stock capping factor (c) ensuring compliance with concentration limits |
@@ -553,8 +553,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `source_url` | `String` | URL | Official exchange notice web URL |
   | `document_url` | `String` | URL | Direct download URL for official exchange PDF disclosure |
   | `source_sha256` | `String` | SHA-256 | Cryptographic hash of the source PDF document for audit reproducibility |
-  | `announced_at` | `String` | ISO UTC | Official public announcement timestamp |
-  | `retrieved_at` | `String` | ISO UTC | System retrieval and ingestion timestamp |
+  | `announced_at` | `Datetime[ms]` | ISO UTC | Official public announcement timestamp |
+  | `retrieved_at` | `Datetime[ms]` | ISO UTC | System retrieval and ingestion timestamp |
   | `availability_basis` | `String` | - | Point-in-Time availability justification (e.g. scheduled_notice) |
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
@@ -565,12 +565,12 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `time` | `String` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
+  | `time` | `Datetime[ms]` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `index` | `String` | - | Index basket code (e.g. VN30, VN100, VNALLSHARE) |
   | `exchange` | `String` | - | Stock exchange (HOSE, HNX) |
   | `company_name` | `String` | - | Full corporate legal name in Vietnamese |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
   | `index_shares` | `Int64` | Shares | Total outstanding shares considered for index calculation (Q) |
   | `free_float_factor` | `Float64` | Ratio (0-1] | Exchange-calculated free-float ratio (f) rounded to regulatory bands |
   | `capping_factor` | `Float64` | Ratio (0-1] | Single-stock capping factor (c) ensuring compliance with concentration limits |
@@ -578,13 +578,13 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `source_url` | `String` | URL | Official exchange notice web URL |
   | `document_url` | `String` | URL | Direct download URL for official exchange PDF disclosure |
   | `source_sha256` | `String` | SHA-256 | Cryptographic hash of the source PDF document for audit reproducibility |
-  | `announced_at` | `String` | ISO UTC | Official public announcement timestamp |
-  | `retrieved_at` | `String` | ISO UTC | System retrieval and ingestion timestamp |
+  | `announced_at` | `Datetime[ms]` | ISO UTC | Official public announcement timestamp |
+  | `retrieved_at` | `Datetime[ms]` | ISO UTC | System retrieval and ingestion timestamp |
   | `availability_basis` | `String` | - | Point-in-Time availability justification (e.g. scheduled_notice) |
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
   | `previous_factor` | `Float64` | Ratio (0-1] | Preceding free-float factor prior to revision |
-  | `previous_snapshot_date` | `String` | YYYY-MM-DD | Date of previous parameter snapshot |
+  | `previous_snapshot_date` | `Date` | YYYY-MM-DD | Date of previous parameter snapshot |
   | `previous_source_url` | `String` | URL | URL of previous official announcement |
   | `change_date_precision` | `String` | - | Resolution precision of effective date (e.g. day) |
 
@@ -594,12 +594,12 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `time` | `String` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
+  | `time` | `Datetime[ms]` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `index` | `String` | - | Index basket code (e.g. VN30, VN100, VNALLSHARE) |
   | `exchange` | `String` | - | Stock exchange (HOSE, HNX) |
   | `company_name` | `String` | - | Full corporate legal name in Vietnamese |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
   | `index_shares` | `Int64` | Shares | Total outstanding shares considered for index calculation (Q) |
   | `free_float_factor` | `Float64` | Ratio (0-1] | Exchange-calculated free-float ratio (f) rounded to regulatory bands |
   | `capping_factor` | `Float64` | Ratio (0-1] | Single-stock capping factor (c) ensuring compliance with concentration limits |
@@ -607,8 +607,8 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `source_url` | `String` | URL | Official exchange notice web URL |
   | `document_url` | `String` | URL | Direct download URL for official exchange PDF disclosure |
   | `source_sha256` | `String` | SHA-256 | Cryptographic hash of the source PDF document for audit reproducibility |
-  | `announced_at` | `String` | ISO UTC | Official public announcement timestamp |
-  | `retrieved_at` | `String` | ISO UTC | System retrieval and ingestion timestamp |
+  | `announced_at` | `Datetime[ms]` | ISO UTC | Official public announcement timestamp |
+  | `retrieved_at` | `Datetime[ms]` | ISO UTC | System retrieval and ingestion timestamp |
   | `availability_basis` | `String` | - | Point-in-Time availability justification (e.g. scheduled_notice) |
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
@@ -619,10 +619,10 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
-  | `time` | `String` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
+  | `time` | `Datetime[ms]` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
   | `basket` | `String` | - | Basket identifier |
-  | `effective_date` | `String` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
+  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
   | `symbols` | `String` | - | JSON list of constituent tickers in basket |
   | `source_urls` | `String` | - | JSON list of publication source URLs |
   | `source_sha256s` | `String` | - | JSON list of cryptographic document hashes |
@@ -660,7 +660,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `fiscal_date` | `String` | YYYY-MM-DD | Accounting period closing balance sheet date |
+  | `fiscal_date` | `Date` | YYYY-MM-DD | Accounting period closing balance sheet date |
   | `year` | `Int32` | Year | Fiscal reporting year |
   | `quarter` | `Int32` | Quarter (1-4, 0) | Fiscal quarter (1, 2, 3, 4; 0 = Full Year Audited Annual Report) |
   | `report_type` | `String` | - | Regulatory period term (QUARTER1, QUARTER2, QUARTER3, QUARTER4, YEAR, ANNUAL) |
@@ -679,7 +679,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `report_date` | `String` | YYYY-MM-DD | Official report filing date or ratio calculation timestamp |
+  | `report_date` | `Date` | YYYY-MM-DD | Official report filing date or ratio calculation timestamp |
   | `year` | `Int32` | Year | Fiscal reporting year |
   | `quarter` | `Int32` | Quarter (1-4, 0) | Fiscal quarter (1, 2, 3, 4; 0 = Full Year Audited Annual Report) |
   | `ratio_code` | `String` | - | Standardized fundamental ratio code (e.g. ROAE_TR_AVG5Q, PRICE_TO_EARNINGS) |
@@ -712,7 +712,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `close_price` | `Int64` | VND | Closing equity price at filing snapshot date |
   | `avg_vol_15d_kshares` | `Float64` | Thousand shares | 15-day average daily trading volume |
   | `kiemtoan` | `Null` | - | Audited status flag |
-  | `report_date` | `String` | YYYY-MM-DD | Official report filing date or ratio calculation timestamp |
+  | `report_date` | `Date` | YYYY-MM-DD | Official report filing date or ratio calculation timestamp |
   | `full_count` | `String` | - | Record counter string |
 
 ---
@@ -727,7 +727,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | :--- | :--- | :--- | :--- |
   | `ticker` | `String` | - | Asset ticker symbol (e.g. ^GSPC, ^TNX, DX-Y.NYB) |
   | `asset_name` | `String` | - | Canonical financial asset name (e.g. sp500, gold_futures) |
-  | `date` | `String` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `open` | `Float64` | VND / Pts | Opening price or index level |
   | `high` | `Float64` | VND / Pts | Intraday high price or index level |
   | `low` | `Float64` | VND / Pts | Intraday low price or index level |

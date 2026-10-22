@@ -38,6 +38,7 @@ from scripts.ingest_fundamentals import run_all as run_fundamentals
 from scripts.ingest_vietnam_commodities import build_vietnam_commodities
 from scripts.build_corporate_network import build_network as build_corporate_network
 from scripts.ingest_etf_data import run_all as run_etf
+from scripts.migrate_time_datatypes import run_migration
 from scripts.anymd_parser import parse_to_markdown
 from scripts.verify_datasets import verify
 
@@ -80,8 +81,12 @@ def run_download_all():
     # Verify anymd can process sample disclosure or report
     print("    - anymd engine active: ready for PDF, DOCX, XLSX, and HTML disclosure extraction")
 
-    # 8. Verification & Catalog Audit
-    print("\n[Step 8/8] Verifying Parquet Datasets Integrity...")
+    # 8. Date & Time Native Parquet Types Enforcement
+    print("\n[Step 8/9] Enforcing Native Date & Datetime Types...")
+    run_migration()
+
+    # 9. Verification & Catalog Audit
+    print("\n[Step 9/9] Verifying Parquet Datasets Integrity...")
     verify()
 
     elapsed = time.time() - start_time
