@@ -47,14 +47,18 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 ## 3. Operational CLI & System Commands
 
 ```bash
+# Environment Setup (Host Machine via uv)
+make install   # Creates .venv and installs Polars, PyTorch, Stable-Baselines3, Scikit-Learn, Statsmodels
+
 # Data Ingestion & Integrity Verification
-make download   # Triggers master WiData, regulatory filing, and macro ingestion
-make verify     # Audits row counts, schemas, and nullness across all 36 Parquet datasets
+make download  # Triggers master WiData, regulatory filing, and macro ingestion
+make verify    # Audits row counts, schemas, and nullness across all 36 Parquet datasets
 
-# Start / Stop Web Application Stack (Docker Compose on Port 3030)
-make start      # Launches Next.js TypeScript fullstack container with live volume mounts
-make stop       # Terminates container stack
-
+# Web UI Display Stack (Docker Compose on Port 3030)
+# Note: Docker purely displays the web app. Quantitative research is executed outside Docker on host mounts.
+make start     # Launches Next.js TypeScript container with live volume mounts
+make stop      # Terminates container stack
+```
 # Multi-Agent Harness CLI
 python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
 python run.py --search="order flow imbalance"

@@ -41,19 +41,26 @@ Every empirical investigation begins with a falsifiable hypothesis ($H_0$ vs $H_
 
 ## 🚀 Quickstart
 
-### 1. Web Dashboard via Docker Compose (Port 3030)
+### 1. Research Environment Setup via `uv` (Host Machine)
+The empirical modeling stack runs natively on the host machine using **`uv`** for reproducible, ultra-fast Python environment management:
 ```bash
-# Start Next.js Full Stack container (volume-mounted for live updates)
+# Install all quantitative dependencies (Polars, Statsmodels, PyTorch, Stable-Baselines3, Scikit-Learn) into .venv
+make install
+```
+
+### 2. Web UI Display via Docker Compose (Port 3030)
+The Docker container displays the Next.js web interface and dashboard, with live volume mounts to the host's `data/`, `autoresearch.db`, and `researches/` folders. All computational research is executed outside Docker:
+```bash
+# Launch Next.js fullstack display container with live volume mounts
 make start
 
-# View logs and container health
-docker compose logs -f
+# View container health
+docker compose ps
 
-# Stop the stack
+# Stop container
 make stop
 ```
-Dashboard available at: **`http://localhost:3030`** (or `http://<server-ip>:3030`).
-
+Dashboard live at: **`http://localhost:3030`** (or `http://<server-ip>:3030`).
 ### 2. Multi-Agent CLI Harness (`run.py`)
 ```bash
 # Wake up concurrent AI research agents (Codex, Claude, Hermes)
