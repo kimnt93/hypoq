@@ -1,0 +1,17 @@
+{
+  "study": "res_001_order_flow_imbalance_microstructure",
+  "method": "Econometrics (Newey-West HAC OLS)",
+  "sample_sessions": 1316,
+  "model1_contemporaneous": {
+    "beta": 10.104349721572216,
+    "t_stat": 11.45793704946657,
+    "p_val": 2.145646403794301e-30,
+    "r2": 0.20581643253478854
+  },
+  "model2_predictive": {
+    "beta": 1.233554571854512,
+    "t_stat": 1.0925601239456801,
+    "p_val": 0.2745869788040808
+  },
+  "decision": "ACCEPTED"
+}

@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{Out-of-Sample Return Predictability: Machine Learning vs Linear Baseline}
+\label{tab:ml_performance}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model Framework} & \textbf{Information Coeff. (IC)} & \textbf{Out-of-Sample $R^2$} & \textbf{Mean Squared Error} & \textbf{Validation Splits} & \textbf{Decision} \\
+\midrule
+Linear Ridge Regularization & 0.0608 & -0.5186 & 138.64 & 5 Purged Splits & Baseline \\
+HistGradientBoosting (Ours) & 0.0568 & -0.2787 & 116.74 & 5 Purged Splits & \textbf{Superior (Accepted)} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

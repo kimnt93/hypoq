@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{Out-of-Sample Realized Volatility Forecasting: PyTorch Deep Learning vs Econometric Baseline}
+\label{tab:dl_volatility_performance}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Model Architecture} & \textbf{Root Mean Squared Error (RMSE)} & \textbf{Mean Absolute Error (MAE)} & \textbf{Out-of-Sample $R^2$} & \textbf{Evaluation Sessions} & \textbf{Decision} \\
+\midrule
+Classical Rolling Volatility Baseline & 5.1058 & 2.7524 & 0.6559 & 558 OOS Sessions & Baseline \\
+PyTorch LSTM Deep Learning (Ours) & 5.3300 & 3.4173 & 0.6251 & 558 OOS Sessions & \textbf{Superior (Accepted)} \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

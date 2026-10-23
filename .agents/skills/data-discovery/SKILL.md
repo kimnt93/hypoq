@@ -20,15 +20,15 @@ This skill provides standardized procedures to explore, audit, and inspect the 3
 ```text
 data/
 ├── macro/
-│   ├── vietnam_monetary_daily.parquet           # Interbank rates, OMO, SBV rates, FX, Yields
-│   ├── vietnam_macro_monthly.parquet            # PMI, CPI components, IIP, Retail sales, FDI
-│   ├── vietnam_commodities_daily.parquet        # Construction Steel, Pork, Fuels, Coffee, Rice
-│   ├── vietnam_trade_exports_monthly.parquet    # Merchandise Exports (Steel, Coffee, Total)
-│   ├── vietnam_fdi_sectors_monthly.parquet      # Realized FDI by Sector
-│   ├── vietnam_sbv_policy_rates_daily.parquet   # SBV Policy Rates & Required Reserves
+│   ├── vn_monetary_daily.parquet                # Interbank rates, OMO, SBV rates, FX, Yields
+│   ├── vn_macro_monthly.parquet                 # PMI, CPI components, IIP, Retail sales, FDI
+│   ├── vn_commodities_daily.parquet             # Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── vn_trade_exports_monthly.parquet         # Merchandise Exports (Steel, Coffee, Total)
+│   ├── vn_fdi_sectors_monthly.parquet           # Realized FDI by Sector
+│   ├── vn_sbv_policy_rates_daily.parquet        # SBV Policy Rates & Required Reserves
+│   ├── vn_market_pe_daily.parquet               # Daily VN-Index P/E valuation (2015-2026)
 │   ├── us_macro_daily.parquet                   # Fed Funds DFF, Yields (3M/2Y/10Y), M2, WALCL
-│   ├── us_fed_balance_sheet_weekly.parquet      # Fed Balance Sheet Assets, Loans, MBS & RRP
-│   └── vietnam_market_pe_daily.parquet          # Daily VN-Index P/E valuation (2015-2026)
+│   └── us_fed_balance_sheet_weekly.parquet      # Fed Balance Sheet Assets, Loans, MBS & RRP
 ├── market/
 │   ├── vn_indices_daily.parquet                 # VNINDEX & VN30 daily OHLCV
 │   ├── vn30f1m_derivatives_daily.parquet        # VN30F1M Futures daily OHLCV
@@ -47,11 +47,11 @@ data/
 │   ├── vn_shareholders_history.parquet          # Major Shareholders & Ownership History
 │   ├── vn_subsidiaries_affiliates.parquet       # Subsidiaries & Affiliates
 │   ├── vn_charter_capital_history.parquet       # Historical Capital Changes & Issuances
-│   ├── free_float.parquet                       # Historical free-float factor & capping factors
+│   ├── vn_free_float.parquet                    # Historical free-float factor & capping factors
 │   ├── vn30_free_float_history.parquet          # VN30-specific free float & index shares history
-│   ├── free_float_changes_observed.parquet      # Discrete parameter changes
-│   ├── index_constituents.parquet               # Historical basket constituents across all VN indices
-│   └── basket_history.parquet                   # Basket rebalancing events and effective dates
+│   ├── vn_free_float_changes_observed.parquet   # Discrete parameter changes
+│   ├── vn_index_constituents.parquet            # Historical basket constituents across all VN indices
+│   └── vn_basket_history.parquet                # Basket rebalancing events and effective dates
 ├── financials/
 │   ├── vn_financial_models_taxonomy.parquet     # Accounting line item definitions (TT200/TT202/TT49)
 │   ├── vn_financial_statements_quarterly_yearly.parquet # Balance Sheet, Income, Cash Flow line items
@@ -60,6 +60,13 @@ data/
 └── cross_asset/
     └── global_macro_daily.parquet               # S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
 ```
+
+### Dataset Jurisdiction Naming Rule
+All datasets must follow the ISO geographic/market jurisdiction prefix:
+* `vn_`: Vietnam domestic series (equities, derivatives, macro, corporate network)
+* `us_`: United States Federal Reserve, Treasury, and macro indicators
+* `eu_`: European Central Bank and European financial series
+* `global_`: Multi-asset international benchmarks (S&P 500, DXY, Gold, WTI, VIX, Bitcoin)
 
 ## Discovery Patterns (Polars)
 

@@ -9,15 +9,15 @@ This document provides a comprehensive, standardized specification of all 36 emp
 ```text
 data/
 ├── macro/
-│   ├── vietnam_monetary_daily.parquet           # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
-│   ├── vietnam_macro_monthly.parquet            # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
-│   ├── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
-│   ├── vietnam_trade_exports_monthly.parquet    # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
-│   ├── vietnam_fdi_sectors_monthly.parquet      # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
-│   ├── vietnam_sbv_policy_rates_daily.parquet   # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
+│   ├── vn_monetary_daily.parquet                # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
+│   ├── vn_macro_monthly.parquet                 # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
+│   ├── vn_commodities_daily.parquet             # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
+│   ├── vn_trade_exports_monthly.parquet         # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
+│   ├── vn_fdi_sectors_monthly.parquet           # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
+│   ├── vn_sbv_policy_rates_daily.parquet        # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
+│   ├── vn_market_pe_daily.parquet               # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
 │   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
-│   ├── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
-│   └── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
+│   └── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
 ├── market/
 │   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
@@ -37,11 +37,11 @@ data/
 │   ├── vn_shareholders_history.parquet          # 3,115 rows x 9 cols | Major Shareholders & Ownership History (Cổ đông lớn)
 │   ├── vn_subsidiaries_affiliates.parquet       # 1,688 rows x 10 cols | Subsidiaries & Affiliates (Công ty con & liên kết)
 │   ├── vn_charter_capital_history.parquet       # 4,391 rows x 13 cols | Historical Capital Changes & Issuances (Vốn điều lệ)
-│   ├── free_float.parquet                       # 43,377 rows x 18 cols | Historical free-float factor & capping factors
+│   ├── vn_free_float.parquet                    # 43,377 rows x 18 cols | Historical free-float factor & capping factors
 │   ├── vn30_free_float_history.parquet          # 690 rows x 18 cols | VN30-specific free float & index shares history
-│   ├── free_float_changes_observed.parquet      # 10,178 rows x 22 cols | Tracking discrete parameter changes
-│   ├── index_constituents.parquet               # 43,377 rows x 18 cols | Historical basket constituents across all VN indices
-│   └── basket_history.parquet                   # 261 rows x 10 cols | Basket rebalancing events and effective dates
+│   ├── vn_free_float_changes_observed.parquet   # 10,178 rows x 22 cols | Tracking discrete parameter changes
+│   ├── vn_index_constituents.parquet            # 43,377 rows x 18 cols | Historical basket constituents across all VN indices
+│   └── vn_basket_history.parquet                # 261 rows x 10 cols | Basket rebalancing events and effective dates
 ├── financials/
 │   ├── vn_financial_models_taxonomy.parquet     # 3,370 rows x 12 cols | Full accounting line item definitions (TT202, TT49)
 │   ├── vn_financial_statements_quarterly_yearly.parquet # 325,000 rows x 12 cols | Balance Sheet, Income, Cash Flow line items
@@ -50,6 +50,16 @@ data/
 └── cross_asset/
     └── global_macro_daily.parquet               # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
 ```
+
+---
+
+## 1.1 Dataset Standardized Jurisdiction Naming Standard
+
+Every empirical dataset archived in `data/` must strictly use an ISO country or geographic scope prefix:
+* **`vn_`**: Vietnam domestic financial, corporate, and macroeconomic series.
+* **`us_`**: United States Federal Reserve, Treasury, and macroeconomic indicators.
+* **`eu_`**: European Central Bank and European financial series.
+* **`global_`**: International multi-asset cross-border benchmarks (S&P 500, DXY, WTI, Gold, VIX, Bitcoin, FX).
 
 ---
 
