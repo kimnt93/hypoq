@@ -58,7 +58,7 @@ make verify    # Audits row counts, schemas, and nullness across all 36 Parquet 
 # Note: Docker purely displays the web app. Quantitative research is executed outside Docker on host mounts.
 make start     # Launches Next.js TypeScript container with live volume mounts
 make stop      # Terminates container stack
-```
+
 # Multi-Agent Harness CLI
 python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
 python run.py --search="order flow imbalance"

@@ -1,6 +1,7 @@
 # hypoq (Hypothesis × Quant) — Autonomous AI Quantitative Research Lab & Empirical Modeling Harness
 
 > **hypoq** ($\text{Hypothesis} \times \text{Quant}$) — Where falsifiable scientific hypotheses meet institutional-grade quantitative modeling.
+
 [![GitHub repository](https://img.shields.io/badge/GitHub-kimnt93%2Fhypoq-blue.svg?logo=github)](https://github.com/kimnt93/hypoq.git)
 [![ML / DL / RL Stack](https://img.shields.io/badge/ML%2FDL%2FRL-PyTorch%20%7C%20Stable--Baselines3%20%7C%20Scikit--Learn-ee4c2c.svg)](https://pytorch.org/)
 [![Econometrics](https://img.shields.io/badge/Stats-Statsmodels%20%7C%20Scipy%20%7C%20Polars-2ca02c.svg)](https://www.statsmodels.org/)
@@ -21,11 +22,12 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 ![hypoq Platform Interface](assets/hypoq_ui.png)
 
 ---
+
 ## ⚡ System Architecture: Host Modeling & Docker Web Display
 
 **hypoq** enforces a strict architectural boundary between heavy quantitative computation and lightweight web visualization:
 
-```
+```text
 ┌────────────────────────────────────────────────────────────────────────┐
 │ HOST MACHINE (Native Quantitative Research Engine)                     │
 │ • Environment: Python 3.12 managed via uv (make install)               │
@@ -50,6 +52,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 ## 🔬 Core Modeling Paradigms
 
 Every research investigation adheres to strict empirical non-negotiables:
+
 1. **Hypothesis-First**: Formulate explicit Null ($H_0$) and Alternative ($H_1$) hypotheses prior to modeling.
 2. **Point-in-Time (PIT) Causality**: Zero look-ahead bias ($\tau_{\text{info}} \le \tau_{\text{market}}$) enforced via zero-copy Polars backward joins (`join_asof`).
 3. **Four Quantitative Paradigms**:
@@ -64,6 +67,7 @@ Every research investigation adheres to strict empirical non-negotiables:
 ## 📊 Empirical Research Study Examples
 
 > **Note**: The empirical studies below serve as reproducible reference examples produced across the four modeling paradigms. Researchers can execute new hypothesis loops via CLI or autonomous agents.
+
 | ID | Domain | Paradigm | Status | Key Metric | Title & Focus |
 | :--- | :--- | :--- | :---: | :---: | :--- |
 | **001** | Microstructure | Econometrics | **ACCEPTED** | $t = 11.46$ | Order Book Imbalance and Contemporaneous Price Impact in VN30 Equities |
@@ -88,14 +92,18 @@ Every research investigation adheres to strict empirical non-negotiables:
 ## 🚀 Quickstart
 
 ### 1. Research Environment Setup via `uv` (Host Machine)
+
 All quantitative analysis, ML/DL/RL training, and LaTeX paper compilations execute directly on the host using **`uv`**:
+
 ```bash
 # Install all quantitative dependencies into .venv
 make install
 ```
 
 ### 2. Web UI Display via Docker Compose (Port 3030)
+
 The Docker container displays the Next.js web application and dashboard, with live volume mounts to the host's `data/`, `autoresearch.db`, and `researches/` directories:
+
 ```bash
 # Start Next.js web display container
 make start
@@ -106,9 +114,11 @@ docker compose ps
 # Stop container
 make stop
 ```
+
 Open **`http://localhost:3030`** (or `http://<server-ip>:3030`) in your browser.
 
 ### 3. Multi-Agent CLI Harness (`run.py`)
+
 ```bash
 # Wake up concurrent AI research agents (Codex, Claude, Hermes)
 python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
