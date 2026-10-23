@@ -3,75 +3,148 @@
 [![GitHub repository](https://img.shields.io/badge/GitHub-kimnt93%2Fhypoq-blue.svg?logo=github)](https://github.com/kimnt93/hypoq.git)
 [![ML / DL / RL Stack](https://img.shields.io/badge/ML%2FDL%2FRL-PyTorch%20%7C%20Stable--Baselines3%20%7C%20Scikit--Learn-ee4c2c.svg)](https://pytorch.org/)
 [![Econometrics](https://img.shields.io/badge/Stats-Statsmodels%20%7C%20Scipy%20%7C%20Polars-2ca02c.svg)](https://www.statsmodels.org/)
+[![Host Package Manager](https://img.shields.io/badge/uv-Fast%20Python%20Env-de5fe9.svg)](https://astral.sh/uv)
 [![Web Stack](https://img.shields.io/badge/Web-Next.js%2016%20%7C%20TypeScript%20%7C%20Arquero-black.svg)](https://nextjs.org/)
 [![Deployment](https://img.shields.io/badge/Deploy-Docker%20Compose-2496ed.svg)](https://www.docker.com/)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**hypoq** is an institutional-grade autonomous AI quantitative research harness and data lake designed for financial economics, market microstructure, derivatives pricing, and macroeconomic spillovers.
+**hypoq** is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for financial economics, market microstructure, algorithmic derivatives pricing, and cross-border macroeconomic spillovers, **hypoq** operationalizes an autonomous agent research loop inspired by the Karpathy AutoResearch cycle and EvoMap architecture:
 
-The platform executes the end-to-end **AutoResearch Cycle**:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
-Every empirical investigation begins with a falsifiable hypothesis ($H_0$ vs $H_1$) and leverages:
-* **Machine Learning & Deep Learning**: Supervised return forecasting with `scikit-learn` and non-linear volatility networks with `pytorch`.
-* **Reinforcement Learning**: Dynamic multi-asset rebalancing policies with `stable-baselines3` under realistic transaction fees.
-* **Econometrics & Statistics**: Newey--West HAC robust covariance, ADF unit roots, and calendar placebo bootstrap tests with `statsmodels`.
-* **Data Processing**: Zero-copy Point-in-Time backward joins with `polars` across 36 standardized Parquet datasets.
-* **Autonomous Serialization**: Automated LaTeX manuscript compilation (`main.pdf`) via Tectonic and SQLite FTS5 BM25 deduplication.
+---
+
+## 🖥️ Platform Dashboard
+
+![hypoq Platform Interface](assets/hypoq_ui.png)
 
 ---
 
-## 🎬 Live Platform Demo
+## 🎬 Project Introduction & Walkthrough
 
-![hypoq Platform Demo](assets/hypoq_demo.gif)
+Watch the platform walkthrough introducing the quantitative data lake, multi-agent orchestration, and live empirical reports:
 
-*Full resolution clip: [`assets/hypoq_demo.mp4`](assets/hypoq_demo.mp4)*
+<p align="center">
+  <video src="assets/hypoq_intro.mp4" controls="controls" width="100%" style="max-height: 540px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+    Your browser does not support the video tag.
+  </video>
+</p>
+
+*Video file: [`assets/hypoq_intro.mp4`](assets/hypoq_intro.mp4)*
 
 ---
 
-## 📚 Core System Documentation
+## ⚡ System Architecture: Host Modeling & Docker Web Display
 
-* **[`RESEARCH.md`](RESEARCH.md)**: Research mandate, active domains & keywords, econometric & ML/DL/RL modeling invariants.
+**hypoq** enforces a strict architectural boundary between heavy quantitative computation and lightweight web visualization:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ HOST MACHINE (Native Quantitative Research Engine)                     │
+│ • Environment: Python 3.12 managed via uv (make install)               │
+│ • Modeling: Polars, Statsmodels, Scikit-Learn, PyTorch, SB3            │
+│ • Ingestion: scripts/download_all.py -> data/ (36 Parquet files)       │
+│ • Pipeline: researches/res_*/code/run_pipeline.py                      │
+│ • Typesetting: Tectonic engine -> main.tex -> main.pdf                 │
+│ • Persistence: autoresearch.db (SQLite FTS5 BM25 deduplication)        │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ Live Host Volume Mounts
+                                    │ (./data, ./autoresearch.db, ./researches)
+┌───────────────────────────────────▼────────────────────────────────────┐
+│ DOCKER CONTAINER (Web UI & Audit Display on Port 3030)                 │
+│ • Service: hypoq-web (Next.js 16 + TypeScript + Tailwind CSS)          │
+│ • Launch: make start / make stop                                       │
+│ • Real-time display of hypothesis cards, metric audits, & PDF reader   │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🔬 Core Modeling Paradigms
+
+Every research investigation adheres to strict empirical non-negotiables:
+1. **Hypothesis-First**: Formulate explicit Null ($H_0$) and Alternative ($H_1$) hypotheses prior to modeling.
+2. **Point-in-Time (PIT) Causality**: Zero look-ahead bias ($\tau_{\text{info}} \le \tau_{\text{market}}$) enforced via zero-copy Polars backward joins (`join_asof`).
+3. **Four Quantitative Paradigms**:
+   * **Machine Learning**: Supervised return forecasting, cross-validation, and feature attribution using `scikit-learn`.
+   * **Deep Learning**: Non-linear volatility nowcasting and neural sequence modeling with `pytorch`.
+   * **Reinforcement Learning**: Continuous asset allocation and order execution agents using `stable-baselines3` under realistic transaction friction hurdles.
+   * **Econometrics & Statistics**: Newey--West HAC robust covariance, Augmented Dickey-Fuller (ADF) unit roots, event-study Cumulative Abnormal Returns (CAR), and error-correction mean-reversion with `statsmodels`.
+4. **Autonomous Serialization**: Every study compiles into a publication-ready LaTeX paper (`main.pdf`) using Tectonic and registers empirical metrics into `autoresearch.db`.
+
+---
+
+## 📊 Empirical Research Portfolio
+
+| ID | Domain | Paradigm | Status | Key Metric | Title & Focus |
+| :--- | :--- | :--- | :---: | :---: | :--- |
+| **001** | Microstructure | Econometrics | **ACCEPTED** | $t = 11.46$ | Order Book Imbalance and Contemporaneous Price Impact in VN30 Equities |
+| **002** | Factor Alpha | Machine Learning | **REJECTED** | $R^2 = 0.057$ | Cross-Sectional Return Predictability with Gradient Boosted Trees |
+| **003** | Macro Volatility | Deep Learning | **REJECTED** | $t = -0.22$ | Multi-Horizon Volatility Nowcasting with Recurrent Neural Networks |
+| **004** | Asset Allocation | Reinforcement Learning | **ACCEPTED** | Sharpe $= 1.49$ | Dynamic Portfolio Allocation with Proximal Policy Optimization (PPO) |
+| **005** | Derivatives | Econometrics | **ACCEPTED** | $t = -5.48$ | Futures-Cash Basis Discount and Arbitrage Bands in VN30 Derivatives |
+| **006** | Macro Transmission | Econometrics | **ACCEPTED** | $t = 6.92$ | Monetary Transmission, Cross-Border Spillovers, and NAV Parity in Vietnamese ETFs |
+
+---
+
+## 📚 Core Documentation
+
+* **[`RESEARCH.md`](RESEARCH.md)**: Research taxonomy across active financial economics domains, required modeling paradigms, and causality invariants.
 * **[`DATA.md`](DATA.md)**: Standardized data lake inventory (36 Parquet files, 1.25M+ rows) and ISO naming standard (`vn_`, `us_`, `eu_`, `global_`).
-* **[`AGENTS.md`](AGENTS.md)**: Multi-agent execution protocol, CLI orchestration, and agent workflow instructions.
+* **[`AGENTS.md`](AGENTS.md)**: Multi-agent execution protocol, CLI orchestration, and agent workflow guidelines.
 * **[`.agents/skills/`](.agents/skills/)**: Modular skills suite (12 AgentSkills covering data discovery, ML/DL/RL, stats, charts, and LaTeX).
-* **[`templates/`](templates/)**: Research Future LaTeX manuscript template compiled with standalone Tectonic.
+* **[`templates/`](templates/)**: Standard Research Future LaTeX manuscript template compiled with standalone Tectonic.
 
 ---
 
 ## 🚀 Quickstart
 
 ### 1. Research Environment Setup via `uv` (Host Machine)
-The empirical modeling stack runs natively on the host machine using **`uv`** for reproducible, ultra-fast Python environment management:
+All quantitative analysis, ML/DL/RL training, and LaTeX paper compilations execute directly on the host using **`uv`**:
 ```bash
-# Install all quantitative dependencies (Polars, Statsmodels, PyTorch, Stable-Baselines3, Scikit-Learn) into .venv
+# Install all quantitative dependencies into .venv
 make install
 ```
 
 ### 2. Web UI Display via Docker Compose (Port 3030)
-The Docker container displays the Next.js web interface and dashboard, with live volume mounts to the host's `data/`, `autoresearch.db`, and `researches/` folders. All computational research is executed outside Docker:
+The Docker container displays the Next.js web application and dashboard, with live volume mounts to the host's `data/`, `autoresearch.db`, and `researches/` directories:
 ```bash
-# Launch Next.js fullstack display container with live volume mounts
+# Start Next.js web display container
 make start
 
-# View container health
+# View container status
 docker compose ps
 
 # Stop container
 make stop
 ```
-Dashboard live at: **`http://localhost:3030`** (or `http://<server-ip>:3030`).
-### 2. Multi-Agent CLI Harness (`run.py`)
+Open **`http://localhost:3030`** (or `http://<server-ip>:3030`) in your browser.
+
+### 3. Multi-Agent CLI Harness (`run.py`)
 ```bash
 # Wake up concurrent AI research agents (Codex, Claude, Hermes)
 python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
 
-# Search historical hypotheses with FTS5 BM25 text ranking to avoid duplicate work
+# Search historical hypotheses with FTS5 BM25 text ranking to prevent duplicate research
 python run.py --search="order flow imbalance"
 
 # List all recorded hypotheses and empirical decisions
 python run.py --list
 python run.py --list --status=ACCEPTED
+```
+
+---
+
+## 🛠️ Makefile Command Reference
+
+```bash
+make install          # Install host Python research stack (.venv) using uv
+make download         # Ingest regulatory filings, WiData macro, and build Parquet datasets
+make verify           # Audit schema integrity and row counts across all 36 Parquet files
+make start            # Launch Next.js web display container on Docker (port 3030)
+make stop             # Terminate Next.js web display container
+make parse-doc        # Parse document/PDF to Markdown (FILE=<path> [PAGES=1-5])
+make clean            # Remove temporary download caches and artifacts
 ```
 
 ---
