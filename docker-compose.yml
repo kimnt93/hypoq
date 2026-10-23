@@ -15,6 +15,7 @@ services:
       - ./data:/app/data:ro
       - ./autoresearch.db:/app/autoresearch.db:rw
       - ./researches:/app/researches:ro
+      - ./templates:/app/templates:ro
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/healthz || exit 1"]
       interval: 15s
