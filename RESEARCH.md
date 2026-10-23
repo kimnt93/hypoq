@@ -1,4 +1,4 @@
-# RESEARCH.md — Vietnam Quantitative Financial Economics Research Agenda
+# RESEARCH.md — Vietnam Quantitative Financial Economics Research Agenda (hypoq: Hypothesis × Quant)
 
 ---
 

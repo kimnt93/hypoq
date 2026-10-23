@@ -1,6 +1,6 @@
-# AGENTS.md — Autonomous Agent Operating Protocol for hypoq
+# AGENTS.md — Autonomous Agent Operating Protocol for hypoq (Hypothesis × Quant)
 
-Welcome to **hypoq**, the autonomous AI quantitative research lab and empirical modeling platform developed by the **AI Quantitative Research Network**.
+Welcome to **hypoq** (**Hypothesis $\times$ Quant**), the autonomous AI quantitative research lab and empirical modeling platform developed by the **AI Quantitative Research Network**.
 
 ---
 

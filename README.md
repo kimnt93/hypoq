@@ -1,5 +1,6 @@
-# hypoq — Autonomous AI Quantitative Research Lab & Empirical Modeling Harness
+# hypoq (Hypothesis × Quant) — Autonomous AI Quantitative Research Lab & Empirical Modeling Harness
 
+> **hypoq** ($\text{Hypothesis} \times \text{Quant}$) — Where falsifiable scientific hypotheses meet institutional-grade quantitative modeling.
 [![GitHub repository](https://img.shields.io/badge/GitHub-kimnt93%2Fhypoq-blue.svg?logo=github)](https://github.com/kimnt93/hypoq.git)
 [![ML / DL / RL Stack](https://img.shields.io/badge/ML%2FDL%2FRL-PyTorch%20%7C%20Stable--Baselines3%20%7C%20Scikit--Learn-ee4c2c.svg)](https://pytorch.org/)
 [![Econometrics](https://img.shields.io/badge/Stats-Statsmodels%20%7C%20Scipy%20%7C%20Polars-2ca02c.svg)](https://www.statsmodels.org/)
@@ -9,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**hypoq** is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for financial economics, market microstructure, algorithmic derivatives pricing, and cross-border macroeconomic spillovers, **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
+**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for financial economics, market microstructure, algorithmic derivatives pricing, and cross-border macroeconomic spillovers, **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
 
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
