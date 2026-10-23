@@ -246,3 +246,65 @@ To ensure high-performance execution across research scripts, agents should util
      ```
 5. **Visualizations**:
    * All charts must be rendered using **Polars** for data processing and **Seaborn** for styling (`scripts/render_*.py`). In `vnresearch/`, output **ONLY PNG** files (zero PDF reports).
+
+---
+
+## 6. AutoResearch Harness & Multi-Agent Architecture
+
+This repository functions as an autonomous quantitative research harness implementing the Karpathy AutoResearch cycle:
+$$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusions} \longrightarrow \text{Database Sync}$$
+
+### 6.1 Research Scope & Directives
+All agents must strictly consult **`RESEARCH.md`** for:
+* The quantitative research taxonomy across 6 core domains (Microstructure, Derivatives & Basis, Corporate Networks & Contagion, Macro Transmission, Fundamental Factors & SUE, Free-Float Wedges).
+* Baseline empirical results and methodologies established in Papers 001 through 015.
+* Hypothesis formulation rules ($H_0$ vs $H_1$, Newey--West HAC inference, placebo bootstrap tests).
+* Active and frontier research questions.
+
+### 6.2 Agent Skills Framework (`.agents/skills/`)
+Modular agent skills are located under `.agents/skills/` following the [agentskills.io](https://agentskills.io) open standard (`SKILL.md` with YAML frontmatter):
+
+1. **`data-discovery`**: Discovering, auditing schemas, and querying the 36 Parquet datasets in `data/`.
+2. **`polars-fast-data`**: High-performance zero-copy Polars routines, backward `join_asof` alignment, rolling metrics.
+3. **`hypothesis-testing-stats`**: Rigorous econometric hypothesis testing (ADF, HAC Newey-West, event studies, placebo tests).
+4. **`charts-visualization`**: Publication-grade Polars + Seaborn chart rendering to high-DPI PNGs.
+5. **`latex-report-generation`**: Compiling concise Research Future LaTeX reports into `main.pdf` via Tectonic.
+6. **`arxiv-paper-search`**: Searching arXiv and academic engines for prior literature and mathematical models.
+7. **`paper-pdf-to-md`**: Extracting equations, tables, and methodologies from research PDFs into structured Markdown.
+8. **`autoresearch-loop`**: Autonomous end-to-end execution of the Karpathy research loop.
+9. **`dedup-hypothesis-search`**: Querying `autoresearch.db` with SQLite FTS5 BM25 search to eliminate duplicate ideas.
+
+### 6.3 Multi-Agent CLI Execution (`run.py`)
+Agents can be awakened individually or concurrently using the unified CLI runner:
+```bash
+# Launch concurrent agent sessions
+python run.py --agents=codex,claude,hermes
+
+# Launch single agent with specific research topic
+python run.py --agent=claude --topic="Foreign trading flow price impact in VN30"
+
+# Search database to check for duplicate hypotheses before running
+python run.py --search="order flow imbalance return predictability"
+
+# List all recorded hypotheses and empirical decisions
+python run.py --list
+
+# Start the Web Research Dashboard and Dataset Explorer
+python run.py --web --port=8080
+```
+
+Supported agent engines: `claude`, `codex`, `pi`, `omp`, `hermes`. Any agent session launched in this directory reads `AGENTS.md`, loads the relevant skills from `.agents/skills/`, and checks `autoresearch.db` before writing code.
+
+### 6.4 SQLite Tracking Database (`autoresearch.db`)
+All research activities, hypotheses, experimental parameters, and decisions are persisted in `autoresearch.db`:
+* **`sessions`**: Tracks agent session ID, agent list, research domain, and execution timestamp.
+* **`hypotheses`**: Tracks hypothesis title, formal $H_0$ and $H_1$, metric names ($t$-stat, $p$-val, Sharpe, $R^2$), empirical decision (`ACCEPTED`, `REJECTED`, `INCONCLUSIVE`), summary findings, and paper PDF path.
+* **`hypotheses_fts`**: FTS5 virtual table indexing title, statement, and findings for fast BM25 deduplication ranking.
+* **`experiments`**: Records execution scripts, duration, and raw JSON results.
+
+### 6.5 Interactive Web Dashboard
+The web dashboard provides an interactive UI to:
+1. Inspect hypotheses and their empirical outcomes (`ACCEPTED` vs `REJECTED`).
+2. Explore and preview all 36 Parquet datasets in `data/`.
+3. View generated research PDF manuscripts inline.
+4. Run real-time deduplication searches on research ideas.
