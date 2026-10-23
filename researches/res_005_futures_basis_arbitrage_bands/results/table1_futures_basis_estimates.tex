@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\caption{VN30F1M Futures-Cash Basis Spread and Error-Correction Mean Reversion}
+\label{tab:futures_basis_estimates}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccr}
+\toprule
+\textbf{Model / Parameter} & \textbf{Estimate} & \textbf{HAC Std. Err.} & \textbf{$t$-Statistic} & \textbf{$p$-Value} & \textbf{$R^2$} & \textbf{Implied Half-Life} \\
+\midrule
+\textbf{Model 1: Structural Discount} & & & & & & \\
+Mean Basis ($\mu$) & -0.2007\% & 0.0366 & -5.48 & 4.1993e-08 & -- & -- \\
+\midrule
+\textbf{Model 2: Mean Reversion} & & & & & & \\
+Intercept ($\alpha$) & -0.0586 & 0.0152 & -3.86 & 0.0001 & -- & -- \\
+Lagged Basis ($\beta$) & -0.2937 & 0.0564 & -5.20 & 1.9519e-07 & 0.1469 & 1.99 Days \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

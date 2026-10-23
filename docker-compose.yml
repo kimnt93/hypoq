@@ -1,0 +1,23 @@
+services:
+  vnresearch-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vnresearch-web
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3030}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - AUTORESEARCH_DB=/app/autoresearch.db
+    volumes:
+      - ./data:/app/data:ro
+      - ./autoresearch.db:/app/autoresearch.db:rw
+      - ./researches:/app/researches:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

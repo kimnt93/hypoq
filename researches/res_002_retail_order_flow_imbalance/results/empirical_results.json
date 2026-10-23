@@ -1,0 +1,29 @@
+{
+  "hypothesis": "Order flow imbalance generates strong contemporaneous price impact but no persistent forward drift",
+  "decision": "ACCEPTED",
+  "sample": {
+    "n_sessions": 1316,
+    "start_date": "2021-07-12",
+    "end_date": "2026-10-20"
+  },
+  "stationarity": {
+    "oir_adf_stat": -13.906899427984094,
+    "oir_adf_pval": 5.601484701337488e-26,
+    "ret_adf_stat": -25.930017175778197,
+    "ret_adf_pval": 0.0
+  },
+  "model1_contemporaneous": {
+    "beta": 10.104349721572216,
+    "hac_se": 0.8818646566087243,
+    "t_stat": 11.45793704946657,
+    "p_value": 2.145646403794301e-30,
+    "r_squared": 0.20581643253478854
+  },
+  "model2_predictive": {
+    "beta": 1.233554571854512,
+    "hac_se": 1.1290496008582516,
+    "t_stat": 1.0925601239456801,
+    "p_value": 0.2745869788040808,
+    "r_squared": 0.004886589012353393
+  }
+}

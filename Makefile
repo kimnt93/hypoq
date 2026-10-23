@@ -6,7 +6,7 @@
 PYTHON ?= $(shell if [ -f .venv/bin/python3 ]; then echo $$(pwd)/.venv/bin/python3; elif [ -f ../.venv/bin/python3 ]; then echo $$(cd .. && pwd)/.venv/bin/python3; else which python3; fi)
 ANYMD ?= $(shell which anymd || echo "/home/kim/.bun/bin/anymd")
 
-.PHONY: all download verify parse-doc help clean
+.PHONY: all download verify parse-doc help clean start stop
 
 # Default target downloads and builds all datasets
 all: download
@@ -17,7 +17,8 @@ help:
 	@echo "========================================================================"
 	@echo " make download         Download, parse with anymd, and build all datasets"
 	@echo " make verify           Validate integrity and row counts of all Parquet files"
-
+	@echo " make start            Start the Next.js fullstack application stack (Docker)"
+	@echo " make stop             Stop the Next.js fullstack application stack"
 	@echo " make parse-doc        Parse document/PDF to Markdown (FILE=<path> [PAGES=1-5])"
 	@echo " make clean            Clean temporary download caches and artifacts"
 	@echo "========================================================================"
@@ -40,3 +41,13 @@ clean:
 	@rm -rf /tmp/widata* /tmp/anymd* .pytest_cache __pycache__
 	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	@echo "    Done."
+
+start:
+	@echo ">>> Starting vnresearch Next.js Full Stack on Docker..."
+	docker compose up -d --build
+	@echo ">>> Service live at http://127.0.0.1:$${PORT:-3030}"
+
+stop:
+	@echo ">>> Stopping vnresearch stack..."
+	docker compose down
+	@echo ">>> Service stopped."
