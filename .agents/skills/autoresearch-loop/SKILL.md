@@ -1,16 +1,15 @@
 ---
 name: autoresearch-loop
-description: Orchestrate the end-to-end Karpathy AutoResearch cycle from idea inception, planning, and coding to experimentation, econometric analysis, and SQLite synchronization.
+description: Orchestrate the end-to-end AutoResearch cycle from idea inception, planning, and coding to experimentation, econometric analysis, and SQLite synchronization.
 version: 1.0.0
 author: kim / vnresearch
-tags: [autoresearch, loop, workflow, karpathy, evomap, lifecycle]
+tags: [autoresearch, loop, workflow, evomap, lifecycle]
 ---
 
 # AutoResearch Loop Skill
 
 ## Overview
-This skill operationalizes the autonomous quantitative research lifecycle inspired by the Karpathy AutoResearch pattern and EvoMap architecture:
-$$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusions} \longrightarrow \text{Database Sync}$$
+This skill operationalizes the autonomous quantitative research lifecycle inspired by the AutoResearch paradigm and EvoMap architecture:
 
 ## The 8-Stage Lifecycle
 

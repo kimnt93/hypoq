@@ -155,7 +155,7 @@ class ResearchSession:
                 print(f"\n🤖 [Agent Context Loaded: {agent.upper()}]")
                 print(f"   Loaded {len(brief['skills_available'])} skills from .agents/skills/")
                 print(f"   Connected to {brief['dataset_count']} Parquet datasets under data/")
-                print(f"   Ready to execute Karpathy AutoResearch cycle.")
+                print(f"   Ready to execute AutoResearch cycle.")
 
         return {
             "session_id": self.session_id,

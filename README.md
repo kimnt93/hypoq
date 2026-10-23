@@ -6,9 +6,10 @@
 [![Host Package Manager](https://img.shields.io/badge/uv-Fast%20Python%20Env-de5fe9.svg)](https://astral.sh/uv)
 [![Web Stack](https://img.shields.io/badge/Web-Next.js%2016%20%7C%20TypeScript%20%7C%20Arquero-black.svg)](https://nextjs.org/)
 [![Deployment](https://img.shields.io/badge/Deploy-Docker%20Compose-2496ed.svg)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**hypoq** is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for financial economics, market microstructure, algorithmic derivatives pricing, and cross-border macroeconomic spillovers, **hypoq** operationalizes an autonomous agent research loop inspired by the Karpathy AutoResearch cycle and EvoMap architecture:
+**hypoq** is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for financial economics, market microstructure, algorithmic derivatives pricing, and cross-border macroeconomic spillovers, **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
 
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
@@ -19,21 +20,6 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 ![hypoq Platform Interface](assets/hypoq_ui.png)
 
 ---
-
-## 🎬 Project Introduction & Walkthrough
-
-Watch the platform walkthrough introducing the quantitative data lake, multi-agent orchestration, and live empirical reports:
-
-<p align="center">
-  <video src="assets/hypoq_intro.mp4" controls="controls" width="100%" style="max-height: 540px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-    Your browser does not support the video tag.
-  </video>
-</p>
-
-*Video file: [`assets/hypoq_intro.mp4`](assets/hypoq_intro.mp4)*
-
----
-
 ## ⚡ System Architecture: Host Modeling & Docker Web Display
 
 **hypoq** enforces a strict architectural boundary between heavy quantitative computation and lightweight web visualization:
@@ -74,8 +60,9 @@ Every research investigation adheres to strict empirical non-negotiables:
 
 ---
 
-## 📊 Empirical Research Portfolio
+## 📊 Empirical Research Study Examples
 
+> **Note**: The empirical studies below serve as reproducible reference examples produced across the four modeling paradigms. Researchers can execute new hypothesis loops via CLI or autonomous agents.
 | ID | Domain | Paradigm | Status | Key Metric | Title & Focus |
 | :--- | :--- | :--- | :---: | :---: | :--- |
 | **001** | Microstructure | Econometrics | **ACCEPTED** | $t = 11.46$ | Order Book Imbalance and Contemporaneous Price Impact in VN30 Equities |
@@ -151,4 +138,4 @@ make clean            # Remove temporary download caches and artifacts
 
 ## ⚖️ License & Attribution
 
-Developed by the **AI Quantitative Research Network**. Released under the Apache 2.0 License.
+Developed by the **AI Quantitative Research Network**. Released under the MIT License.
