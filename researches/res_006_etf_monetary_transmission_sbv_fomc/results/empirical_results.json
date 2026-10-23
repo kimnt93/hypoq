@@ -1,0 +1,30 @@
+{
+  "study": "res_006_etf_monetary_transmission_sbv_fomc",
+  "method": "Econometrics (Cross-Border Lead-Lag, FOMC Event Study, and Error-Correction NAV Parity)",
+  "sample_sessions": 2415,
+  "lead_lag_vnm": {
+    "beta_normal": 0.22582074068633828,
+    "t_stat_normal": 6.92238076600154,
+    "p_val_normal": 4.4411556665335855e-12,
+    "beta_fomc_interaction": -0.2389595187319295,
+    "t_stat_fomc_interaction": -2.580216311620761,
+    "p_val_fomc_interaction": 0.00987384451955843
+  },
+  "event_study_car": {
+    "car_hike_3d_mean_pct": -0.8255931433934622,
+    "car_hike_3d_tstat": -0.9459348853818906,
+    "car_hike_3d_pval": 0.35605746650033554
+  },
+  "diamond_premium_fx": {
+    "beta_usdvnd": 0.4628997424427455,
+    "t_stat": 2.6694185048852135,
+    "p_val": 0.0075982709586672435
+  },
+  "nav_parity_ecm": {
+    "lambda_speed": -0.9649324791433835,
+    "half_life_days": 0.20687996927777827,
+    "t_stat": -49.617323870686015,
+    "p_val": 0.0
+  },
+  "decision": "ACCEPTED"
+}
