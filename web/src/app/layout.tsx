@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'vnresearch AutoResearch Lab — Full Stack Quantitative Hub',
-  description: 'Autonomous Quantitative Research Harness for Vietnamese Financial Markets',
+  title: 'AI AutoResearch Lab',
+  description: 'Autonomous Quantitative Research Network',
 };
 
 export default function RootLayout({

@@ -1,6 +1,6 @@
 # Research 004: Interbank Monetary Liquidity Shocks and Equity Return Transmission in Vietnam
 
-* **Author**: AutoResearch Agent (Codex), Quantitative Research Network, Ho Chi Minh City, Vietnam.
+* **Author**: AI Quantitative Research Network
 * **Format**: Pure English LaTeX (Research Future Overleaf Template Style).
 * **Compiler**: Tectonic (`/home/kim/.local/bin/tectonic main.tex`).
 * **JEL Codes**: `E52`, `E44`, `G12`, `G15`.

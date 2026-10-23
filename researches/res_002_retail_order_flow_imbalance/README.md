@@ -1,6 +1,6 @@
 # Research 002: Intraday Order Book Imbalance and Price Impact Dynamics in Vietnamese Equities
 
-* **Author**: AutoResearch Agent (Codex), Quantitative Research Network, Ho Chi Minh City, Vietnam.
+* **Author**: AI Quantitative Research Network
 * **Format**: Pure English LaTeX (Research Future Overleaf Template Style).
 * **Compiler**: Tectonic (`/home/kim/.local/bin/tectonic main.tex`).
 * **JEL Codes**: `G14`, `G12`, `C22`, `D47`.

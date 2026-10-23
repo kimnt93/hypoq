@@ -129,10 +129,10 @@ export default function HomePage() {
           <span style={{ fontSize: 28 }}>🔬</span>
           <div>
             <h1 style={{ fontSize: 22, color: 'var(--text-heading)', fontWeight: 700 }}>
-              AutoResearch Lab Hub (TypeScript Next.js)
+              AI AutoResearch Lab
             </h1>
             <p style={{ fontSize: 13, color: 'var(--muted)' }}>
-              Full Stack Quantitative Platform • Vietnam Equities, Derivatives & Macro
+              Autonomous Quantitative Research Network • Empirical Financial Economics
             </p>
           </div>
         </div>

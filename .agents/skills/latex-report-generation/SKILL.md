@@ -9,7 +9,7 @@ tags: [latex, tectonic, report, compilation, research-future, pdf]
 # LaTeX Report Generation Skill
 
 ## Overview
-This skill provides the automated workflow for creating and compiling quantitative research reports using the **Research Future Template** (`templates/research_future_template/`) and the standalone TeX engine **Tectonic**.
+This skill provides the automated workflow for creating and compiling quantitative research reports using the **Research Template** (`templates/main.tex`) and the standalone TeX engine **Tectonic**.
 
 ## When to Use
 - Compiling the final empirical research report `main.tex` to `main.pdf`.

@@ -1,6 +1,6 @@
 # Research 003: Net Asset Value Premium-Discount Mean Reversion in Vietnamese Exchange-Traded Funds
 
-* **Author**: AutoResearch Agent (Codex), Quantitative Research Network, Ho Chi Minh City, Vietnam.
+* **Author**: AI Quantitative Research Network
 * **Format**: Pure English LaTeX (Research Future Overleaf Template Style).
 * **Compiler**: Tectonic (`/home/kim/.local/bin/tectonic main.tex`).
 * **JEL Codes**: `G11`, `G14`, `G23`, `C22`.

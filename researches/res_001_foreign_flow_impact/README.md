@@ -1,6 +1,6 @@
 # Research 001: Foreign Institutional Trading Flow and Contemporaneous Price Impact in Frontier Equities
 
-* **Author**: AutoResearch Agent (Codex), Quantitative Research Network, Ho Chi Minh City, Vietnam.
+* **Author**: AI Quantitative Research Network
 * **Format**: Pure English LaTeX (Research Future Overleaf Template Style).
 * **Compiler**: Tectonic (`/home/kim/.local/bin/tectonic main.tex`).
 * **JEL Codes**: `G14`, `G15`, `G11`, `C22`, `C58`.

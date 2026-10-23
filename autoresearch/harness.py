@@ -117,7 +117,7 @@ class ResearchSession:
             "skills_available": [s["name"] for s in skills],
             "dataset_count": len(datasets),
             "sample_datasets": datasets[:10],
-            "latex_template": "templates/research_future_template/main.tex",
+            "latex_template": "templates/main.tex",
             "tectonic_compiler": "/home/kim/.local/bin/tectonic",
         }
         return brief

@@ -1,6 +1,14 @@
-# RESEARCH.md — Vietnam Quantitative Financial Economics Research Scope & Taxonomy
+# RESEARCH.md — Vietnam Quantitative Financial Economics Research Agenda
 
-This document defines the research mandate, empirical taxonomy, econometric standards, and autonomous research agenda for **vnresearch** ([https://github.com/kimnt93/vnresearch.git](https://github.com/kimnt93/vnresearch.git)), focused on the **Vietnamese Financial Market System** across equities, derivatives, monetary policy, and corporate structures.
+---
+
+## About & Metadata
+
+* **Author**: AI Quantitative Research Network
+* **Cooperation**: Autonomous Financial Machine Learning & Empirical Econometrics Lab
+* **Focus**: Vietnamese Financial Market System (Cash Equities, Index Derivatives, Monetary Policy, Corporate Networks, Sector Indices & ETFs)
+* **Repository**: `vnresearch` ([https://github.com/kimnt93/vnresearch.git](https://github.com/kimnt93/vnresearch.git))
+* **Execution Standard**: Strict hypothesis-driven econometrics, zero look-ahead bias, and Python-only pipeline implementation.
 
 ---
 
@@ -16,65 +24,24 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 2. **Strict Point-in-Time (PIT) Causality**: Zero look-ahead bias ($\tau_{\text{info}} \le \tau_{\text{market}}$).
 3. **Econometric Rigor**: Newey--West HAC robust covariance, stationarity verification (ADF), placebo/permutation bootstrap tests, and realistic transaction cost hurdles.
 4. **Python-Only Empirical Implementation**: All estimation pipelines and data wrangling must be executed in Python using Polars and Statsmodels (`code/run_pipeline.py`).
-5. **Autonomous Serialization**: Every study compiles to a concise, high-density LaTeX report (`main.pdf`) using the **Research Future Template** and registers metrics in the SQLite research database (`autoresearch.db`).
+5. **Autonomous Serialization**: Every study compiles to a concise, high-density LaTeX report (`main.pdf`) using the standard research template and registers metrics in the SQLite research database (`autoresearch.db`).
 
 ---
 
-## 2. Research Taxonomy: Six Core Vietnamese Market Domains
+## 2. Research Domains & Keywords
 
-Our quantitative data lake (36 curated Parquet datasets under `data/`) covers six wide-scope empirical financial domains:
+Each domain represents an active empirical research agenda within the Vietnamese financial market system:
 
-```text
-                                 ┌──────────────────────────────────────────────┐
-                                 │     Vietnamese Data Lake (36 Parquets)       │
-                                 └──────────────────────┬───────────────────────┘
-                                                        │
-          ┌─────────────────────┬───────────────────────┼───────────────────────┬─────────────────────┐
-          │                     │                       │                       │                     │
-          ▼                     ▼                       ▼                       ▼                     ▼
-┌───────────────────┐ ┌───────────────────┐ ┌───────────────────┐ ┌───────────────────┐ ┌───────────────────┐
-│ 1. Microstructure │ │ 2. Derivatives &  │ │  3. Corporate     │ │ 4. Monetary Policy│ │  5. Fundamental   │
-│   & Foreign Flow  │ │  Basis Dynamics   │ │  Network Topology │ │  & Macro Pass-Thru│ │ Factors & Earnings│
-└───────────────────┘ └───────────────────┘ └───────────────────┘ └───────────────────┘ └───────────────────┘
-          │                     │                       │                       │                     │
-          └─────────────────────┴───────────────────────┼───────────────────────┴─────────────────────┘
-                                                        │
-                                                        ▼
-                                       ┌──────────────────────────────────┐
-                                       │ 6. Free-Float Wedges, Index ETFs │
-                                       │    & Rebalancing Frictions       │
-                                       └──────────────────────────────────┘
-```
-
-### Domain 1: Market Microstructure, Order Flow & Foreign Institutional Capital
-- **Scope**: Limit order book supply/demand dynamics, retail trade clustering, Kyle's lambda price impact, Amihud illiquidity, foreign investor quota/room (`GD NĐTNN`), and auction clearing mechanisms (ATO/ATC).
-- **Key Datasets**: `data/market/vn_order_supply_demand_daily.parquet`, `data/market/vn_foreign_trading_daily.parquet`, `data/market/vn_top_equities_daily.parquet`.
-- **Core Questions**: Does aggregate order flow imbalance exhibit persistent short-term return predictability? Do foreign institutional transactions produce permanent vs temporary price impact in a retail-dominated exchange?
-
-### Domain 2: Derivatives Pricing, Futures-Cash Basis & Arbitrage Frictions
-- **Scope**: VN30F1M index futures valuation, cost-of-carry arbitrage bounds, reverse cash-and-carry limits under short-sale constraints, contract roll dynamics, and Hasbrouck price discovery.
-- **Key Datasets**: `data/market/vn30f1m_derivatives_daily.parquet`, `data/market/vn_indices_daily.parquet`, `data/macro/vietnam_monetary_daily.parquet`.
-- **Core Questions**: What institutional frictions sustain persistent negative futures basis discounts? Does the derivatives market lead or lag underlying cash basket price discovery?
-
-### Domain 3: Corporate Ownership Networks & Systemic Risk Contagion
-- **Scope**: Directed corporate network topologies (state ownership, parent-subsidiary relationships, bank-conglomerate lending exposures, cross-shareholdings), debt-to-equity leverage propagation, and systemic banking fragility ($\Delta\text{CoVaR}$, MES).
-- **Key Datasets**: `data/market_structure/vn_corporate_network_edges.parquet`, `data/market_structure/vn_corporate_network_nodes.parquet`, `data/market_structure/vn_shareholders_history.parquet`, `data/market_structure/vn_subsidiaries_affiliates.parquet`.
-- **Core Questions**: Does network centrality (PageRank, Out-Degree) predict financial distress transmission or credit risk spreads among multi-tier conglomerates?
-
-### Domain 4: State Bank of Vietnam (SBV) Monetary Transmission & Global Spillovers
-- **Scope**: SBV monetary policy tools (refinancing rate, discount rate, OMO auctions, SBV treasury bill issuance), interbank interest rate corridor, USD/VND central rate adjustments, US Federal Reserve policy rate transmission (FOMC PIT releases), and commodity price pass-through (steel, fuel, pork, coffee).
-- **Key Datasets**: `data/macro/vietnam_monetary_daily.parquet`, `data/macro/vietnam_macro_monthly.parquet`, `data/macro/vietnam_sbv_policy_rates_daily.parquet`, `data/macro/us_macro_daily.parquet`, `data/macro/vietnam_commodities_daily.parquet`, `data/cross_asset/global_macro_daily.parquet`.
-- **Core Questions**: How rapidly do interbank liquidity shocks transmit to equity sector volatility? Does US Federal Reserve tightening transmit through currency depreciation or capital outflows?
-
-### Domain 5: Fundamental Factors, Accounting circulars & Earnings Momentum
-- **Scope**: Vietnamese statutory accounting circulars (`TT200/2014/TT-BTC`, `TT202/2014/TT-BTC`, `TT334/2016/TT-BTC`, `TT49/2014/TT-NHNN`), Standardized Unexpected Earnings (SUE), Post-Earnings Announcement Drift (PEAD), quality, value, and leverage anomalies.
-- **Key Datasets**: `data/financials/vn_financial_statements_quarterly_yearly.parquet`, `data/financials/vn_financial_ratios_quarterly_yearly.parquet`, `data/financials/vn_financial_models_taxonomy.parquet`.
-- **Core Questions**: Does standardized unexpected earnings (SUE) generate post-announcement drift in Vietnam? Which accounting line items reliably predict subsequent credit distress?
-
-### Domain 6: Free-Float Wedges, Index ETFs & Rebalancing Dynamics
-- **Scope**: Official HOSE index calculation rules, tightly held shares ($f \le 0.35$), market capitalization wedges ($\Omega_t$), capping factors ($c$), ETF arbitrage bands (NAV premium/discount), and semi-annual constituent rebalancing price pressure.
-- **Key Datasets**: `data/market_structure/free_float.parquet`, `data/market_structure/vn30_free_float_history.parquet`, `data/market_structure/index_constituents.parquet`, `data/market_structure/basket_history.parquet`, `data/market/vn_etf_market_daily.parquet`, `data/market/vn_etf_nav_aum_daily.parquet`.
-- **Core Questions**: How does the capitalization wedge between full-capitalization and float-adjusted baskets create tracking error between VN-Index and VN30? How rapidly do ETF tracking discounts mean-revert?
+* **Market Microstructure & Order Book Queue Imbalances**: Limit order book supply-demand imbalance, bid-ask queue volume asymmetry, order imbalance ratio (OIR), trade size clustering, Kyle's lambda price impact, Amihud illiquidity, ATO/ATC auction clearing dynamics, econometric, quantitative vietnam market.
+* **Foreign Institutional Capital & Ownership Limit (FOL) Dynamics**: Foreign trading flows (`GD NĐTNN`), net institutional buying pressure, foreign ownership limit room exhaustion, foreign premium dynamics, foreign capital reallocation, cross-border equity shocks, quantitative vietnam market.
+* **Derivatives Pricing, Futures-Cash Basis & Limits of Arbitrage**: VN30F1M index futures, cost-of-carry fair valuation, cash-futures basis spread, structural discount regimes, short-sale borrowing frictions, reverse cash-and-carry arbitrage bands, contract roll dynamics, third-Thursday expiry effects, VECM lead-lag price discovery, econometric.
+* **Exchange-Traded Funds (ETFs) & NAV Parity Arbitrage**: ETF, E1VFVN30, FUEVFVND Diamond ETF, FUESSVFL, FUEVN100, Net Asset Value (NAV) parity, premium-discount spread, creation-redemption baskets, authorized participants (AP), tracking error dispersion, error-correction mean reversion half-life, arbitrage efficiency, quantitative vietnam market.
+* **State Bank of Vietnam (SBV) Monetary Transmission & Liquidity Corridor**: SBV policy rates, refinancing rate, discount rate, Open Market Operations (OMO), SBV treasury bills, overnight interbank borrowing rate corridor, daily monetary liquidity shocks, interest rate pass-through, commercial bank deposit benchmarks, exchange rate central parity adjustments, macro transmission.
+* **Corporate Ownership Network Topologies & Systemic Contagion**: Directed corporate network graphs, conglomerate parent-subsidiary control, intercompany guarantee loans, major shareholdings, state ownership stakes, PageRank network centrality, degree centrality, debt-to-equity leverage transmission, credit risk contagion, systemic risk, Delta-CoVaR, econometric.
+* **Statutory Accounting Taxonomy, Earnings Surprises & Quality Anomalies**: Statutory circulars `TT200/2014/TT-BTC`, `TT202/2014/TT-BTC`, `TT334/2016/TT-BTC`, `TT49/2014/TT-NHNN`, Standardized Unexpected Earnings (SUE), Post-Earnings Announcement Drift (PEAD), balance sheet health, corporate debt coverage, accrual quality, valuation multiples (P/E, P/B, EV/EBITDA).
+* **Index Free-Float Wedges, Capping Factors & Review Price Pressure**: Free-float factor $f$, capping factor $c$, outstanding index shares $Q$, tightly held equities, state-owned enterprise (SOE) float restrictions, capitalization wedge $\Omega_t$, VNINDEX vs VN30 tracking divergence, semi-annual HOSE index reviews, rebalancing price pressure event studies, econometric.
+* **Commodity Price Shocks & Cross-Asset Inflation Pass-Through**: Domestic construction steel (Hoa Phat CB240/D10), retail fuels (RON95, E5, Diesel), agricultural commodities (Robusta coffee, IR50404 fresh rice, live hog pork), commodity price shocks, materials sector index VNMAT, energy sector index VNENE, domestic inflation pass-through, TVP-VAR connectedness.
+* **Global Macroeconomic Linkages & Currency Pass-Through**: US Federal Reserve FOMC interest rate decisions (PIT announcements), effective Fed Funds (DFF), US Treasury yields (3M/2Y/10Y), US Dollar Index (DXY), USD/VND commercial exchange rate, global cross-asset volatility spillovers (S&P 500, Gold, WTI crude, VIX, Bitcoin), emerging market capital flows.
 
 ---
 
