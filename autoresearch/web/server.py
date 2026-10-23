@@ -408,6 +408,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
         <button class="active" onclick="showTab('hypotheses')">Hypotheses & Results</button>
         <button onclick="showTab('datasets')">Data Lake (36 Parquets)</button>
         <button onclick="showTab('reports')">Research Manuscripts & PDFs</button>
+        <a href="/explorer" style="text-decoration:none;"><button type="button" style="border-color: var(--accent); color: var(--accent);">Data Lake Explorer (index.html) &rarr;</button></a>
     </nav>
 </header>
 
@@ -682,13 +683,24 @@ class AutoResearchHandler(BaseHTTPRequestHandler):
         query = urllib.parse.parse_qs(parsed.query)
 
         # 1. Main Dashboard HTML
-        if path == "/" or path == "/index.html":
+        if path == "/" or path == "/dashboard":
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
             self.end_headers()
             self.wfile.write(HTML_TEMPLATE.encode("utf-8"))
             return
 
+        # 1b. Static Data Lake Explorer (index.html)
+        if path == "/explorer" or path == "/index.html":
+            explorer_path = os.path.join(BASE_DIR, "index.html")
+            if os.path.exists(explorer_path):
+                with open(explorer_path, "rb") as f:
+                    content = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.end_headers()
+                self.wfile.write(content)
+                return
         # 2. PDF Serving
         if path == "/pdf":
             rel_pdf = query.get("path", [""])[0]
