@@ -7,7 +7,6 @@
 * **Author**: AI Quantitative Research Network
 * **Cooperation**: Autonomous Financial Machine Learning & Empirical Econometrics Lab
 * **Focus**: Vietnamese Financial Market System (Cash Equities, Index Derivatives, Monetary Policy, Corporate Networks, Sector Indices & ETFs)
-* **Repository**: `vnresearch` ([https://github.com/kimnt93/vnresearch.git](https://github.com/kimnt93/vnresearch.git))
 * **Execution Standard**: Strict hypothesis-driven econometrics, zero look-ahead bias, and Python-only pipeline implementation.
 
 ---
@@ -15,15 +14,14 @@
 ## 1. Executive Research Mandate
 
 The primary mission is the autonomous generation, empirical econometric testing, and peer-reviewed documentation of quantitative hypotheses within the Vietnamese financial market ecosystem and its international macro linkages.
-
-Every empirical investigation follows the **Karpathy AutoResearch Cycle**:
+Every empirical investigation follows the **AutoResearch Cycle**:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
 ### Core Invariants:
 1. **Hypothesis-Driven First**: No ex-post curve-fitting. Every experiment begins with an explicit Null Hypothesis ($H_0$) and Alternative Hypothesis ($H_1$).
 2. **Strict Point-in-Time (PIT) Causality**: Zero look-ahead bias ($\tau_{\text{info}} \le \tau_{\text{market}}$).
-3. **Econometric Rigor**: Newey--West HAC robust covariance, stationarity verification (ADF), placebo/permutation bootstrap tests, and realistic transaction cost hurdles.
-4. **Python-Only Empirical Implementation**: All estimation pipelines and data wrangling must be executed in Python using Polars and Statsmodels (`code/run_pipeline.py`).
+3. **Econometric & Statistical Rigor**: Newey--West HAC robust covariance, stationarity verification (ADF), placebo bootstrap tests, and transaction friction hurdles.
+4. **Python-Only Empirical & ML/DL/RL Implementation**: All estimation pipelines, machine learning (Scikit-Learn), deep learning (PyTorch), and reinforcement learning (Stable-Baselines3) models must be executed in Python using Polars, Scikit-Learn, PyTorch, Stable-Baselines3, and Statsmodels (`code/run_pipeline.py`).
 5. **Autonomous Serialization**: Every study compiles to a concise, high-density LaTeX report (`main.pdf`) using the standard research template and registers metrics in the SQLite research database (`autoresearch.db`).
 
 ---

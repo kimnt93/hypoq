@@ -1,9 +1,9 @@
 services:
-  vnresearch-web:
+  hypoq-web:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: vnresearch-web
+    container_name: hypoq-web
     restart: unless-stopped
     ports:
       - "${PORT:-3030}:3000"

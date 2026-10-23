@@ -1,188 +1,148 @@
-# vnresearch — Autonomous Quantitative Financial & Macroeconomic Data Lake
+# hypoq — Autonomous AI Quantitative Research Lab & Empirical Modeling Harness
 
-[![GitHub repository](https://img.shields.io/badge/GitHub-kimnt93%2Fvnresearch-blue.svg?logo=github)](https://github.com/kimnt93/vnresearch.git)
-[![Data Format](https://img.shields.io/badge/Format-Apache%20Parquet-orange.svg)](https://parquet.apache.org/)
-[![Query Engine](https://img.shields.io/badge/Engine-Polars%20Vectorized-cd79ff.svg)](https://pola.rs/)
-[![Document Parser](https://img.shields.io/badge/Parser-SylphxAI%2Fanymd-c3f53c.svg)](https://github.com/SylphxAI/anymd)
+[![GitHub repository](https://img.shields.io/badge/GitHub-kimnt93%2Fhypoq-blue.svg?logo=github)](https://github.com/kimnt93/hypoq.git)
+[![ML / DL / RL Stack](https://img.shields.io/badge/ML%2FDL%2FRL-PyTorch%20%7C%20Stable--Baselines3%20%7C%20Scikit--Learn-ee4c2c.svg)](https://pytorch.org/)
+[![Econometrics](https://img.shields.io/badge/Stats-Statsmodels%20%7C%20Scipy%20%7C%20Polars-2ca02c.svg)](https://www.statsmodels.org/)
+[![Web Stack](https://img.shields.io/badge/Web-Next.js%2016%20%7C%20TypeScript%20%7C%20Arquero-black.svg)](https://nextjs.org/)
+[![Deployment](https://img.shields.io/badge/Deploy-Docker%20Compose-2496ed.svg)](https://www.docker.com/)
+[![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**vnresearch** is an autonomous quantitative financial, corporate network, and macroeconomic data lake for emerging and frontier market research (focusing on Vietnam equities, index derivatives, corporate ownership networks, and monetary policy).
+**hypoq** is an institutional-grade autonomous AI quantitative research harness and data lake designed for financial economics, market microstructure, derivatives pricing, and macroeconomic spillovers.
 
-It provides clean, Point-in-Time (PIT) datasets serialized in **Apache Parquet**, paired with autonomous ingestion pipelines that extract regulatory filings, announcements, and corporate disclosures using **[`anymd`](https://github.com/SylphxAI/anymd)**.
+The platform executes end-to-end hypothesis testing, combining **Machine Learning (`scikit-learn`)**, **Deep Learning (`pytorch`)**, and **Reinforcement Learning (`stable-baselines3`)** with rigorous econometrics (`statsmodels`, Newey--West HAC, ADF unit roots, placebo bootstrap tests) and zero-copy data processing (`polars`). Every study automatically serializes into a publication-ready LaTeX manuscript (`main.pdf`) and syncs empirical metrics to an indexed SQLite database with FTS5 BM25 deduplication.
 
 ---
 
-## 1. Quickstart & Automation (`Makefile`)
+## 🎬 Platform Overview & Live Dashboard
 
-The repository includes a dedicated `Makefile` to acquire, parse, verify, and inspect all datasets:
+![hypoq Platform Demo](assets/hypoq_demo.gif)
 
+*Watch full resolution clip: [`assets/hypoq_demo.mp4`](assets/hypoq_demo.mp4)*
+
+---
+
+## 1. System Architecture
+
+```mermaid
+graph TD
+    A[AutoResearch CLI / Agents] -->|--agents=codex,claude,hermes| B[Harness Coordinator]
+    A -->|--search / --list| C[(autoresearch.db - SQLite + FTS5)]
+    B --> D[.agents/skills/]
+    
+    subgraph Tooling [Core Modeling & Data Stack]
+        ML[PyTorch • Stable-Baselines3 • Scikit-Learn]
+        Stats[Statsmodels • Scipy • Newey-West HAC]
+        Data[Polars 2.0 • 36 Parquet Datasets]
+    end
+    
+    B --> Tooling
+    Tooling --> E[researches/res_XXX/]
+    E -->|Polars + Statsmodels| F[code/run_pipeline.py]
+    F -->|Results & Figures| G[results/ & figures/]
+    G -->|Tectonic LaTeX| H[main.pdf Manuscript]
+    F -->|Log Metrics| C
+    
+    subgraph WebStack [Next.js TypeScript Fullstack Stack]
+        NextServer[Next.js App Router / Node.js]
+        JSData[Arquero JS DataFrame + Hyparquet]
+        UI[React UI Dashboard - Port 3030]
+    end
+    
+    C --> NextServer
+    Data --> JSData
+    JSData --> UI
+    NextServer --> UI
+```
+
+---
+
+## 2. Standard Machine Learning & Econometric Stack
+
+All empirical pipelines (`code/run_pipeline.py`) strictly utilize Python for research execution:
+
+* **Machine Learning (`scikit-learn`)**: Expanding-window Purged TimeSeriesSplit cross-validation, HistGradientBoosting, Ridge/ElasticNet regularization, and factor return predictability.
+* **Deep Learning (`pytorch`)**: Recurrent neural networks (LSTM), Temporal Convolutional Networks (TCN), and non-linear volatility regime nowcasting.
+* **Reinforcement Learning (`stable-baselines3`)**: Deep Q-Learning (DQN) and Proximal Policy Optimization (PPO) agents operating on custom Gymnasium portfolio environments with transaction cost penalties.
+* **Econometrics & Statistics (`statsmodels`, `scipy`)**: Heteroskedasticity and Autocorrelation Consistent (HAC) covariance with Bartlett kernel lag selection, Augmented Dickey-Fuller (ADF) stationarity, and 1,000-draw calendar placebo bootstrap tests.
+* **High-Performance Data (`polars`)**: Zero-copy vectorized operations, lazy execution (`scan_parquet`), and strict Point-in-Time backward alignment (`join_asof(..., strategy="backward")`).
+
+---
+
+## 3. Quickstart & Deployment
+
+### Run via Docker Compose (Recommended)
 ```bash
-# Clone the repository
-git clone https://github.com/kimnt93/vnresearch.git
-cd vnresearch
+# Start Next.js Full Stack container on port 3030
+make start
 
-# Display all available commands
-make help
+# View container health and logs
+docker ps | grep hypoq-web
+docker compose logs -f
 
-# Run complete data acquisition & ingestion pipeline via anymd
-make download
+# Stop the container stack
+make stop
+```
 
-# Validate integrity, schemas, and row counts across all 29 Parquet files
-make verify
+Access the interactive web dashboard at: **`http://localhost:3030`** (or `http://<server-ip>:3030`).
 
+### Run via Multi-Agent CLI Harness
+```bash
+# Wake up concurrent AI research agents (Codex, Claude, Hermes)
+python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
 
-# Explore datasets interactively in your browser
-open index.html   # or python3 -m http.server 8000
+# Search historical hypotheses with FTS5 BM25 ranking to prevent duplicate runs
+python run.py --search="order flow imbalance"
 
-# Parse any corporate report, regulatory PDF, or web document to clean Markdown
-make parse-doc FILE=path/to/report.pdf [PAGES=1-5]
-# Clean temporary download caches
-make clean
+# List all recorded hypotheses and empirical decisions
+python run.py --list
+python run.py --list --status=ACCEPTED
 ```
 
 ---
 
-## 2. Complete Dataset Architecture & Inventory (`data/`)
+## 4. Empirical Research Inventory
 
-All 36 datasets are serialized in **Apache Parquet** format for zero-copy, high-speed analytical queries:
+Every research project includes complete reproduction code, figures, empirical JSON metrics, and a compiled LaTeX manuscript:
 
-```text
-vnresearch/data/
-├── macro/
-│   ├── vietnam_monetary_daily.parquet           # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
-│   ├── vietnam_macro_monthly.parquet            # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
-│   ├── vietnam_commodities_daily.parquet        # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
-│   ├── vietnam_trade_exports_monthly.parquet    # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
-│   ├── vietnam_fdi_sectors_monthly.parquet      # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
-│   ├── vietnam_sbv_policy_rates_daily.parquet   # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
-│   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
-│   ├── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
-│   └── vietnam_market_pe_daily.parquet          # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
-├── market/
-│   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
-│   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
-│   ├── vn_top_equities_daily.parquet            # 136,302 rows x 8 cols | 55 constituent stocks across all sectors
-│   ├── vn_stock_industry_classification.parquet # 1,971 rows x 22 cols | All listed stocks mapped to 4-tier ICB
-│   ├── vn_industry_sectors_icb.parquet          # 185 rows x 7 cols | 185 ICB sector definitions & ticker lists
-│   ├── vn_sector_indices_daily.parquet          # 26,113 rows x 8 cols | 12 official sector indices daily OHLCV
-│   ├── vn_foreign_trading_daily.parquet         # 130,837 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Room)
-│   ├── vn_order_supply_demand_daily.parquet     # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu)
-│   ├── vn_etf_market_daily.parquet              # 22,377 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
-│   └── vn_etf_nav_aum_daily.parquet             # 18,512 rows x 10 cols | Daily Net Asset Value (NAV), AUM & Premium/Discount
-├── market_structure/
-│   ├── vn_etf_portfolio_holdings_daily.parquet  # 58 rows x 8 cols | Daily ETF Constituent Creation Baskets (Danh mục hoán đổi)
-│   ├── vn_corporate_network_edges.parquet       # 4,803 rows x 12 cols | Corporate Network Directed Edges (Loans, Subs, Owners)
-│   ├── vn_corporate_network_nodes.parquet       # 3,473 rows x 8 cols | Corporate Network Nodes & Centrality (PageRank, Degree)
-│   ├── vn_shareholders_history.parquet          # 3,115 rows x 9 cols | Major Shareholders & Ownership History (Cổ đông lớn)
-│   ├── vn_subsidiaries_affiliates.parquet       # 1,688 rows x 10 cols | Subsidiaries & Affiliates (Công ty con & liên kết)
-│   ├── vn_charter_capital_history.parquet       # 4,391 rows x 13 cols | Historical Capital Changes & Issuances (Vốn điều lệ)
-│   ├── free_float.parquet                       # 43,377 rows x 18 cols | Historical free-float factor & capping factors
-│   ├── vn30_free_float_history.parquet          # 690 rows x 18 cols | VN30-specific free float & index shares history
-│   ├── free_float_changes_observed.parquet      # 10,178 rows x 22 cols | Tracking discrete parameter changes
-│   ├── index_constituents.parquet               # 43,377 rows x 18 cols | Historical basket constituents across all VN indices
-│   └── basket_history.parquet                   # 261 rows x 10 cols | Basket rebalancing events and effective dates
-├── financials/
-│   ├── vn_financial_models_taxonomy.parquet     # 3,370 rows x 12 cols | Full accounting line item definitions (TT202, TT49)
-│   ├── vn_financial_statements_quarterly_yearly.parquet # 325,000 rows x 12 cols | Balance Sheet, Income, Cash Flow line items
-│   ├── vn_financial_ratios_quarterly_yearly.parquet     # 189,000 rows x 8 cols  | Financial Ratios (P/E, P/B, ROE, ROA, D/E)
-│   └── vn_listed_q3_2026_financials.parquet     # 192 rows x 21 cols | Q3-2026 corporate results (Revenue, Profit, P/E)
-└── cross_asset/
-    └── global_macro_daily.parquet               # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
-```
-
-Total database volume: **36 Parquet files | 1,254,222 total rows | 15.74 MB on disk**.  
-For exact column schemas, mathematical formulas, and data provenance, see [`DATA.md`](./DATA.md).
+| Study ID | Title | Methodology | Sample | Decision | Manuscript |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **`res_001`** | Foreign Trading Flow and Price Impact | Newey--West HAC, Placebo Bootstrap | 2,031 sessions | **REJECTED** ($t = 1.67, p = 0.095$) | [`main.pdf`](researches/res_001_foreign_flow_impact/main.pdf) |
+| **`res_002`** | Order Book Supply/Demand Imbalance | Queue Imbalance Ratio, OLS | 1,316 sessions | **ACCEPTED** ($t = 11.46, R^2 = 20.6\%$) | [`main.pdf`](researches/res_002_retail_order_flow_imbalance/main.pdf) |
+| **`res_003`** | ETF NAV Premium-Discount Reversal | Error-Correction AR(1), Half-Life | 2,495 sessions | **ACCEPTED** (Half-life = 0.20 days) | [`main.pdf`](researches/res_003_etf_arbitrage_discount_reversal/main.pdf) |
+| **`res_004`** | Interbank Monetary Liquidity Shocks | SBV Overnight Corridor Shocks | 2,264 sessions | **ACCEPTED** ($\beta = -0.078\%, t = -2.59$) | [`main.pdf`](researches/res_004_interbank_rate_equity_volatility/main.pdf) |
+| **`res_005`** | VN30F1M Basis & Arbitrage Bands | Structural Discount & Half-Life | 2,284 sessions | **ACCEPTED** ($\mu = -20.07 \text{ bps}, t = -5.48$) | [`main.pdf`](researches/res_005_futures_basis_arbitrage_bands/main.pdf) |
 
 ---
 
-## 3. Querying Datasets: Polars vs. Pandas Solutions
+## 5. Agent Skills Framework (`.agents/skills/`)
 
-### A. Point-in-Time Alignment (Macro to Daily Market Data)
-* **Polars (Vectorized Zero-Copy)**:
-  ```python
-  import polars as pl
-  
-  df_idx = pl.read_parquet("data/market/vn_indices_daily.parquet").filter(pl.col("symbol") == "VNINDEX")
-  df_macro = pl.read_parquet("data/macro/vietnam_macro_monthly.parquet")
-  
-  aligned = df_idx.join_asof(
-      df_macro,
-      left_on=pl.col("date").str.to_date(),
-      right_on=pl.col("date").str.to_date(),
-      strategy="backward"
-  )
-  ```
-* **Pandas**:
-  ```python
-  import pandas as pd
-  
-  df_idx = pd.read_parquet("data/market/vn_indices_daily.parquet").query("symbol == 'VNINDEX'")
-  df_macro = pd.read_parquet("data/macro/vietnam_macro_monthly.parquet")
-  
-  df_idx["date"] = pd.to_datetime(df_idx["date"])
-  df_macro["date"] = pd.to_datetime(df_macro["date"])
-  
-  aligned = pd.merge_asof(df_idx.sort_values("date"), df_macro.sort_values("date"), on="date", direction="backward")
-  ```
+Modular skills following the [AgentSkills.io](https://agentskills.io) standard:
 
-### B. Corporate Network Traversal & PageRank Centrality
-* **Polars**:
-  ```python
-  import polars as pl
-  
-  nodes = pl.read_parquet("data/market_structure/vn_corporate_network_nodes.parquet")
-  edges = pl.read_parquet("data/market_structure/vn_corporate_network_edges.parquet")
-  
-  # Top 10 most central systemic entities
-  top_central = nodes.sort("pagerank", descending=True).head(10)
-  
-  # Direct subsidiary control edges for Vingroup
-  vic_subs = edges.filter((pl.col("source_id") == "VIC") & (pl.col("relationship_type") == "SUBSIDIARY_CONTROL"))
-  ```
-* **Pandas**:
-  ```python
-  import pandas as pd
-  
-  nodes = pd.read_parquet("data/market_structure/vn_corporate_network_nodes.parquet")
-  edges = pd.read_parquet("data/market_structure/vn_corporate_network_edges.parquet")
-  
-  top_central = nodes.sort_values("pagerank", ascending=False).head(10)
-  vic_subs = edges[(edges["source_id"] == "VIC") & (edges["relationship_type"] == "SUBSIDIARY_CONTROL")]
-  ```
+1. **`ml-dl-rl-modeling`**: Scikit-Learn, PyTorch, and Stable-Baselines3 empirical financial modeling pipelines.
+2. **`hypothesis-testing-stats`**: Econometric testing protocols (ADF, HAC Newey--West, placebo resampling).
+3. **`data-discovery`**: Auditing schemas, date ranges, and row counts across the 36 Parquet datasets.
+4. **`data-explore-pit-builder`**: Constructing Point-in-Time (PIT) event datasets (Fed FOMC announcements, SBV rate changes).
+5. **`data-exploration-js`**: Querying Parquet and SQLite using Arquero (JS pandas alternative) and `node:sqlite`.
+6. **`polars-fast-data`**: Zero-copy expressions and backward `join_asof` alignment.
+7. **`charts-visualization`**: Publication-grade Polars + Seaborn charts rendered strictly to high-DPI PNGs.
+8. **`latex-report-generation`**: Compiling concise research reports via Tectonic using `templates/main.tex`.
+9. **`arxiv-paper-search`**: Literature discovery via arXiv API and BibTeX extraction.
+10. **`paper-pdf-to-md`**: Extracting equations and methodologies from research PDFs via `anymd`.
+11. **`autoresearch-loop`**: Autonomous execution of the 8-stage AutoResearch cycle.
+12. **`dedup-hypothesis-search`**: SQLite FTS5 BM25 deduplication matching.
 
 ---
 
-## 4. Verified Data Sources & Reference Links
+## 6. Data Lake Architecture (`data/` - 36 Parquet Datasets)
 
-1. **WiData Financial & Macro Engine**: High-frequency macroeconomic indicators, interbank market rates, SBV bills/OMO operations.  
-   *URL*: [https://widata.vn/vi-mo/vn/pmi-san-xuat](https://widata.vn/vi-mo/vn/pmi-san-xuat) | [https://widata.vn/ket-qua-kinh-doanh](https://widata.vn/ket-qua-kinh-doanh)
-2. **State Bank of Vietnam (SBV / NHNN)**: Central bank reference exchange rates, refinancing rates, discount rates, interbank data.  
-   *URL*: [https://www.sbv.gov.vn](https://www.sbv.gov.vn)
-3. **VNDirect Financial Information (Finfo Open API)**: Listed stock registry, 4-tier ICB taxonomy, financial statements (TT200/TT202/TT49), financial ratios, daily order book supply/demand (`trading_statistics`), daily foreign trading (`foreigns`), shareholders, and subsidiaries.  
-   *URL*: [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn) | [https://www.vndirect.com.vn](https://www.vndirect.com.vn)
-4. **Ho Chi Minh Stock Exchange (HOSE) & Hanoi Stock Exchange (HNX)**: Official Point-in-Time constituent rebalancing announcements, free-float factors ($f$), capping factors ($c$), and index shares.  
-   *URL*: [https://www.hsx.vn](https://www.hsx.vn) | [https://www.hnx.vn](https://www.hnx.vn)
-5. **Ministry of Finance (Bộ Tài chính)**: Statutory accounting circulars governing financial statement reporting lines (`TT200/2014/TT-BTC`, `TT202/2014/TT-BTC`, `TT334/2016/TT-BTC`, `TT199/2014/TT-BTC`).  
-   *URL*: [https://mof.gov.vn](https://mof.gov.vn)
-6. **Yahoo Finance Open Engine**: Multi-asset global macro pricing benchmarks: S&P 500 (`^GSPC`), US 10Y Yield (`^TNX`), US Dollar Index (`DX-Y.NYB`), WTI Crude Oil (`CL=F`), Gold (`GC=F`), VIX (`^VIX`), Bitcoin (`BTC-USD`), and USD/VND (`VND=X`).  
-   *URL*: [https://finance.yahoo.com](https://finance.yahoo.com)
-7. **Federal Reserve Bank of St. Louis (FRED)**: US Federal Reserve monetary policies, Treasuries, and money supply series.  
-   *URL*: [https://fred.stlouisfed.org](https://fred.stlouisfed.org)
-8. **SylphxAI anymd**: Fast native Rust document & PDF parser.  
-   *URL*: [https://github.com/SylphxAI/anymd](https://github.com/SylphxAI/anymd)
+* **`data/market/`**: Spot equities (`vn_top_equities_daily`), index OHLCV (`vn_indices_daily`), futures (`vn30f1m_derivatives_daily`), order supply/demand (`vn_order_supply_demand_daily`), foreign trading (`vn_foreign_trading_daily`), sector indices (`vn_sector_indices_daily`), and ETF market data (`vn_etf_market_daily`).
+* **`data/market_structure/`**: Free-float factors (`free_float`), index constituents (`index_constituents`), corporate network directed edges (`vn_corporate_network_edges`), and nodes (`vn_corporate_network_nodes`).
+* **`data/macro/`**: SBV monetary benchmarks (`vietnam_monetary_daily`), monthly macro indicators (`vietnam_macro_monthly`), domestic commodity prices (`vietnam_commodities_daily`), and US macro indicators (`us_macro_daily`).
+* **`data/financials/`**: Corporate financial statements (`vn_financial_statements_quarterly_yearly`), standardized financial ratios (`vn_financial_ratios_quarterly_yearly`), and statutory circular taxonomy (`vn_financial_models_taxonomy`).
+* **`data/cross_asset/`**: Global cross-asset benchmarks (`global_macro_daily`: S&P 500, US10Y, DXY, Gold, WTI crude, VIX, Bitcoin, USD/VND).
 
 ---
 
-## 5. License & Citations
+## 7. License & Attribution
 
-All data processing scripts, schemas, and documentation are released under the MIT License:
-
-```bibtex
-@misc{nguyen2026vnresearch,
-  author = {Nguyen, Kim},
-  title = {vnresearch: Autonomous Quantitative Financial and Macroeconomic Data Lake for Emerging Markets},
-  year = {2026},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/kimnt93/vnresearch}}
-}
-```
+Developed by the **AI Quantitative Research Network**. Released under the Apache 2.0 License.

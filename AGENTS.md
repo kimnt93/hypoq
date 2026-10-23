@@ -251,7 +251,7 @@ To ensure high-performance execution across research scripts, agents should util
 
 ## 6. AutoResearch Harness & Multi-Agent Architecture
 
-This repository functions as an autonomous quantitative research harness implementing the Karpathy AutoResearch cycle:
+This repository functions as an autonomous quantitative research harness implementing the AutoResearch cycle:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusions} \longrightarrow \text{Database Sync}$$
 
 ### 6.1 Research Scope & Directives
@@ -267,13 +267,15 @@ Modular agent skills are located under `.agents/skills/` following the [agentski
 1. **`data-discovery`**: Discovering, auditing schemas, and querying the 36 Parquet datasets in `data/`.
 2. **`polars-fast-data`**: High-performance zero-copy Polars routines, backward `join_asof` alignment, rolling metrics.
 3. **`hypothesis-testing-stats`**: Rigorous econometric hypothesis testing (ADF, HAC Newey-West, event studies, placebo tests).
-4. **`charts-visualization`**: Publication-grade Polars + Seaborn chart rendering to high-DPI PNGs.
-5. **`latex-report-generation`**: Compiling concise Research Future LaTeX reports into `main.pdf` via Tectonic.
-6. **`arxiv-paper-search`**: Searching arXiv and academic engines for prior literature and mathematical models.
-7. **`paper-pdf-to-md`**: Extracting equations, tables, and methodologies from research PDFs into structured Markdown.
-8. **`autoresearch-loop`**: Autonomous end-to-end execution of the Karpathy research loop.
-9. **`dedup-hypothesis-search`**: Querying `autoresearch.db` with SQLite FTS5 BM25 search to eliminate duplicate ideas.
-
+4. **`ml-dl-rl-modeling`**: Supervised Machine Learning (Scikit-Learn), Deep Volatility Networks (PyTorch), and Dynamic Portfolio RL Agents (Stable-Baselines3).
+5. **`data-explore-pit-builder`**: Building Point-in-Time (PIT) event datasets (Fed FOMC announcements, SBV policy rate changes) without lookahead bias.
+6. **`data-exploration-js`**: Querying and wrangling Parquet and SQLite datasets in JavaScript using Arquero and Hyparquet.
+7. **`charts-visualization`**: Publication-grade Polars + Seaborn chart rendering to high-DPI PNGs.
+8. **`latex-report-generation`**: Compiling concise research reports into `main.pdf` via Tectonic using `templates/main.tex`.
+9. **`arxiv-paper-search`**: Searching arXiv and academic engines for prior literature and mathematical models.
+10. **`paper-pdf-to-md`**: Extracting equations, tables, and methodologies from research PDFs into structured Markdown via `anymd`.
+11. **`autoresearch-loop`**: Autonomous end-to-end execution of the AutoResearch cycle.
+12. **`dedup-hypothesis-search`**: Querying `autoresearch.db` with SQLite FTS5 BM25 search to eliminate duplicate ideas.
 ### 6.3 Multi-Agent CLI Execution (`run.py`)
 Agents can be awakened individually or concurrently using the unified CLI runner:
 ```bash

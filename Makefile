@@ -43,8 +43,8 @@ clean:
 	@echo "    Done."
 
 start:
-	@echo ">>> Starting vnresearch Next.js Full Stack on Docker..."
-	docker compose up -d --build
+	@echo ">>> Starting hypoq Next.js Full Stack on Docker..."
+	docker compose up -d --build --remove-orphans
 	@echo ">>> Service live at http://127.0.0.1:$${PORT:-3030}"
 
 stop:
