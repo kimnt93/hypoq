@@ -86,7 +86,7 @@ def main():
     parser.add_argument(
         "--search",
         type=str,
-        help="Search existing hypotheses in database using FTS5 BM25 text match",
+        help="Search existing hypotheses in database using dense semantic vector similarity",
     )
     parser.add_argument(
         "--list",
@@ -124,25 +124,26 @@ def main():
 
     # Mode 1: Search Hypotheses
     if args.search:
-        print(f"\n🔍 [FTS5 Search] Query: \"{args.search}\"")
+        print(f"\n🔍 [Dense Semantic Search] Query: \"{args.search}\"")
         matches = search_hypotheses(args.search, top_k=10, db_path=args.db)
         if not matches:
             print("No matching hypotheses found in database.")
         else:
-            print(f"Found {len(matches)} match(es):\n")
+            print(f"Found {len(matches)} match(es) ranked by semantic similarity:\n")
             format_table(
                 matches,
-                headers=["ID", "Status", "Domain", "Metric", "p-val", "Title"],
-                keys=["id", "status", "domain", "metric_value", "p_value", "title"],
+                headers=["ID", "Status", "Similarity", "Domain", "Metric", "p-val", "Title"],
+                keys=["id", "status", "similarity_score", "domain", "metric_value", "p_value", "title"],
             )
-            print("\nTop Match Details:")
+            print("\nTop Semantic Match Details:")
             top = matches[0]
-            print(f"Title   : {top['title']}")
-            print(f"H0      : {top['null_hypothesis']}")
-            print(f"H1      : {top['alt_hypothesis']}")
-            print(f"Findings: {top.get('summary_findings', 'N/A')}")
+            print(f"Title      : {top['title']}")
+            print(f"Similarity : {top.get('similarity_score', 0.0):.4f}")
+            print(f"H0         : {top['null_hypothesis']}")
+            print(f"H1         : {top['alt_hypothesis']}")
+            print(f"Findings   : {top.get('summary_findings', 'N/A')}")
             if top.get("pdf_path"):
-                print(f"PDF     : {top['pdf_path']}")
+                print(f"PDF        : {top['pdf_path']}")
         return
 
     # Mode 2: List Hypotheses

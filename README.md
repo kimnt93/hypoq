@@ -35,7 +35,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 │ • Ingestion: scripts/download_all.py -> data/ (80 Parquet files)       │
 │ • Pipeline: researches/res_*/code/run_pipeline.py                      │
 │ • Typesetting: Tectonic engine -> main.tex -> main.pdf                 │
-│ • Persistence: autoresearch.db (SQLite FTS5 BM25 deduplication)        │
+│ • Persistence: SQLite / PostgreSQL (Dense Semantic Vector Search via Gemini/HF) │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ Live Host Volume Mounts
                                     │ (./data, ./autoresearch.db, ./researches)

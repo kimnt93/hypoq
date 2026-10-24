@@ -37,15 +37,16 @@ All empirical research investigations must execute the **AutoResearch Cycle**:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
 ### Non-Negotiables:
-1. **Hypothesis-First**: Formulate explicit Null ($H_0$) and Alternative ($H_1$) hypotheses.
-2. **Deduplication Check**: Always query `autoresearch.db` (`python run.py --search="..."`) to confirm research novelty before writing code.
-3. **Python-Only Research Pipelines**: All data transformations, ML/DL/RL training, and econometric regressions must be coded in Python using Polars, Scikit-Learn, PyTorch, Stable-Baselines3, and Statsmodels (`code/run_pipeline.py`).
-4. **Strict Point-in-Time Integrity**: Zero look-ahead bias. Low-frequency macro and accounting disclosures must be backward-matched (`join_asof(..., strategy="backward")`).
-5. **Manuscript Compilation**: Every study must be serialized into `main.tex` using the standard template in `templates/` and compiled into `main.pdf` using Tectonic:
+1. **English-Only by Default**: All hypothesis statements, titles, null/alt formulations, and findings must be written exclusively in academic English.
+2. **Hypothesis-First**: Formulate explicit Null ($H_0$) and Alternative ($H_1$) hypotheses.
+3. **Deduplication Check**: Always query the semantic vector search engine (`python run.py --search="..."`) to confirm research novelty via cosine similarity before writing code.
+4. **Python-Only Research Pipelines**: All data transformations, ML/DL/RL training, and econometric regressions must be coded in Python using Polars, Scikit-Learn, PyTorch, Stable-Baselines3, and Statsmodels (`code/run_pipeline.py`).
+5. **Strict Point-in-Time Integrity**: Zero look-ahead bias. Low-frequency macro and accounting disclosures must be backward-matched (`join_asof(..., strategy="backward")`).
+6. **Manuscript Compilation**: Every study must be serialized into `main.tex` using the standard template in `templates/` and compiled into `main.pdf` using Tectonic:
    ```bash
    cd researches/<research_folder> && /home/kim/.local/bin/tectonic main.tex
    ```
-6. **Database Persistence**: Register empirical metrics, $p$-values, effect sizes, and final decisions (**ACCEPTED** or **REJECTED**) in `autoresearch.db`.
+7. **Dual-Backend Persistence**: Register empirical metrics, $p$-values, effect sizes, and dense vector embeddings in SQLite (`autoresearch.db`) or PostgreSQL (via `DATABASE_URL`).
 
 ---
 
@@ -57,7 +58,7 @@ make install   # Creates .venv and installs Polars, PyTorch, Stable-Baselines3, 
 
 # Data Ingestion & Integrity Verification
 make download  # Triggers master WiData, regulatory filing, and macro ingestion
-make verify    # Audits row counts, schemas, and nullness across all 36 Parquet datasets
+make verify    # Audits row counts, schemas, and nullness across all 80 Parquet datasets
 
 # Web UI Display Stack (Docker Compose on Port 3030)
 # Note: Docker purely displays the web app. Quantitative research is executed outside Docker on host mounts.
@@ -66,6 +67,6 @@ make stop      # Terminates container stack
 
 # Multi-Agent Harness CLI
 python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
-python run.py --search="order flow imbalance"
-python run.py --list [--status=ACCEPTED]
+python run.py --search="interest rate shock transmission to ETFs"  # Dense semantic vector search
+DATABASE_URL="postgresql://user:pass@localhost:5432/hypoq" python run.py --list
 ```

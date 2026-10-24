@@ -67,13 +67,17 @@ export async function GET(request: NextRequest) {
         }
       }
     } else {
-      let sql = 'SELECT * FROM hypotheses';
+      let sql = `
+        SELECT h.*, (e.hypothesis_id IS NOT NULL) AS has_embedding, e.model_name
+        FROM hypotheses h
+        LEFT JOIN hypothesis_embeddings e ON h.id = e.hypothesis_id
+      `;
       const params: string[] = [];
       if (status) {
-        sql += ' WHERE UPPER(status) = ?';
+        sql += ' WHERE UPPER(h.status) = ?';
         params.push(status.toUpperCase());
       }
-      sql += ' ORDER BY id DESC LIMIT 100';
+      sql += ' ORDER BY h.id DESC LIMIT 100';
       const stmt = db.prepare(sql);
       rows = stmt.all(...params) as unknown as HypothesisRecord[];
     }

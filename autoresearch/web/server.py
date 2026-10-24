@@ -43,6 +43,7 @@ def get_dataset_inventory() -> List[Dict[str, Any]]:
 
         # Quick schema scan via Polars
         try:
+            lf = pl.scan_parquet(p)
             schema = lf.collect_schema()
             col_count = len(schema)
             # Fetch row count

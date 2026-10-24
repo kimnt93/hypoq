@@ -1,70 +1,50 @@
 ---
 name: dedup-hypothesis-search
-description: Search existing research hypotheses in the SQLite research database using FTS5 BM25 text ranking and keyword similarity to eliminate duplicate experiments.
-version: 1.0.0
-author: kim / vnresearch
-tags: [search, deduplication, sqlite, fts5, hypothesis, bm25]
+description: Search existing research hypotheses using dense semantic vector embeddings (Google Gemini text-embedding-004 or open-source Hugging Face all-MiniLM-L6-v2) across SQLite or PostgreSQL backends to eliminate duplicate experiments.
+version: 2.0.0
+author: AI Quantitative Research Network
+tags: [search, deduplication, semantic-search, vector-embeddings, gemini, huggingface, postgres, sqlite]
 ---
 
 # Deduplication & Hypothesis Search Skill
 
 ## Overview
-To prevent wasted compute and redundant empirical exploration, this skill provides fast querying over historical hypotheses stored in `autoresearch.db`. It utilizes SQLite FTS5 (Full-Text Search) with BM25 relevance ranking and token overlap scoring.
+To prevent wasted compute and redundant empirical exploration, this skill provides dense semantic vector search over historical hypotheses stored in `autoresearch.db` (SQLite) or PostgreSQL (configured via `DATABASE_URL`). It replaces rigid keyword matching with neural embeddings that compute cosine similarity over hypothesis concepts, null/alt formulations, and empirical findings.
 
+### Embedding Providers Supported
+1. **Google Gemini (`text-embedding-004`)**: Activated when `GEMINI_API_KEY` is provided. Free tier, 768 dimensions.
+2. **Hugging Face (`sentence-transformers/all-MiniLM-L6-v2`)**: Default open-source model. 384 dimensions, < 200MB RAM, optimized for machines under 8GB RAM.
 ## When to Use
 - Before launching a new experimental research run.
 - When an agent is prompted with a research question to see if previous experiments accepted, rejected, or found inconclusive evidence on the same topic.
 - To discover prior test statistics and refine an alternative angle or model specification.
 
 ## CLI Usage
-Query the database directly from the command line:
+Execute semantic search from the terminal:
 ```bash
-# Search by keywords
-python run.py --search="tightly held shares basis"
+# Semantic concept search (matches even if exact words differ)
+python run.py --search="interest rate hike shock transmission to cross border ETFs"
 
-# Search by topic or factor
-python run.py --search="foreign flow trading pressure"
+# Dynamic portfolio optimization search
+python run.py --search="reinforcement learning policy for portfolio rebalancing"
+
+# Set database backend via environment variable (SQLite or PostgreSQL)
+DATABASE_URL="postgresql://user:pass@localhost:5432/hypoq" python run.py --search="order flow imbalance"
 ```
 
 ## Python Integration
 ```python
-import sqlite3
+from autoresearch.db import search_hypotheses
 
-def query_dedup_search(query_str: str, db_path: str = "autoresearch.db", top_k: int = 5):
+def query_semantic_dedup(query_str: str, top_k: int = 5, min_score: float = 0.3):
     """
-    Executes BM25 full-text search against the hypotheses_fts table.
+    Executes dense semantic vector similarity search against the hypotheses database.
+    Returns matches ranked by cosine similarity score (0.0 to 1.0).
     """
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row
-    cursor = conn.cursor()
-    
-    # Clean query tokens for FTS5 syntax
-    tokens = [t.replace('"', '') for t in query_str.split() if len(t) > 2]
-    if not tokens:
-        return []
-    
-    fts_query = " OR ".join(tokens)
-    
-    sql = """
-    SELECT h.id, h.title, h.status, h.metric_name, h.metric_value, h.p_value,
-           h.summary_findings, h.report_dir, h.pdf_path,
-           bm25(hypotheses_fts) AS rank_score
-    FROM hypotheses_fts
-    JOIN hypotheses h ON hypotheses_fts.rowid = h.id
-    WHERE hypotheses_fts MATCH ?
-    ORDER BY rank_score ASC
-    LIMIT ?;
-    """
-    try:
-        cursor.execute(sql, (fts_query, top_k))
-        results = [dict(row) for row in cursor.fetchall()]
-    except Exception as e:
-        print(f"Search warning: {e}")
-        results = []
-    finally:
-        conn.close()
-        
-    return results
+    matches = search_hypotheses(query_str, top_k=top_k, min_score=min_score)
+    for m in matches:
+        print(f"[{m['similarity_score']:.4f}] ID {m['id']} ({m['status']}): {m['title']}")
+    return matches
 ```
 
 ## Deduplication Strategy Guidelines
