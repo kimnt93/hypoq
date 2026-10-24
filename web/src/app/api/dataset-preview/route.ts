@@ -44,7 +44,19 @@ export async function GET(request: NextRequest) {
     const dt = aq.from(rows);
     const totalRows = dt.numRows();
     const columns = dt.columnNames();
-    const sampleRows = dt.slice(0, 20).objects();
+    const rawSample = dt.slice(0, 20).objects();
+    // Convert BigInt to Number or String for JSON compatibility
+    const sampleRows = rawSample.map(row => {
+      const cleanRow: Record<string, unknown> = {};
+      for (const [key, val] of Object.entries(row)) {
+        if (typeof val === 'bigint') {
+          cleanRow[key] = Number(val);
+        } else {
+          cleanRow[key] = val;
+        }
+      }
+      return cleanRow;
+    });
 
     return NextResponse.json({
       filename: path.basename(absPath),

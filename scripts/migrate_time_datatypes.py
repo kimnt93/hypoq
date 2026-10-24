@@ -13,7 +13,7 @@ import glob
 import polars as pl
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(BASE_DIR, "vnresearch/data")
+DATA_DIR = os.path.join(BASE_DIR, "data")
 
 DATE_COLUMNS = [
     "date", "fiscal_date", "report_date", "effective_date", "listed_date",

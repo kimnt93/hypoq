@@ -10,7 +10,7 @@ tags: [data, discovery, parquet, schema, datasets, ingestion, documentation, inc
 
 ## Overview
 This skill defines the complete operational protocol for managing the quantitative data lake in `data/`:
-1. **Discovering & Auditing**: Inspecting schemas, row counts, null rates, and date ranges across the five core data lake domains (`macro/`, `market/`, `market_structure/`, `financials/`, `cross_asset/`).
+1. **Discovering & Auditing**: Inspecting schemas, row counts, null rates, and date ranges across the six core data lake domains (`macro/`, `market/`, `market_structure/`, `financials/`, `cross_asset/`, `crypto/`).
 2. **Ingesting New Datasets**: Writing standalone or modular ingestion scripts under `scripts/ingest_*.py` when researchers request new financial or macroeconomic series.
 3. **Continuous Incremental Updates**: Appending new observations without rewriting historical data from scratch, ensuring zero look-ahead bias and deduplication by primary keys.
 4. **Documentation Synchronization**: Keeping `DATA.md` strictly synchronized with column definitions, data types, sources, units, and row counts.
@@ -19,11 +19,12 @@ This skill defines the complete operational protocol for managing the quantitati
 
 ## 1. Dataset Jurisdiction Naming Standard
 Every empirical dataset stored under `data/` must strictly use an ISO country or geographic scope prefix:
-* **`vn_`**: Vietnam domestic financial, corporate, and macroeconomic series (e.g. `data/market/vn_indices_daily.parquet`).
-* **`us_`**: United States Federal Reserve, Treasury, and macroeconomic indicators (e.g. `data/macro/us_macro_daily.parquet`).
-* **`eu_`**: European Central Bank and European financial series.
-* **`global_`**: International multi-asset cross-border benchmarks (e.g. `data/cross_asset/global_macro_daily.parquet`).
-
+* **`asia_`**: Asian regional indices, equities, and currencies (e.g. `data/market/asia_indices_daily.parquet`, `data/market/asia_equities_daily.parquet`, `data/macro/asia_macro_daily.parquet`).
+* **`us_`**: United States Federal Reserve, Treasury term structure, and equities (e.g. `data/market/us_indices_daily.parquet`, `data/market/us_equities_daily.parquet`, `data/macro/us_yield_curve_daily.parquet`).
+* **`eu_`**: European Central Bank, sovereign yields, EU indices, and FX series (e.g. `data/market/eu_indices_daily.parquet`, `data/macro/eu_macro_daily.parquet`).
+* **`global_`**: International multi-asset cross-border benchmarks, factor ETFs, and commodities (e.g. `data/market/global_etfs_daily.parquet`, `data/macro/global_commodities_daily.parquet`, `data/cross_asset/global_macro_daily.parquet`).
+* **`crypto_`**: Cryptocurrency markets, Layer 1 benchmarks, and crypto-macro aggregate indicators (e.g. `data/crypto/crypto_top_assets_daily.parquet`, `data/crypto/crypto_market_daily.parquet`).
+* **`vn_`**: Vietnam domestic financial, corporate, and macroeconomic series.
 ---
 
 ## 2. Discovery & Auditing Protocols

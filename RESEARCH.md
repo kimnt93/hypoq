@@ -1,4 +1,4 @@
-# RESEARCH.md — Vietnam Quantitative Financial Economics Research Agenda (hypoq: Hypothesis × Quant)
+# RESEARCH.md — Global Quantitative Financial Economics Research Agenda (hypoq: Hypothesis × Quant)
 
 ---
 
@@ -6,14 +6,14 @@
 
 * **Author**: AI Quantitative Research Network
 * **Cooperation**: Autonomous Financial Machine Learning & Empirical Econometrics Lab
-* **Focus**: Vietnamese Financial Market System (Cash Equities, Index Derivatives, Monetary Policy, Corporate Networks, Sector Indices & ETFs)
+* **Focus**: Global Multi-Asset Financial Markets (Asia, United States, Europe, International Macro, Sovereign Yield Curves, Commodities & Cryptocurrencies)
 * **Execution Standard**: Strict hypothesis-driven econometrics, zero look-ahead bias, and Python-only pipeline implementation.
 
 ---
 
 ## 1. Executive Research Mandate
 
-The primary mission is the autonomous generation, empirical econometric testing, and peer-reviewed documentation of quantitative hypotheses within the Vietnamese financial market ecosystem and its international macro linkages.
+The primary mission is the autonomous generation, empirical econometric testing, and peer-reviewed documentation of quantitative hypotheses across the global financial market ecosystem—spanning Asia-Pacific, North America, Europe, global commodities, and decentralized digital assets—with strict point-in-time causality and econometric discipline.
 Every empirical investigation follows the **AutoResearch Cycle**:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
@@ -39,7 +39,13 @@ Each domain represents an active empirical research agenda within the Vietnamese
 * **Statutory Accounting Taxonomy, Earnings Surprises & Quality Anomalies**: Statutory circulars `TT200/2014/TT-BTC`, `TT202/2014/TT-BTC`, `TT334/2016/TT-BTC`, `TT49/2014/TT-NHNN`, Standardized Unexpected Earnings (SUE), Post-Earnings Announcement Drift (PEAD), balance sheet health, corporate debt coverage, accrual quality, valuation multiples (P/E, P/B, EV/EBITDA).
 * **Index Free-Float Wedges, Capping Factors & Review Price Pressure**: Free-float factor $f$, capping factor $c$, outstanding index shares $Q$, tightly held equities, state-owned enterprise (SOE) float restrictions, capitalization wedge $\Omega_t$, VNINDEX vs VN30 tracking divergence, semi-annual HOSE index reviews, rebalancing price pressure event studies, econometric.
 * **Commodity Price Shocks & Cross-Asset Inflation Pass-Through**: Domestic construction steel (Hoa Phat CB240/D10), retail fuels (RON95, E5, Diesel), agricultural commodities (Robusta coffee, IR50404 fresh rice, live hog pork), commodity price shocks, materials sector index VNMAT, energy sector index VNENE, domestic inflation pass-through, TVP-VAR connectedness.
-* **Global Macroeconomic Linkages & Currency Pass-Through**: US Federal Reserve FOMC interest rate decisions (PIT announcements), effective Fed Funds (DFF), US Treasury yields (3M/2Y/10Y), US Dollar Index (DXY), USD/VND commercial exchange rate, global cross-asset volatility spillovers (S&P 500, Gold, WTI crude, VIX, Bitcoin), emerging market capital flows.
+* **Global Macroeconomic Linkages & Currency Pass-Through**: US Federal Reserve FOMC interest rate decisions, effective Fed Funds (DFF), US Treasury term structure (3M/5Y/10Y/30Y yield curves), US Dollar Index (DXY), European Central Bank policy rates, EUR/USD, GBP/USD, Asian FX regimes (USD/JPY, USD/CNY, USD/KRW, USD/INR, USD/SGD, USD/VND), global cross-asset volatility spillovers (S&P 500, Euro Stoxx 50, Nikkei 225, Gold, WTI crude, VIX, Bitcoin), emerging and developed market capital flows.
+* **Cross-Border Equity Factor Portability & Asset Pricing Anomalies**: Multi-region factor modeling (Fama-French 5-factor, Carhart momentum, low-volatility, quality, size, value) across US equities (S&P 500, Nasdaq 100, Mega-Cap tech), European blue-chips (DAX 40, FTSE 100, CAC 40, ASML, Novo Nordisk, SAP), and Asian corporate giants (TSMC, Samsung, Alibaba, Tencent, Toyota), Fama-MacBeth 2-step cross-sectional regressions, transaction friction hurdles.
+* **Cryptocurrency Microstructure, Regime Shifts & Tail Risk**: Digital assets (Bitcoin, Ethereum, Solana, Binance Coin, Layer-1 tokens), 24/7 calendar alignment, realized volatility estimators (Parkinson, Garman-Klass), crypto-equity spillover, rolling correlations with S&P 500 and Gold, Value-at-Risk (VaR) and Expected Shortfall (CVaR), weekend liquidity shocks, momentum and cross-pair lead-lag dynamics.
+* **Global Commodity Cycles & Macroeconomic Transmission**: Energy markets (WTI crude oil, Brent crude, natural gas, RBOB gasoline), precious and industrial metals (Gold, Silver, Copper, Platinum), agricultural futures (Corn, Wheat, Soybeans, Coffee, Sugar, Cotton), supply-chain shocks, terms-of-trade shifts, cross-border inflation pass-through, Diebold-Yilmaz connectedness.
+* **Sovereign Yield Curves & Term Premia Dynamics**: US Treasury curve (3M, 5Y, 10Y, 30Y), European sovereign spreads (German Bunds, Gilts, BTPs), Asian bond yields (JGBs), Nelson-Siegel level, slope, and curvature decompositions, term premium estimation, yield inversion recession nowcasting.
+* **VIP Social Sentiment, Executive Announcements & Market Jump Dynamics**: Social media posts, Truth Social announcements, executive commentary, and FOMC communications by Donald Trump, Elon Musk, Jerome Powell, and Michael Saylor, event-study Cumulative Abnormal Returns (CAR), realized jump variation, intraday price discovery, tariff shock intensity, and crypto hype propagation.
+* **World Financial Data Taxonomy, GICS Sector Rotations & Fundamental Valuation Alpha**: Multi-domain modeling bridging real economic activity (FRED PCE, Unemployment, NFCI), 11 GICS sector business cycle rotations, smart beta factors (Momentum, Quality, Value, Low-Vol), corporate credit spreads (HY OAS, LQD, HYG), cross-asset implied volatility surfaces (VIX, VVIX, OVX, GVZ), maritime supply chain freight (BDRY), and global cross-sectional corporate valuation screens (P/E, P/B, EV/EBITDA, ROE, margins, debt-to-equity).
 
 ---
 

@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for financial economics, market microstructure, algorithmic derivatives pricing, and cross-border macroeconomic spillovers, **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
+**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for global financial economics, cross-border equity factor modeling, sovereign yield curve term structure, macroeconomic spillovers, cryptocurrency microstructure, and multi-asset derivatives across **Asia**, the **United States**, **Europe**, and decentralized digital asset markets. **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
 
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
@@ -32,7 +32,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 │ HOST MACHINE (Native Quantitative Research Engine)                     │
 │ • Environment: Python 3.12 managed via uv (make install)               │
 │ • Modeling: Polars, Statsmodels, Scikit-Learn, PyTorch, SB3            │
-│ • Ingestion: scripts/download_all.py -> data/ (36 Parquet files)       │
+│ • Ingestion: scripts/download_all.py -> data/ (80 Parquet files)       │
 │ • Pipeline: researches/res_*/code/run_pipeline.py                      │
 │ • Typesetting: Tectonic engine -> main.tex -> main.pdf                 │
 │ • Persistence: autoresearch.db (SQLite FTS5 BM25 deduplication)        │
@@ -81,10 +81,10 @@ Every research investigation adheres to strict empirical non-negotiables:
 
 ## 📚 Core Documentation
 
-* **[`RESEARCH.md`](RESEARCH.md)**: Research taxonomy across active financial economics domains, required modeling paradigms, and causality invariants.
-* **[`DATA.md`](DATA.md)**: Standardized data lake inventory (36 Parquet files, 1.25M+ rows) and ISO naming standard (`vn_`, `us_`, `eu_`, `global_`).
+* **[`RESEARCH.md`](RESEARCH.md)**: Research taxonomy across global quantitative domains (Asia, CN, HK, JP, KR, US, Europe, Commodities, Crypto, VIP Sentiment, and World Taxonomy), modeling paradigms, and causality invariants.
+* **[`DATA.md`](DATA.md)**: Standardized data lake inventory (80 Parquet files, 2.0M+ rows, strictly < 100MB per file for GitHub safety) and standardized jurisdiction naming standard (`cn_`, `hk_`, `jp_`, `kr_`, `asia_`, `us_`, `eu_`, `global_`, `crypto_`, `sentiment/`, `vn_`).
 * **[`AGENTS.md`](AGENTS.md)**: Multi-agent execution protocol, CLI orchestration, and agent workflow guidelines.
-* **[`.agents/skills/`](.agents/skills/)**: Modular skills suite (12 AgentSkills covering data discovery, ML/DL/RL, stats, charts, and LaTeX).
+* **[`.agents/skills/`](.agents/skills/)**: Modular skills suite (18 AgentSkills covering chunked data exploration, world data taxonomy, VIP sentiment event studies, global macro, crypto modeling, factor pricing, data discovery, ML/DL/RL, stats, charts, and LaTeX).
 * **[`templates/`](templates/)**: Standard Research Future LaTeX manuscript template compiled with standalone Tectonic.
 
 ---

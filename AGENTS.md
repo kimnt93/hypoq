@@ -9,13 +9,19 @@ Welcome to **hypoq** (**Hypothesis $\times$ Quant**), the autonomous AI quantita
 Whenever an AI agent (Claude, Codex, Hermes, Pi, OMP) is awakened in this repository, it must strictly orient itself by reading the following foundational files:
 
 1. **[`RESEARCH.md`](RESEARCH.md)**: Defines the research taxonomy across active quantitative domains, required modeling paradigms (Machine Learning with `scikit-learn`, Deep Learning with `pytorch`, Reinforcement Learning with `stable-baselines3`, and Econometrics with `statsmodels`), and strict causality invariants.
-2. **[`DATA.md`](DATA.md)**: Details the quantitative data lake (36 Parquet files under `data/`), schema dictionaries, and the ISO jurisdiction prefix standard (`vn_`, `us_`, `eu_`, `global_`).
-3. **[`.agents/skills/`](.agents/skills/)**: Contains 12 self-contained skills adhering to the [AgentSkills.io](https://agentskills.io) standard:
+2. **[`DATA.md`](DATA.md)**: Details the quantitative data lake (80 Parquet files under `data/`, 2.0M+ rows, strictly < 100MB per file for GitHub safety), schema dictionaries, and the standardized jurisdiction prefix standard (`cn_`, `hk_`, `jp_`, `kr_`, `asia_`, `us_`, `eu_`, `global_`, `crypto_`, `sentiment/`, `vn_`).
+3. **[`.agents/skills/`](.agents/skills/)**: Contains 18 self-contained skills adhering to the [AgentSkills.io](https://agentskills.io) standard:
+   * `chunked-data-exploration`: Exploring, scanning, filtering, and streaming partitioned / chunked Parquet files with zero RAM bloat.
+   * `world-data-taxonomy-modeling`: Multi-domain modeling across FRED macro, 11 GICS sectors, factors, credit spreads, and global valuation ratios.
+   * `vip-sentiment-event-studies`: Quantifying market reactions, CAR, price jumps, and volatility surges around Trump, Musk, and Powell announcements.
+   * `global-macro-cross-asset`: Cross-border macroeconomic transmission, sovereign yield curves, FX pass-through, and commodity shock propagation.
+   * `crypto-quantitative-modeling`: Cryptocurrency microstructure, high-volatility regime modeling, crypto-macro spillover, and tail risk (VaR/CVaR).
+   * `global-equity-factor-modeling`: Multi-region equity factor modeling (Fama-French, momentum, quality, low-vol) across US, EU, and Asia.
    * `ml-dl-rl-modeling`: Scikit-Learn, PyTorch, and Stable-Baselines3 implementations.
    * `hypothesis-testing-stats`: Econometric inference (Newey--West HAC, ADF, placebo bootstrap).
    * `polars-fast-data`: High-performance zero-copy and Point-in-Time backward alignment.
-   * `data-discovery`: Data lake auditing and schema inspection.
-   * `data-explore-pit-builder`: Point-in-Time event dataset construction (Fed FOMC, SBV rates).
+   * `data-discovery`: Data lake auditing, schema inspection, and continuous ingestion.
+   * `data-explore-pit-builder`: Point-in-Time event dataset construction (Fed FOMC, central bank rates).
    * `data-exploration-js`: JavaScript / Arquero / `node:sqlite` data manipulation.
    * `charts-visualization`: High-DPI publication chart rendering with Seaborn.
    * `latex-report-generation`: Compiling `templates/main.tex` to `main.pdf` via Tectonic.
@@ -23,7 +29,6 @@ Whenever an AI agent (Claude, Codex, Hermes, Pi, OMP) is awakened in this reposi
    * `paper-pdf-to-md`: PDF-to-Markdown document parsing using `anymd`.
    * `autoresearch-loop`: Execution protocol for the 8-stage research cycle.
    * `dedup-hypothesis-search`: FTS5 BM25 deduplication ranking in `autoresearch.db`.
-
 ---
 
 ## 2. Autonomous Research Execution Protocol

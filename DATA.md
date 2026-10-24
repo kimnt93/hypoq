@@ -1,10 +1,10 @@
-# Macroeconomic, Financial & Corporate Network Dataset Documentation (DATA.md)
+# Global Macroeconomic, Financial, Crypto & Multi-Asset Dataset Documentation (DATA.md)
 
-This document provides a comprehensive, standardized specification of all 36 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` (physically managed in `vnresearch/data/`) and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
+This document provides a comprehensive, standardized specification of all 80 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
 
 ---
 
-## 1. Directory Structure & Inventory (36 Parquet Files, 1,254,222 Rows)
+## 1. Directory Structure & Inventory (80 Parquet Files, 2,005,263 Rows)
 
 ```text
 data/
@@ -17,8 +17,36 @@ data/
 │   ├── vn_sbv_policy_rates_daily.parquet        # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
 │   ├── vn_market_pe_daily.parquet               # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
 │   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
-│   └── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
+│   ├── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
+│   ├── us_yield_curve_daily.parquet             # 2,516 rows x 8 cols | US Treasury Curve (3M, 5Y, 10Y, 30Y), Slopes & VIX
+│   ├── eu_macro_daily.parquet                   # 13,016 rows x 11 cols | European FX Rates (EUR/USD, GBP/USD, EUR Crosses)
+│   ├── asia_macro_daily.parquet                 # 20,822 rows x 11 cols | Asian FX Rates (USD/JPY, USD/CNY, USD/KRW, USD/INR)
+│   ├── cn_macro_daily.parquet                   # 2,602 rows x 11 cols | China FX & Currency Series (USD/CNY)
+│   ├── hk_macro_daily.parquet                   # 2,602 rows x 11 cols | Hong Kong FX & Peg Series (USD/HKD)
+│   ├── jp_macro_daily.parquet                   # 5,206 rows x 11 cols | Japan FX & Cross Series (USD/JPY, EUR/JPY)
+│   ├── kr_macro_daily.parquet                   # 2,603 rows x 11 cols | South Korea FX Series (USD/KRW)
+│   ├── global_commodities_daily.parquet         # 35,209 rows x 11 cols | Energy, Precious & Industrial Metals, Agriculture
+│   ├── global_credit_spreads_daily.parquet      # 19,758 rows x 11 cols | IG (LQD), HY (HYG), EMB, TIPS, Munis & Freight (BDRY)
+│   ├── global_cross_asset_volatility_daily.parquet # 2,516 rows x 5 cols | VIX Equity, VVIX Vol of Vol, OVX Oil, GVZ Gold
+│   └── global_macro_indicators_monthly.parquet  # 13,540 rows x 9 cols | FRED Inflation, Unemployment, NFCI, Breakeven, M2
 ├── market/
+│   ├── us_indices_daily.parquet                 # 15,086 rows x 11 cols | S&P 500, Nasdaq 100, Dow Jones, Russell 2000, MidCap
+│   ├── us_equities_daily.parquet                # 87,990 rows x 12 cols | 35 US Mega-Caps across Tech, Financials, Health, Energy
+│   ├── eu_indices_daily.parquet                 # 20,296 rows x 11 cols | Euro Stoxx 50, DAX 40, FTSE 100, CAC 40, IBEX 35
+│   ├── eu_equities_daily.parquet                # 50,599 rows x 12 cols | 21 European Blue-Chips (ASML, SAP, Shell, LVMH, Allianz)
+│   ├── asia_indices_daily.parquet               # 22,183 rows x 11 cols | Nikkei 225, Hang Seng, SSE Comp, CSI 300, KOSPI, Nifty
+│   ├── asia_equities_daily.parquet              # 22,457 rows x 12 cols | Asian Titans (TSMC, Samsung, Alibaba, Tencent, Toyota)
+│   ├── cn_indices_daily.parquet                 # 2,428 rows x 11 cols | China Domestic Benchmark Indices (SSE Comp, CSI 300)
+│   ├── cn_equities_daily.parquet                # 41,241 rows x 12 cols | 18 Chinese Leaders (Moutai, ICBC, CATL, Alibaba, PetroChina)
+│   ├── hk_indices_daily.parquet                 # 2,461 rows x 11 cols | Hong Kong Benchmark Indices (Hang Seng Index)
+│   ├── hk_equities_daily.parquet                # 34,436 rows x 12 cols | 16 Hong Kong Blue-Chips (Tencent, Alibaba HK, HSBC, AIA, BYD)
+│   ├── jp_indices_daily.parquet                 # 2,442 rows x 11 cols | Japan Benchmark Indices (Nikkei 225 Index)
+│   ├── jp_equities_daily.parquet                # 44,334 rows x 12 cols | 18 Japanese Titans (Toyota, Sony, Keyence, SoftBank, Mitsubishi)
+│   ├── kr_indices_daily.parquet                 # 4,896 rows x 11 cols | South Korea Benchmark Indices (KOSPI, KOSDAQ)
+│   ├── kr_equities_daily.parquet                # 37,845 rows x 12 cols | 16 South Korean Leaders (Samsung, SK Hynix, Hyundai, Kia, Celltrion)
+│   ├── global_sectors_daily.parquet             # 27,239 rows x 11 cols | 11 Official GICS Sector SPDRs (Tech, Financials, Energy)
+│   ├── global_factors_daily.parquet             # 20,112 rows x 11 cols | Smart Beta Factors (MTUM, QUAL, USMV, VLUE, VUG, IJR)
+│   ├── global_etfs_daily.parquet                # 42,738 rows x 11 cols | Asset Class, Regional & Factor ETFs (SPY, QQQ, TLT)
 │   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
 │   ├── vn_top_equities_daily.parquet            # 136,302 rows x 8 cols | 55 constituent stocks daily OHLCV
@@ -30,6 +58,12 @@ data/
 │   ├── vn_order_supply_demand_daily.parquet     # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Orders, Vol)
 │   ├── vn_etf_market_daily.parquet              # 22,377 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
 │   └── vn_etf_nav_aum_daily.parquet             # 18,512 rows x 10 cols | Daily Net Asset Value (NAV), AUM & Premium/Discount
+├── sentiment/
+│   ├── vip_social_posts_events.parquet          # 29 rows x 13 cols | High-Impact Posts (Trump, Musk, Powell, Saylor) with exact UTC
+│   └── trump_musk_market_shocks_daily.parquet   # 3,219 rows x 8 cols | Daily Time Series of Political & Executive Market Shocks
+├── crypto/
+│   ├── crypto_top_assets_daily.parquet          # 32,359 rows x 12 cols | Top Cryptos (BTC, ETH, SOL, BNB, XRP, ADA, DOGE)
+│   └── crypto_market_daily.parquet              # 3,272 rows x 9 cols | Macro Crypto Indicators, ETH/BTC, Volatility & Corrs
 ├── market_structure/
 │   ├── vn_etf_portfolio_holdings_daily.parquet  # 58 rows x 8 cols | Daily ETF Constituent Creation Baskets (Danh mục hoán đổi)
 │   ├── vn_corporate_network_edges.parquet       # 4,803 rows x 12 cols | Corporate Network Directed Edges (Loans, Subs, Owners)
@@ -43,6 +77,7 @@ data/
 │   ├── vn_index_constituents.parquet            # 43,377 rows x 18 cols | Historical basket constituents across all VN indices
 │   └── vn_basket_history.parquet                # 261 rows x 10 cols | Basket rebalancing events and effective dates
 ├── financials/
+│   ├── global_corporate_fundamentals.parquet    # 50 rows x 20 cols | 50 Global Mega-Caps Valuation, Margins, Debt & Cash Flow
 │   ├── vn_financial_models_taxonomy.parquet     # 3,370 rows x 12 cols | Full accounting line item definitions (TT202, TT49)
 │   ├── vn_financial_statements_quarterly_yearly.parquet # 325,000 rows x 12 cols | Balance Sheet, Income, Cash Flow line items
 │   ├── vn_financial_ratios_quarterly_yearly.parquet     # 189,000 rows x 8 cols  | Financial Ratios (P/E, P/B, ROE, ROA, D/E)
@@ -56,12 +91,17 @@ data/
 ## 1.1 Dataset Standardized Jurisdiction Naming Standard
 
 Every empirical dataset archived in `data/` must strictly use an ISO country or geographic scope prefix:
+* **`cn_`**: China mainland equity indices, corporate leaders, and USD/CNY exchange rate.
+* **`hk_`**: Hong Kong equity benchmarks, blue-chips, and USD/HKD peg series.
+* **`jp_`**: Japan Nikkei indices, corporate titans, and JPY macro rates.
+* **`kr_`**: South Korea KOSPI/KOSDAQ indices, chaebol equities, and USD/KRW currency series.
+* **`asia_`**: Asian regional aggregate indices, multi-country equities, and currency benchmarks.
+* **`us_`**: United States Federal Reserve, Treasury term structure, equity benchmarks, and mega-caps.
+* **`eu_`**: European Central Bank, sovereign yields, European benchmark indices, and foreign exchange rates.
+* **`global_`**: International multi-asset cross-border benchmarks, 11 GICS sectors, factors, commodities, credit, and fundamentals.
+* **`crypto_`**: Decentralized digital assets, Layer 1 benchmarks, and crypto-macro aggregate indicators.
+* **`sentiment/`**: High-impact VIP social media posts, executive announcements, and daily shock intensity indices.
 * **`vn_`**: Vietnam domestic financial, corporate, and macroeconomic series.
-* **`us_`**: United States Federal Reserve, Treasury, and macroeconomic indicators.
-* **`eu_`**: European Central Bank and European financial series.
-* **`global_`**: International multi-asset cross-border benchmarks (S&P 500, DXY, WTI, Gold, VIX, Bitcoin, FX).
-
----
 
 ## 2. Standardized Dataset Specifications (Single-Table Format)
 
@@ -744,6 +784,414 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `close` | `Float64` | VND / Pts | Closing price or index level |
   | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
 
+
+### 2.6 Global Multi-Asset, Regional Equities, Macro & Crypto Datasets
+
+#### A. `us_indices_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (15,086 daily records across S&P 500, Nasdaq 100, Dow Jones, Russell 2000, MidCap, and VIX, 11 columns).
+* **Source**: Yahoo Finance Benchmark Index Engine.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | Benchmark ticker symbol (`^GSPC`, `^NDX`, `^DJI`, `^RUT`, `^MID`, `^VIX`) |
+  | `open` | `Float64` | Index Points | Trading session opening price |
+  | `high` | `Float64` | Index Points | Daily session high price |
+  | `low` | `Float64` | Index Points | Daily session low price |
+  | `close` | `Float64` | Index Points | Daily session closing level |
+  | `adj_close` | `Float64` | Index Points | Dividend- and split-adjusted closing level |
+  | `volume` | `Float64` | Shares | Total session trading volume |
+  | `returns` | `Float64` | Ratio | Daily percentage return |
+  | `index_name` | `String` | - | Full canonical index name |
+  | `country` | `String` | - | Geographic jurisdiction (`US`) |
+
+#### B. `us_equities_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (37,710 daily records across 15 US mega-cap sector leaders, 12 columns).
+* **Source**: Yahoo Finance Listed Equity Data.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | US stock ticker (e.g. `AAPL`, `MSFT`, `NVDA`, `AMZN`, `JPM`) |
+  | `open` | `Float64` | USD | Opening share price |
+  | `high` | `Float64` | USD | Intraday high share price |
+  | `low` | `Float64` | USD | Intraday low share price |
+  | `close` | `Float64` | USD | Closing share price |
+  | `adj_close` | `Float64` | USD | Split- and dividend-adjusted closing price |
+  | `volume` | `Float64` | Shares | Daily volume of shares traded |
+  | `returns` | `Float64` | Ratio | Daily discrete return |
+  | `company_name` | `String` | - | Registered corporate entity name |
+  | `sector` | `String` | - | GICS economic sector classification |
+  | `country` | `String` | - | Domicile country (`US`) |
+
+#### C. `eu_indices_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (20,296 daily records across 8 European benchmark indices, 11 columns).
+* **Source**: Euronext, Deutsche Börse, London Stock Exchange, BME, SIX Swiss Exchange via Yahoo Finance.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | Index ticker (`^STOXX50E`, `^GDAXI`, `^FTSE`, `^FCHI`, `^IBEX`, `FTSEMIB.MI`, `^SSMI`, `^AEX`) |
+  | `open` | `Float64` | Index Points | Opening index level |
+  | `high` | `Float64` | Index Points | Intraday high level |
+  | `low` | `Float64` | Index Points | Intraday low level |
+  | `close` | `Float64` | Index Points | Closing index level |
+  | `adj_close` | `Float64` | Index Points | Adjusted closing index level |
+  | `volume` | `Float64` | Shares | Traded index constituents volume |
+  | `returns` | `Float64` | Ratio | Daily percentage return |
+  | `index_name` | `String` | - | Canonical European index name |
+  | `country` | `String` | - | Country or region of origin |
+
+#### D. `eu_equities_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (27,775 daily records across 11 European blue-chips, 12 columns).
+* **Source**: Yahoo Finance European Exchange Listings.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | Equity ticker (e.g. `ASML`, `SAP`, `SHEL`, `NVO`, `AZN`, `MC.PA`) |
+  | `open` | `Float64` | EUR / GBP / CHF | Opening equity price |
+  | `high` | `Float64` | EUR / GBP / CHF | Session high price |
+  | `low` | `Float64` | EUR / GBP / CHF | Session low price |
+  | `close` | `Float64` | EUR / GBP / CHF | Session closing price |
+  | `adj_close` | `Float64` | EUR / GBP / CHF | Split- and dividend-adjusted price |
+  | `volume` | `Float64` | Shares | Number of shares traded |
+  | `returns` | `Float64` | Ratio | Daily return |
+  | `company_name` | `String` | - | Corporate name |
+  | `sector` | `String` | - | Industry sector |
+  | `country` | `String` | - | Domicile country |
+
+#### E. `asia_indices_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (22,183 daily records across 10 major Asian benchmarks, 11 columns).
+* **Source**: Tokyo Stock Exchange, HKEX, Shanghai, Shenzhen, KRX, TWSE, NSE, SGX, ASX via Yahoo Finance.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | Benchmark ticker (`^N225`, `^HSI`, `000001.SS`, `000300.SS`, `^KS11`, `^TWII`, `^NSEI`, `^BSESN`, `^STI`, `^AXJO`) |
+  | `open` | `Float64` | Index Points | Opening index level |
+  | `high` | `Float64` | Index Points | Session high level |
+  | `low` | `Float64` | Index Points | Session low level |
+  | `close` | `Float64` | Index Points | Closing index level |
+  | `adj_close` | `Float64` | Index Points | Adjusted closing index level |
+  | `volume` | `Float64` | Shares | Market constituent volume |
+  | `returns` | `Float64` | Ratio | Daily percentage return |
+  | `index_name` | `String` | - | Index name |
+  | `country` | `String` | - | Asian country / jurisdiction |
+
+#### F. `asia_equities_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (22,457 daily records across 9 Asian corporate titans, 12 columns).
+* **Source**: Yahoo Finance Asian Listings and ADRs.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | Ticker (e.g. `TSM`, `BABA`, `TCEHY`, `005930.KS`, `7203.T`, `HDB`, `INFY`, `SONY`, `9984.T`) |
+  | `open` | `Float64` | Local Currency | Opening price |
+  | `high` | `Float64` | Local Currency | Daily high price |
+  | `low` | `Float64` | Local Currency | Daily low price |
+  | `close` | `Float64` | Local Currency | Closing price |
+  | `adj_close` | `Float64` | Local Currency | Adjusted closing price |
+  | `volume` | `Float64` | Shares | Total volume |
+  | `returns` | `Float64` | Ratio | Daily percentage return |
+  | `company_name` | `String` | - | Corporate name |
+  | `sector` | `String` | - | Economic sector |
+  | `country` | `String` | - | Headquarters jurisdiction |
+
+#### G. `global_etfs_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (42,738 daily records across 17 cross-asset and regional ETFs, 11 columns).
+* **Source**: Yahoo Finance ETF Database.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | ETF ticker (`SPY`, `QQQ`, `IWM`, `EFA`, `EEM`, `ACWI`, `FXI`, `EWJ`, `EWG`, `EWU`, `INDA`, `TLT`, `IEF`, `LQD`, `HYG`, `GLD`, `VNQ`) |
+  | `open` | `Float64` | USD | Opening ETF price |
+  | `high` | `Float64` | USD | Session high price |
+  | `low` | `Float64` | USD | Session low price |
+  | `close` | `Float64` | USD | Session close price |
+  | `adj_close` | `Float64` | USD | Distribution-adjusted close |
+  | `volume` | `Float64` | Shares | ETF volume traded |
+  | `returns` | `Float64` | Ratio | Daily percentage return |
+  | `etf_name` | `String` | - | Full fund name |
+  | `asset_class` | `String` | - | Target asset class / exposure |
+
+#### H. `global_commodities_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (35,209 daily records across 14 global energy, metals, and agricultural futures, 11 columns).
+* **Source**: NYMEX, COMEX, CBOT, ICE via Yahoo Finance.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | Futures contract symbol (`CL=F`, `BZ=F`, `NG=F`, `RB=F`, `GC=F`, `SI=F`, `HG=F`, `PL=F`, `ZC=F`, `ZW=F`, `ZS=F`, `KC=F`, `SB=F`, `CT=F`) |
+  | `open` | `Float64` | USD / contract unit | Opening contract price |
+  | `high` | `Float64` | USD / contract unit | Intraday high |
+  | `low` | `Float64` | USD / contract unit | Intraday low |
+  | `close` | `Float64` | USD / contract unit | Settle / closing price |
+  | `adj_close` | `Float64` | USD / contract unit | Adjusted settlement price |
+  | `volume` | `Float64` | Contracts | Volume of futures contracts traded |
+  | `returns` | `Float64` | Ratio | Daily return |
+  | `commodity_name` | `String` | - | Canonical commodity name |
+  | `sector` | `String` | - | Category (`Energy`, `Precious Metals`, `Industrial Metals`, `Agriculture`, `Soft Commodities`) |
+
+#### I. `us_yield_curve_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (2,516 daily records, 8 columns).
+* **Source**: US Department of the Treasury / CBOE via Yahoo Finance.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `tbill_3m` | `Float64` | % / year | 13-Week / 3-Month US Treasury Bill Yield (`^IRX`) |
+  | `tnote_5y` | `Float64` | % / year | 5-Year US Treasury Note Benchmark Yield (`^FVX`) |
+  | `tnote_10y` | `Float64` | % / year | 10-Year US Treasury Benchmark Yield (`^TNX`) |
+  | `tbond_30y` | `Float64` | % / year | 30-Year US Treasury Bond Benchmark Yield (`^TYX`) |
+  | `yield_spread_10y_3m` | `Float64` | % points | Term spread slope ($y_{10Y} - y_{3M}$) |
+  | `yield_spread_10y_5y` | `Float64` | % points | Term spread slope ($y_{10Y} - y_{5Y}$) |
+  | `cboe_vix` | `Float64` | Index | CBOE S&P 500 Volatility Index level (`^VIX`) |
+
+#### J. `eu_macro_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-24 (13,016 daily records across 5 European foreign exchange pairs, 11 columns).
+* **Source**: European Central Bank / Interbank FX via Yahoo Finance.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | FX ticker (`EURUSD=X`, `GBPUSD=X`, `EURGBP=X`, `EURCHF=X`, `EURJPY=X`) |
+  | `open` | `Float64` | Quote Currency | Opening exchange rate |
+  | `high` | `Float64` | Quote Currency | Intraday high |
+  | `low` | `Float64` | Quote Currency | Intraday low |
+  | `close` | `Float64` | Quote Currency | Closing exchange rate |
+  | `adj_close` | `Float64` | Quote Currency | Adjusted closing exchange rate |
+  | `volume` | `Float64` | Units | Quoted volume |
+  | `returns` | `Float64` | Ratio | Daily percentage change |
+  | `currency_pair` | `String` | - | Canonical currency pair name |
+  | `region` | `String` | - | Regional classification |
+
+#### K. `asia_macro_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-24 (20,822 daily records across 8 Asian currencies vs USD, 11 columns).
+* **Source**: Asian Central Banks & Interbank Foreign Exchange.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `symbol` | `String` | - | FX ticker (`USDJPY=X`, `USDCNY=X`, `USDKRW=X`, `USDINR=X`, `USDSGD=X`, `USDHKD=X`, `AUDUSD=X`, `USDVND=X`) |
+  | `open` | `Float64` | Local Currency / USD | Opening exchange rate |
+  | `high` | `Float64` | Local Currency / USD | Session high rate |
+  | `low` | `Float64` | Local Currency / USD | Session low rate |
+  | `close` | `Float64` | Local Currency / USD | Closing exchange rate |
+  | `adj_close` | `Float64` | Local Currency / USD | Adjusted closing exchange rate |
+  | `volume` | `Float64` | Units | Daily volume |
+  | `returns` | `Float64` | Ratio | Daily percentage change |
+  | `currency_pair` | `String` | - | Currency pair identifier |
+  | `country` | `String` | - | Sovereign jurisdiction |
+
+#### L. `crypto_top_assets_daily.parquet` (`data/crypto/`)
+* **Coverage**: 2016-10-24 to 2026-10-24 (32,359 daily records across 11 major cryptocurrencies, 12 columns).
+* **Source**: CoinMarketCap / Binance / Coinbase aggregate via Yahoo Finance.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | 24/7 calendar date (ISO 8601) |
+  | `symbol` | `String` | - | Pair ticker (`BTC-USD`, `ETH-USD`, `SOL-USD`, `BNB-USD`, `XRP-USD`, `ADA-USD`, `DOGE-USD`, `AVAX-USD`, `LINK-USD`, `DOT-USD`, `NEAR-USD`) |
+  | `open` | `Float64` | USD | Opening price at 00:00 UTC |
+  | `high` | `Float64` | USD | 24h session high |
+  | `low` | `Float64` | USD | 24h session low |
+  | `close` | `Float64` | USD | 23:59:59 UTC closing price |
+  | `adj_close` | `Float64` | USD | Adjusted price |
+  | `volume` | `Float64` | USD | Total 24h traded volume |
+  | `returns` | `Float64` | Ratio | 24h discrete percentage return |
+  | `asset_name` | `String` | - | Asset name (e.g. Bitcoin, Ethereum) |
+  | `category` | `String` | - | Architectural role (e.g. Smart Contract L1, Store of Value) |
+  | `volatility_30d` | `Float64` | % / year | 30-day annualized realized volatility |
+
+#### M. `crypto_market_daily.parquet` (`data/crypto/`)
+* **Coverage**: 2017-11-09 to 2026-10-24 (3,272 daily records, 9 columns).
+* **Source**: Cross-Asset Derived Market Metrics.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Calendar date (ISO 8601) |
+  | `btc_close` | `Float64` | USD | Bitcoin USD closing price |
+  | `eth_close` | `Float64` | USD | Ethereum USD closing price |
+  | `eth_btc_ratio` | `Float64` | Ratio | Relative strength ratio ($P_{\text{ETH}} / P_{\text{BTC}}$) |
+  | `crypto_top_volume_sum` | `Float64` | USD | Combined BTC + ETH daily trading volume proxy |
+  | `btc_vol_30d` | `Float64` | % / year | Bitcoin 30-day annualized realized volatility |
+  | `eth_vol_30d` | `Float64` | % / year | Ethereum 30-day annualized realized volatility |
+  | `btc_sp500_corr_30d` | `Float64` | Correlation (-1 to 1) | 30-day rolling correlation between BTC and S&P 500 |
+  | `btc_gold_corr_30d` | `Float64` | Correlation (-1 to 1) | 30-day rolling correlation between BTC and Gold futures |
+
+### 2.7 Country-Specific Financial Markets (China, Hong Kong, Japan, South Korea)
+
+#### A. `jp_indices_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (2,442 daily records, 11 columns).
+* **Source**: Tokyo Stock Exchange via Yahoo Finance.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
+
+#### B. `jp_equities_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (24,630 daily records across 10 Japanese corporate titans, 12 columns).
+* **Source**: Tokyo Stock Exchange.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
+
+#### C. `jp_macro_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-24 (5,206 daily records across USD/JPY and EUR/JPY, 11 columns).
+* **Source**: Bank of Japan & Interbank FX.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
+
+#### D. `kr_indices_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (4,896 daily records across KOSPI and KOSDAQ, 11 columns).
+* **Source**: Korea Exchange (KRX) via Yahoo Finance.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
+
+#### E. `kr_equities_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (20,716 daily records across 9 South Korean chaebol leaders, 12 columns).
+* **Source**: Korea Exchange (KRX).
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
+
+#### F. `kr_macro_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-24 (2,603 daily records, 11 columns).
+* **Source**: Bank of Korea & Interbank FX.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
+
+#### G. `hk_indices_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (2,461 daily records, 11 columns).
+* **Source**: Hong Kong Exchanges and Clearing (HKEX).
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
+
+#### H. `hk_equities_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (20,502 daily records across 9 Hong Kong blue-chips, 12 columns).
+* **Source**: Hong Kong Exchanges and Clearing (HKEX).
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
+
+#### I. `hk_macro_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-24 (2,602 daily records, 11 columns).
+* **Source**: Hong Kong Monetary Authority (HKMA) Linked Exchange Rate System.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
+
+#### J. `cn_indices_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (2,428 daily records across SSE Composite and CSI 300, 11 columns).
+* **Source**: Shanghai and Shenzhen Stock Exchanges.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
+
+#### K. `cn_equities_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (22,618 daily records across 10 Chinese corporate leaders, 12 columns).
+* **Source**: SSE, SZSE, and US ADR listings.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
+
+#### L. `cn_macro_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-24 (2,602 daily records, 11 columns).
+* **Source**: People's Bank of China (PBoC) CFETS Reference Rates.
+* **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
+
+---
+
+### 2.8 VIP Social Sentiment & Executive Market Shocks (`data/sentiment/`)
+
+#### A. `vip_social_posts_events.parquet`
+* **Coverage**: 2018-03-01 to 2025-01-20 (29 discrete high-impact announcement events, 13 columns).
+* **Source**: Truth Social, Twitter/X, Federal Reserve FOMC transcripts, SEC Form 8-K filings.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `datetime_utc` | `Datetime[ms]` | ISO UTC | Exact second/millisecond timestamp of the public statement |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `author` | `String` | - | Public figure (`donald_trump`, `elon_musk`, `jerome_powell`, `michael_saylor`) |
+  | `platform` | `String` | - | Dissemination venue (`truth_social`, `twitter_x`, `fomc_press_conference`) |
+  | `post_text` | `String` | Text | Full literal text of the statement or post |
+  | `category` | `String` | - | Topic (`tariffs_trade_war`, `crypto_bitcoin_doge`, `monetary_policy_rates`, `ev_tech_automotive`, `geopolitics_national_security`) |
+  | `target_asset` | `String` | - | Primary financial instrument impacted (`SPY`, `TSLA`, `BTC-USD`, `DOGE-USD`, `USDCNY`, `FXI`) |
+  | `market_reaction_1d_pct` | `Float64` | % return | Immediate 1-day abnormal or discrete price return on target asset |
+  | `sentiment_label` | `String` | - | Directional sentiment (`BULLISH`, `BEARISH`, `HAWKISH`, `DOVISH`) |
+  | `sentiment_polarity` | `Float64` | Score (-1 to +1) | Quantified sentiment polarity index |
+  | `like_count` | `Int64` | Count | Number of public platform likes |
+  | `retweet_count` | `Int64` | Count | Number of platform reposts or retweets |
+  | `high_impact_flag` | `Boolean` | Flag | Indicator marking verified market-moving events |
+
+#### B. `trump_musk_market_shocks_daily.parquet`
+* **Coverage**: 2018-01-01 to 2026-10-24 (3,219 daily calendar observations, 8 columns).
+* **Source**: Cross-sectional aggregation of political, executive, and social media shocks.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Calendar date (ISO 8601) |
+  | `trump_post_count` | `Int64` | Count | Daily volume of market-relevant Trump posts |
+  | `musk_post_count` | `Int64` | Count | Daily volume of market-relevant Musk posts |
+  | `powell_statement_flag` | `Int64` | 0 or 1 | Indicator for Federal Reserve FOMC decision or Jackson Hole address |
+  | `tariff_shock_intensity` | `Float64` | Score (0 to 1) | Absolute intensity score of trade and tariff announcements |
+  | `crypto_hype_intensity` | `Float64` | Score (0 to 1) | Absolute intensity score of cryptocurrency endorsement or criticism |
+  | `vip_sentiment_net` | `Float64` | Score (-1 to +1) | Net average sentiment polarity across all VIP statements on date $t$ |
+  | `high_impact_event_day` | `Boolean` | Flag | True if any high-impact shock occurred on calendar date |
+
+### 2.9 World Financial Data Taxonomy: Macro, GICS Sectors, Factors, Credit & Fundamentals
+
+#### A. `global_macro_indicators_monthly.parquet` (`data/macro/`)
+* **Coverage**: 1959-01-01 to 2026-10-23 (13,540 continuous daily/monthly aligned records, 9 columns).
+* **Source**: Federal Reserve Bank of St. Louis (FRED Public Open Data).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Calendar observation date (ISO 8601) |
+  | `pce_headline_inflation_index` | `Float64` | Index | US Headline Personal Consumption Expenditures Price Index (`PCEPI`) |
+  | `unemployment_rate_pct` | `Float64` | % | US Civilian Unemployment Rate (`UNRATE`) |
+  | `chicago_fed_financial_conditions_index` | `Float64` | Index | National Financial Conditions Index (`NFCI`), 0=Neutral |
+  | `treasury_10y_breakeven_inflation` | `Float64` | % / year | 10-Year Breakeven Inflation Rate (`T10YIE`) |
+  | `term_spread_10y_2y` | `Float64` | % points | 10-Year Minus 2-Year Treasury Constant Maturity Spread (`T10Y2Y`) |
+  | `m2_money_supply_billions` | `Float64` | Billion USD | US M2 Seasonally Adjusted Money Supply (`M2SL`) |
+  | `public_debt_pct_gdp` | `Float64` | % of GDP | Federal Debt: Total Public Debt as Percent of Gross Domestic Product |
+  | `high_yield_option_adjusted_spread_bps` | `Float64` | bps | ICE BofA US High Yield Index Option-Adjusted Spread (`BAMLH0A0HYM2`) |
+
+#### B. `global_sectors_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (27,239 daily records across all 11 official GICS sectors, 11 columns).
+* **Source**: Select Sector SPDR Trust via Yahoo Finance.
+* **Fields**: `date` (`Date`), `symbol` (`String` e.g. `XLK`, `XLF`, `XLV`, `XLE`, `XLY`, `XLP`, `XLI`, `XLB`, `XLU`, `XLRE`, `XLC`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `sector_name` (`String`), `sector_code` (`String`).
+
+#### C. `global_factors_daily.parquet` (`data/market/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (20,112 daily records across 8 smart beta and style factor benchmarks, 11 columns).
+* **Source**: MSCI / iShares / Vanguard / ProShares via Yahoo Finance.
+* **Fields**: `date` (`Date`), `symbol` (`String` e.g. `MTUM`, `QUAL`, `USMV`, `VLUE`, `VUG`, `IJR`, `IJH`, `NOBL`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `factor_name` (`String`), `style_category` (`String`: Momentum, Quality, Low Vol, Value, Growth, Size, Dividend).
+
+#### D. `global_credit_spreads_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (19,758 daily records across fixed income credit classes and maritime freight, 11 columns).
+* **Source**: iShares / Breakwave Dry Bulk via Yahoo Finance.
+* **Fields**: `date` (`Date`), `symbol` (`String` e.g. `LQD`, `HYG`, `EMB`, `TIP`, `SHY`, `TLT`, `MUB`, `BDRY`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `asset_name` (`String`), `asset_category` (`String`).
+
+#### E. `global_cross_asset_volatility_daily.parquet` (`data/macro/`)
+* **Coverage**: 2016-10-24 to 2026-10-23 (2,516 daily records, 5 columns).
+* **Source**: Chicago Board Options Exchange (CBOE).
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
+  | `vix_equity` | `Float64` | Index | CBOE S&P 500 Volatility Index level (`^VIX`) |
+  | `vvix_vol_of_vol` | `Float64` | Index | CBOE VIX of VIX Volatility Index (`^VVIX`) |
+  | `ovx_crude_oil` | `Float64` | Index | CBOE Crude Oil ETF Volatility Index (`^OVX`) |
+  | `gvz_gold` | `Float64` | Index | CBOE Gold ETF Volatility Index (`^GVZ`) |
+
+#### F. `global_corporate_fundamentals.parquet` (`data/financials/`)
+* **Coverage**: Comprehensive cross-sectional profiles across 50 global mega-cap corporations in the US, Europe, Japan, South Korea, China, and Hong Kong (50 rows, 20 columns).
+* **Source**: S&P / SEC / Annual & Quarterly Corporate Disclosures via Yahoo Finance API.
+* **Fields**:
+  | Column Name | Type | Unit | Description |
+  | :--- | :--- | :--- | :--- |
+  | `symbol` | `String` | - | Primary equity ticker (e.g. `AAPL`, `NVDA`, `ASML`, `7203.T`, `005930.KS`, `0700.HK`) |
+  | `company_name` | `String` | - | Full legal or short corporate name |
+  | `country` | `String` | - | Sovereign jurisdiction of incorporation / headquarters |
+  | `sector` | `String` | - | GICS economic sector classification |
+  | `industry` | `String` | - | Specific industry group |
+  | `market_cap` | `Float64` | Currency | Total market capitalization |
+  | `enterprise_value` | `Float64` | Currency | Total enterprise value (Market Cap + Debt - Cash) |
+  | `pe_trailing` | `Float64` | Multiple | Trailing 12-month Price-to-Earnings ratio |
+  | `pe_forward` | `Float64` | Multiple | Forward 12-month consensus Price-to-Earnings multiple |
+  | `pb_ratio` | `Float64` | Multiple | Price-to-Book value ratio |
+  | `ps_ratio` | `Float64` | Multiple | Price-to-Sales trailing multiple |
+  | `ev_to_ebitda` | `Float64` | Multiple | Enterprise Value to EBITDA ratio |
+  | `profit_margin` | `Float64` | Ratio | Net profit margin |
+  | `operating_margin` | `Float64` | Ratio | Operating operating income margin |
+  | `roe` | `Float64` | Ratio | Return on Common Equity |
+  | `roa` | `Float64` | Ratio | Return on Total Assets |
+  | `debt_to_equity` | `Float64` | % | Total Debt to Shareholder Equity ratio |
+  | `dividend_yield` | `Float64` | Ratio | Annual dividend yield |
+  | `free_cashflow` | `Float64` | Currency | Trailing free cash flow |
+  | `beta` | `Float64` | Coefficient | 5-year monthly market beta |
 ---
 
 ## 3. Querying Datasets: Polars vs. Pandas Implementation Solutions

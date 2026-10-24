@@ -453,6 +453,35 @@ def build_corporate_and_microstructure():
         run_all()
     except Exception as e:
         print(f"    ! Error running corporate & microstructure ingestion: {e}")
+def build_global_multi_asset():
+    print(">>> 8. Ingesting Global Multi-Asset Markets (Asia, US, EU, Commodities, Crypto)...")
+    try:
+        from scripts.ingest_global_data import run_all
+        run_all()
+    except Exception as e:
+def build_country_markets():
+    print(">>> 9. Ingesting Country-Specific Markets (CN, HK, JP, KR)...")
+    try:
+        from scripts.ingest_country_markets import run_all
+        run_all()
+    except Exception as e:
+        print(f"    ! Error running country markets ingestion: {e}")
+
+def build_vip_sentiment():
+    print(">>> 10. Ingesting VIP Social Sentiment & Executive Shocks (Trump, Musk, Powell)...")
+    try:
+        from scripts.ingest_vip_sentiment import run_all
+        run_all()
+    except Exception as e:
+        print(f"    ! Error running VIP sentiment ingestion: {e}")
+
+def build_world_data():
+    print(">>> 11. Ingesting World Comprehensive Data (FRED Macro, GICS Sectors, Credit, Fundamentals)...")
+    try:
+        from scripts.ingest_world_data import run_all
+        run_all()
+    except Exception as e:
+        print(f"    ! Error running world data ingestion: {e}")
 
 
 if __name__ == "__main__":
@@ -465,5 +494,9 @@ if __name__ == "__main__":
     build_market_structure()
     build_sectors_and_industries()
     build_corporate_and_microstructure()
+    build_global_multi_asset()
+    build_country_markets()
+    build_vip_sentiment()
+    build_world_data()
     elapsed = time.time() - start_time
     print(f"\nAll datasets built and saved to Parquet successfully in {elapsed:.2f} seconds!")
