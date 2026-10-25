@@ -16,7 +16,7 @@ help:
 	@echo "========================================================================"
 	@echo " hypoq: Autonomous Quantitative Research Lab & Empirical Modeling"
 	@echo "========================================================================"
-	@echo " make install          Install host research stack (.venv) using uv"
+	@echo " make install          Install host research stack (.venv) & start default SQLite stack"
 	@echo " make download         Download, parse with anymd, and build all datasets"
 	@echo " make verify           Validate integrity and row counts of all Parquet files"
 	@echo " make start            Start Next.js web UI display container on Docker"
@@ -37,6 +37,8 @@ install:
 	@echo ">>> Research environment successfully configured in .venv!"
 	@echo "    Python binary: $(shell pwd)/.venv/bin/python3"
 	@$(PYTHON) -c "import polars, statsmodels, sklearn, torch, stable_baselines3; print('>>> Verified Core Libraries: Polars, Statsmodels, Scikit-Learn, PyTorch, Stable-Baselines3')"
+	@echo ">>> Setting up default SQLite database backend and starting web container..."
+	$(MAKE) install-sqlite
 
 download:
 	@echo ">>> Starting Complete Data Ingestion Pipeline via anymd..."

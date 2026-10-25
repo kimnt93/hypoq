@@ -136,7 +136,7 @@ python run.py --list --status=ACCEPTED
 ## 🛠️ Makefile Command Reference
 
 ```bash
-make install          # Install host Python research stack (.venv) using uv
+make install          # Install host Python research stack (.venv) & start default SQLite stack
 make download         # Ingest regulatory filings, WiData macro, and build Parquet datasets
 make verify           # Audit schema integrity and row counts across all 80 Parquet files
 make install-pg       # Launch PostgreSQL via Docker Compose & initialize semantic DB

@@ -54,7 +54,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 
 ```bash
 # Environment Setup (Host Machine via uv)
-make install   # Creates .venv and installs Polars, PyTorch, Stable-Baselines3, Scikit-Learn, Statsmodels
+make install   # Configures .venv via uv and automatically starts default SQLite stack with Docker Compose
 
 # Data Ingestion & Integrity Verification
 make download  # Triggers master WiData, regulatory filing, and macro ingestion
