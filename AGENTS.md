@@ -60,10 +60,11 @@ make install   # Creates .venv and installs Polars, PyTorch, Stable-Baselines3, 
 make download  # Triggers master WiData, regulatory filing, and macro ingestion
 make verify    # Audits row counts, schemas, and nullness across all 80 Parquet datasets
 
-# Web UI Display Stack (Docker Compose on Port 3030)
-# Note: Docker purely displays the web app. Quantitative research is executed outside Docker on host mounts.
-make start     # Launches Next.js TypeScript container with live volume mounts
-make stop      # Terminates container stack
+# Database & Web UI Stack (Docker Compose)
+make install-pg       # Launches PostgreSQL via Docker Compose & initializes semantic database
+make install-sqlite   # Launches SQLite & Next.js web container via Docker Compose
+make start            # Launches Next.js TypeScript container with live volume mounts
+make stop             # Terminates container stack
 
 # Multi-Agent Harness CLI
 python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"

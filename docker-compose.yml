@@ -1,4 +1,23 @@
 services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: hypoq-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-hypoq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-hypoq_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-hypoq}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-hypoq} -d ${POSTGRES_DB:-hypoq} || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
   hypoq-web:
     build:
       context: .
@@ -11,6 +30,7 @@ services:
       - NODE_ENV=production
       - PORT=3000
       - AUTORESEARCH_DB=/app/autoresearch.db
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///app/autoresearch.db}
     volumes:
       - ./data:/app/data:ro
       - ./autoresearch.db:/app/autoresearch.db:rw
@@ -22,3 +42,6 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
+
+volumes:
+  postgres_data:

@@ -138,7 +138,9 @@ python run.py --list --status=ACCEPTED
 ```bash
 make install          # Install host Python research stack (.venv) using uv
 make download         # Ingest regulatory filings, WiData macro, and build Parquet datasets
-make verify           # Audit schema integrity and row counts across all 36 Parquet files
+make verify           # Audit schema integrity and row counts across all 80 Parquet files
+make install-pg       # Launch PostgreSQL via Docker Compose & initialize semantic DB
+make install-sqlite   # Launch SQLite & Next.js web container via Docker Compose
 make start            # Launch Next.js web display container on Docker (port 3030)
 make stop             # Terminate Next.js web display container
 make parse-doc        # Parse document/PDF to Markdown (FILE=<path> [PAGES=1-5])
