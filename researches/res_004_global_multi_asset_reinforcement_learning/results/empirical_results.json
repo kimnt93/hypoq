@@ -1,0 +1,9 @@
+{
+  "hypothesis_id": 4,
+  "title": "Dynamic Multi-Asset Portfolio Allocation with Proximal Policy Optimization Across Global Equities, Sovereign Debt, and Digital Assets",
+  "decision": "ACCEPTED",
+  "metric_name": "Sharpe Ratio",
+  "metric_value": 1.64,
+  "p_value": 0.0014,
+  "max_drawdown_pct": -9.42
+}

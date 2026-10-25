@@ -1,0 +1,10 @@
+{
+  "hypothesis_id": 5,
+  "title": "Executive Social Announcements and Asset Price Jump Dynamics: An Econometric Event Study of Political and Corporate Shocks",
+  "decision": "ACCEPTED",
+  "metric_name": "CAR t-statistic",
+  "metric_value": 5.21,
+  "p_value": 0.0001,
+  "car_pct": 3.42,
+  "placebo_p_value": 0.0001
+}

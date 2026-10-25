@@ -14,7 +14,7 @@ This skill provides routines for querying Parquet files and SQLite databases in 
 ## When to Use
 - Implementing Next.js API endpoints (`app/api/dataset-preview/route.ts` or `app/api/hypotheses/route.ts`).
 - Transforming, slicing, or aggregating Parquet datasets on the Node/Next.js backend without invoking external Python processes.
-- Querying `autoresearch.db` inside fullstack JavaScript applications.
+- Querying `hypoq.db` inside fullstack JavaScript applications.
 
 ## Core Libraries
 - **Arquero** (`import * as aq from 'arquero'`): High-performance table/dataframe operations (filter, derive, groupby, rollup, sample, order) modeled after dplyr and pandas.
@@ -79,7 +79,7 @@ async function computeSectorSummary(dt) {
 ```javascript
 const { DatabaseSync } = require('node:sqlite');
 
-function getHypotheses(dbPath = 'autoresearch.db', status = null) {
+function getHypotheses(dbPath = 'hypoq.db', status = null) {
   const db = new DatabaseSync(dbPath);
   let queryStr = 'SELECT id, title, statement, domain, metric_name, metric_value, p_value, status, pdf_path FROM hypotheses';
   const params = [];

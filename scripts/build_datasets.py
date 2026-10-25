@@ -36,34 +36,34 @@ def build_market_structure():
     ff_path = os.path.join(LAZY_DATA_DIR, "free_float.csv")
     if os.path.exists(ff_path):
         df_ff = pl.read_csv(ff_path)
-        df_ff.write_parquet(os.path.join(STRUCT_DIR, "free_float.parquet"))
-        print(f"    - Saved free_float.parquet ({len(df_ff):,} rows, {df_ff['symbol'].n_unique()} tickers across {df_ff['index'].n_unique()} indices)")
+        df_ff.write_parquet(os.path.join(STRUCT_DIR, "vn_free_float.parquet"))
+        print(f"    - Saved vn_free_float.parquet ({len(df_ff):,} rows, {df_ff['symbol'].n_unique()} tickers across {df_ff['index'].n_unique()} indices)")
 
         # VN30 specific free-float slice
         df_vn30_ff = df_ff.filter(pl.col("index") == "VN30").sort(["symbol", "effective_date"])
-        df_vn30_ff.write_parquet(os.path.join(STRUCT_DIR, "vn30_free_float_history.parquet"))
-        print(f"    - Saved vn30_free_float_history.parquet ({len(df_vn30_ff):,} rows for VN30)")
+        df_vn30_ff.write_parquet(os.path.join(STRUCT_DIR, "vn_vn30_free_float_history.parquet"))
+        print(f"    - Saved vn_vn30_free_float_history.parquet ({len(df_vn30_ff):,} rows for VN30)")
 
     # 5.2 Observed free-float changes
     ff_changes_path = os.path.join(LAZY_DATA_DIR, "free_float_changes_observed.csv")
     if os.path.exists(ff_changes_path):
         df_ffc = pl.read_csv(ff_changes_path)
-        df_ffc.write_parquet(os.path.join(STRUCT_DIR, "free_float_changes_observed.parquet"))
-        print(f"    - Saved free_float_changes_observed.parquet ({len(df_ffc):,} rows)")
+        df_ffc.write_parquet(os.path.join(STRUCT_DIR, "vn_free_float_changes_observed.parquet"))
+        print(f"    - Saved vn_free_float_changes_observed.parquet ({len(df_ffc):,} rows)")
 
     # 5.3 Index constituents
     const_path = os.path.join(LAZY_DATA_DIR, "index_constituents.csv")
     if os.path.exists(const_path):
         df_const = pl.read_csv(const_path)
-        df_const.write_parquet(os.path.join(STRUCT_DIR, "index_constituents.parquet"))
-        print(f"    - Saved index_constituents.parquet ({len(df_const):,} rows)")
+        df_const.write_parquet(os.path.join(STRUCT_DIR, "vn_index_constituents.parquet"))
+        print(f"    - Saved vn_index_constituents.parquet ({len(df_const):,} rows)")
 
     # 5.4 Basket history
     basket_path = os.path.join(LAZY_DATA_DIR, "basket_history.csv")
     if os.path.exists(basket_path):
         df_basket = pl.read_csv(basket_path)
-        df_basket.write_parquet(os.path.join(STRUCT_DIR, "basket_history.parquet"))
-        print(f"    - Saved basket_history.parquet ({len(df_basket):,} rows)")
+        df_basket.write_parquet(os.path.join(STRUCT_DIR, "vn_basket_history.parquet"))
+        print(f"    - Saved vn_basket_history.parquet ({len(df_basket):,} rows)")
 for d in [MACRO_DIR, MARKET_DIR, FIN_DIR, CROSS_DIR]:
     os.makedirs(d, exist_ok=True)
 
@@ -123,8 +123,8 @@ def build_widata_macro():
         pivot_daily = sub_daily.pivot(on="series_id", index="date", values="value")
         rename_map = {k: v for k, v in vn_daily_series.items() if k in pivot_daily.columns}
         pivot_daily = pivot_daily.rename(rename_map).sort("date")
-        pivot_daily.write_parquet(os.path.join(MACRO_DIR, "vietnam_monetary_daily.parquet"))
-        print(f"    - Saved vietnam_monetary_daily.parquet ({len(pivot_daily):,} rows, {len(pivot_daily.columns)-1} features)")
+        pivot_daily.write_parquet(os.path.join(MACRO_DIR, "vn_monetary_daily.parquet"))
+        print(f"    - Saved vn_monetary_daily.parquet ({len(pivot_daily):,} rows, {len(pivot_daily.columns)-1} features)")
 
     # 1.3 Vietnam Monthly Real Economy & Macro Series
     vn_monthly_series = {
@@ -147,8 +147,8 @@ def build_widata_macro():
         pivot_monthly = sub_monthly.pivot(on="series_id", index="date", values="value")
         rename_map = {k: v for k, v in vn_monthly_series.items() if k in pivot_monthly.columns}
         pivot_monthly = pivot_monthly.rename(rename_map).sort("date")
-        pivot_monthly.write_parquet(os.path.join(MACRO_DIR, "vietnam_macro_monthly.parquet"))
-        print(f"    - Saved vietnam_macro_monthly.parquet ({len(pivot_monthly):,} rows, {len(pivot_monthly.columns)-1} features)")
+        pivot_monthly.write_parquet(os.path.join(MACRO_DIR, "vn_macro_monthly.parquet"))
+        print(f"    - Saved vn_macro_monthly.parquet ({len(pivot_monthly):,} rows, {len(pivot_monthly.columns)-1} features)")
 
     # 1.4 US Macro Series
     us_series = {
@@ -175,8 +175,8 @@ def build_widata_macro():
         with open('/tmp/widata_vnindex_pe_daily.json') as f:
             pe_data = json.load(f)
         df_pe = pl.DataFrame(pe_data).rename({"ngay": "date", "mack": "symbol"}).sort("date")
-        df_pe.write_parquet(os.path.join(MACRO_DIR, "vietnam_market_pe_daily.parquet"))
-        print(f"    - Saved vietnam_market_pe_daily.parquet ({len(df_pe):,} rows)")
+        df_pe.write_parquet(os.path.join(MACRO_DIR, "vn_market_pe_daily.parquet"))
+        print(f"    - Saved vn_market_pe_daily.parquet ({len(df_pe):,} rows)")
 
 
 def build_financials():
@@ -255,8 +255,8 @@ def build_market_data():
     print(f"    - Fetched VN30F1M: {len(f1m_records)} trading days")
     if f1m_records:
         df_f1m = pl.DataFrame(f1m_records).sort("date")
-        df_f1m.write_parquet(os.path.join(MARKET_DIR, "vn30f1m_derivatives_daily.parquet"))
-        print(f"    - Saved vn30f1m_derivatives_daily.parquet ({len(df_f1m):,} rows)")
+        df_f1m.write_parquet(os.path.join(MARKET_DIR, "vn_vn30f1m_derivatives_daily.parquet"))
+        print(f"    - Saved vn_vn30f1m_derivatives_daily.parquet ({len(df_f1m):,} rows)")
 
     # 3.3 Leading Sector Constituent Equities
     top_stocks = [
@@ -467,13 +467,13 @@ def build_country_markets():
     except Exception as e:
         print(f"    ! Error running country markets ingestion: {e}")
 
-def build_vip_sentiment():
-    print(">>> 10. Ingesting VIP Social Sentiment & Executive Shocks (Trump, Musk, Powell)...")
+def build_community_and_social():
+    print(">>> 10. Ingesting Raw Community & Social Discussions (Reddit, X, VIP)...")
     try:
-        from scripts.ingest_vip_sentiment import run_all
+        from scripts.ingest_community_and_social import run_all
         run_all()
     except Exception as e:
-        print(f"    ! Error running VIP sentiment ingestion: {e}")
+        print(f"    ! Error running community and social ingestion: {e}")
 
 def build_world_data():
     print(">>> 11. Ingesting World Comprehensive Data (FRED Macro, GICS Sectors, Credit, Fundamentals)...")
@@ -496,7 +496,7 @@ if __name__ == "__main__":
     build_corporate_and_microstructure()
     build_global_multi_asset()
     build_country_markets()
-    build_vip_sentiment()
+    build_community_and_social()
     build_world_data()
     elapsed = time.time() - start_time
     print(f"\nAll datasets built and saved to Parquet successfully in {elapsed:.2f} seconds!")

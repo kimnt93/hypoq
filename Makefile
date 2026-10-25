@@ -75,7 +75,7 @@ install-pg:
 	@until docker compose exec -T postgres pg_isready -U hypoq -d hypoq >/dev/null 2>&1; do sleep 1; done
 	@echo ">>> PostgreSQL container running on port $${POSTGRES_PORT:-5432}!"
 	@echo ">>> Initializing PostgreSQL tables and semantic vector embeddings..."
-	@$(PYTHON) -c "from autoresearch.db import init_db, sync_all_embeddings; url = 'postgresql://hypoq:hypoq_secret@localhost:5432/hypoq'; init_db(url); n = sync_all_embeddings(url); print(f'>>> Successfully initialized PostgreSQL database ({url}) with {n} semantic embeddings!')"
+	@$(PYTHON) -c "from hypoq.db import init_db, sync_all_embeddings; url = 'postgresql://hypoq:hypoq_secret@localhost:5432/hypoq'; init_db(url); n = sync_all_embeddings(url); print(f'>>> Successfully initialized PostgreSQL database ({url}) with {n} semantic embeddings!')"
 
 install-postgres: install-pg
 setup-pg: install-pg
@@ -83,7 +83,7 @@ setup-pg: install-pg
 install-sqlite:
 	docker compose up -d hypoq-web
 	@echo ">>> Initializing SQLite database schema and semantic vector embeddings..."
-	@$(PYTHON) -c "from autoresearch.db import init_db, sync_all_embeddings; init_db('autoresearch.db'); n = sync_all_embeddings('autoresearch.db'); print(f'>>> Successfully initialized SQLite database (autoresearch.db) with {n} semantic embeddings!')"
+	@$(PYTHON) -c "from hypoq.db import init_db, sync_all_embeddings; init_db('hypoq.db'); n = sync_all_embeddings('hypoq.db'); print(f'>>> Successfully initialized SQLite database (hypoq.db) with {n} semantic embeddings!')"
 	@echo ">>> SQLite database and hypoq web display active at http://127.0.0.1:$${PORT:-3030}!"
 
 setup-sqlite: install-sqlite

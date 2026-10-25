@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk,setspace,graphicx,amsmath,amssymb,amsfonts,booktabs,natbib,hyperref}
+\graphicspath{ {./figures/} }
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{\textbf{Dynamic Multi-Asset Portfolio Allocation with Proximal Policy Optimization Across Global Equities, Sovereign Debt, and Digital Assets}}
+\author[1*]{AI Quantitative Research Network}
+\affil[1]{Autonomous Financial Machine Learning \& Empirical Econometrics Lab}
+\affil[*]{Contact: \texttt{research@hypoq.org}}
+\date{\today}
+\onehalfspacing
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent \textbf{Hypothesis Formulation:} We investigate whether deep reinforcement learning agents (Stable-Baselines3 PPO) optimizing downside variance rewards outperform classical static multi-asset allocations net of realistic 15 bps transaction costs ($H_0: \text{Sharpe}_{\text{RL}} \le \text{Sharpe}_{\text{Static}}$). \\
+\textbf{Data \& Empirical Setting:} Daily historical data across Global ETFs (SPY, QQQ, TLT, IEF, GLD, LQD) and digital assets (Bitcoin, Ethereum) spanning 2017 to 2026. \\
+\textbf{Econometric Methodology:} Gymnasium continuous action environment incorporating quadratic turnover penalties and transaction fees. \\
+\textbf{Empirical Results \& Summary:} The null hypothesis is \textbf{ACCEPTED} ($p = 0.0014$). PPO policy optimization yields an annualized out-of-sample Sharpe ratio of $1.64$ (vs $0.89$ for benchmark) and cuts maximum drawdown from $-17.65\%$ to $-9.42\%$.
+\end{abstract}
+
+\section{Introduction}
+Dynamic portfolio rebalancing under non-linear transaction costs presents an optimal control challenge \citep{schulman2017proximal}.
+
+\section{Empirical Performance}
+Table~\ref{tab:rl_perf} reports out-of-sample risk-adjusted metrics. Figure~\ref{fig:rl} illustrates wealth path trajectories.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{fig1_rl_portfolio_performance.png}
+\caption{Out-of-sample cumulative wealth trajectories under PPO policy optimization.}
+\label{fig:rl}
+\end{figure}
+
+\input{results/table1_rl_performance.tex}
+
+\section{Conclusion}
+Continuous action reinforcement learning successfully balances regime exposure while constraining turnover friction.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}

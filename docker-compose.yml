@@ -29,11 +29,11 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - AUTORESEARCH_DB=/app/autoresearch.db
-      - DATABASE_URL=${DATABASE_URL:-sqlite:///app/autoresearch.db}
+      - HYPOQ_DB=/app/hypoq.db
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///app/hypoq.db}
     volumes:
       - ./data:/app/data:ro
-      - ./autoresearch.db:/app/autoresearch.db:rw
+      - ./hypoq.db:/app/hypoq.db:rw
       - ./researches:/app/researches:ro
       - ./templates:/app/templates:ro
     healthcheck:

@@ -36,9 +36,9 @@ export async function GET(request: NextRequest) {
   const query = searchParams.get('q');
 
   const root = getProjectRoot();
-  const dbPath = process.env.AUTORESEARCH_DB && fs.existsSync(process.env.AUTORESEARCH_DB)
-    ? process.env.AUTORESEARCH_DB
-    : path.join(root, 'autoresearch.db');
+  const dbPath = process.env.HYPOQ_DB && fs.existsSync(process.env.HYPOQ_DB)
+    ? process.env.HYPOQ_DB
+    : path.join(root, 'hypoq.db');
 
   if (!fs.existsSync(dbPath)) {
     return NextResponse.json({ error: `Database not found at ${dbPath}` }, { status: 404 });

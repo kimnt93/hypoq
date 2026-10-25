@@ -40,7 +40,7 @@ from scripts.build_corporate_network import build_network as build_corporate_net
 from scripts.ingest_etf_data import run_all as run_etf
 from scripts.ingest_global_data import run_all as run_global_ingestion
 from scripts.ingest_country_markets import run_all as run_country_markets
-from scripts.ingest_vip_sentiment import run_all as run_vip_sentiment
+from scripts.ingest_community_and_social import run_all as run_community_social
 from scripts.ingest_world_data import run_all as run_world_data
 from scripts.migrate_time_datatypes import run_migration
 from scripts.anymd_parser import parse_to_markdown
@@ -75,9 +75,9 @@ def run_download_all():
     print("\n[Step 3.3] Ingesting Country-Specific Markets (China, Hong Kong, Japan, South Korea)...")
     run_country_markets()
 
-    # 3.4 VIP Social Sentiment & Market Shocks (Trump, Musk, Powell)
-    print("\n[Step 3.4] Ingesting VIP Social Sentiment & Market Shocks (Trump, Musk, Powell)...")
-    run_vip_sentiment()
+    # 3.4 Raw Financial Community & Social Posts (Reddit, X, VIP Statements)
+    print("\n[Step 3.4] Ingesting Raw Financial Community & Social Discussions (Reddit, X, VIP)...")
+    run_community_social()
 
     # 3.5 World Comprehensive Financial & Macroeconomic Taxonomy (FRED, GICS, Credit, Freight)
     print("\n[Step 3.5] Ingesting World Data Taxonomy (FRED Macro, GICS Sectors, Credit, Fundamentals)...")

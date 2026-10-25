@@ -14,7 +14,7 @@
 ## 1. Executive Research Mandate
 
 The primary mission is the autonomous generation, empirical econometric testing, and peer-reviewed documentation of quantitative hypotheses across the global financial market ecosystem—spanning Asia-Pacific, North America, Europe, global commodities, and decentralized digital assets—with strict point-in-time causality and econometric discipline.
-Every empirical investigation follows the **AutoResearch Cycle**:
+Every empirical investigation follows the **hypoq Cycle**:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
 ### Core Invariants:
@@ -23,7 +23,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 3. **Strict Point-in-Time (PIT) Causality**: Zero look-ahead bias ($\tau_{\text{info}} \le \tau_{\text{market}}$).
 4. **Econometric & Statistical Rigor**: Newey--West HAC robust covariance, stationarity verification (ADF), placebo bootstrap tests, and transaction friction hurdles.
 5. **Python-Only Empirical & ML/DL/RL Implementation**: All estimation pipelines, machine learning (Scikit-Learn), deep learning (PyTorch), and reinforcement learning (Stable-Baselines3) models must be executed in Python using Polars, Scikit-Learn, PyTorch, Stable-Baselines3, and Statsmodels (`code/run_pipeline.py`).
-6. **Autonomous Serialization & Semantic Storage**: Every study compiles to a concise, high-density LaTeX report (`main.pdf`) using the standard research template and registers metrics, findings, and dense vector embeddings in the database (`autoresearch.db` via SQLite or PostgreSQL via `DATABASE_URL`).
+6. **Autonomous Serialization & Semantic Storage**: Every study compiles to a concise, high-density LaTeX report (`main.pdf`) using the standard research template and registers metrics, findings, and dense vector embeddings in the database (`hypoq.db` via SQLite or PostgreSQL via `DATABASE_URL`).
 
 ---
 

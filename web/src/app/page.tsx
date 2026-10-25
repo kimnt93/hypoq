@@ -129,10 +129,10 @@ export default function HomePage() {
           <span style={{ fontSize: 28 }}>🔬</span>
           <div>
             <h1 style={{ fontSize: 22, color: 'var(--text-heading)', fontWeight: 700 }}>
-              AI AutoResearch Lab
+              hypoq Lab
             </h1>
             <p style={{ fontSize: 13, color: 'var(--muted)' }}>
-              Autonomous Quantitative Research Network • Empirical Financial Economics
+              Autonomous Quantitative Research Network • Global Multi-Asset Empirical Economics
             </p>
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function HomePage() {
               fontWeight: 600,
             }}
           >
-            Data Lake (36 Parquets)
+            Data Lake ({datasets.length || 70} Parquets)
           </button>
           <button
             onClick={() => setActiveTab('reports')}
@@ -243,7 +243,7 @@ export default function HomePage() {
           }}
         >
           <div style={{ fontSize: 13, color: 'var(--muted)' }}>Data Lake Parquets</div>
-          <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--accent)' }}>36</div>
+          <div style={{ fontSize: 26, fontWeight: 700, color: 'var(--accent)' }}>{datasets.length || 70}</div>
         </div>
       </div>
 
@@ -254,7 +254,7 @@ export default function HomePage() {
           <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
             <input
               type="text"
-              placeholder="Search hypotheses with SQLite FTS5 (e.g. tightly held, basis, order flow, monetary)..."
+              placeholder="Search hypotheses using dense semantic vector similarity (e.g. volatility spillover, portfolio optimization, factor alpha)..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => {
@@ -481,7 +481,7 @@ export default function HomePage() {
       {activeTab === 'datasets' && (
         <div>
           <h2 style={{ fontSize: 18, color: 'var(--text-heading)', marginBottom: 16 }}>
-            Vietnamese Quantitative Data Lake (36 Parquet Datasets)
+            Global Quantitative Financial Data Lake ({datasets.length || 70} Parquet Datasets)
           </h2>
           <div
             style={{

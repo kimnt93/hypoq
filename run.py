@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-AutoResearch Master CLI Runner.
+hypoq CLI Runner.
 Supports multi-agent orchestration, hypothesis search, research execution, and web dashboard.
 
 Usage:
@@ -19,14 +19,14 @@ from typing import List
 # Ensure repository root is on sys.path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from autoresearch.db import (
+from hypoq.db import (
     init_db,
     search_hypotheses,
     list_hypotheses,
     get_hypothesis,
     DEFAULT_DB_PATH,
 )
-from autoresearch.harness import ResearchSession, SUPPORTED_AGENTS
+from hypoq.harness import ResearchSession, SUPPORTED_AGENTS
 
 
 def format_table(rows: List[dict], headers: List[str], keys: List[str]):
@@ -60,7 +60,7 @@ def format_table(rows: List[dict], headers: List[str], keys: List[str]):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="AutoResearch Harness: Autonomous Quantitative Research for Financial Markets",
+        description="hypoq: Hypothesis × Quant Research Engine",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
@@ -148,7 +148,7 @@ def main():
 
     # Mode 2: List Hypotheses
     if args.list:
-        print("\n📋 [AutoResearch Hypotheses Inventory]")
+        print("\n📋 [hypoq Hypotheses Inventory]")
         records = list_hypotheses(
             status=args.status, domain=args.domain, limit=100, db_path=args.db
         )
@@ -161,7 +161,7 @@ def main():
 
     # Mode 3: Start Web Server
     if args.web:
-        from autoresearch.web.server import run_server
+        from api import run_server
         run_server(port=args.port, db_path=args.db)
         return
 

@@ -1,0 +1,44 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk,setspace,graphicx,amsmath,amssymb,amsfonts,booktabs,natbib,hyperref}
+\graphicspath{ {./figures/} }
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{\textbf{Multi-Horizon Volatility Nowcasting with Deep Recurrent Sequence Models Across Crypto and Traditional Equities}}
+\author[1*]{AI Quantitative Research Network}
+\affil[1]{Autonomous Financial Machine Learning \& Empirical Econometrics Lab}
+\affil[*]{Contact: \texttt{research@hypoq.org}}
+\date{\today}
+\onehalfspacing
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent \textbf{Hypothesis Formulation:} We test whether deep recurrent neural network sequence architectures (PyTorch LSTM) incorporating multi-asset volatility surfaces outperform classical GARCH(1,1) baselines in multi-horizon volatility nowcasting ($H_0: \text{RMSE}_{\text{DL}} \ge \text{RMSE}_{\text{GARCH}}$). \\
+\textbf{Data \& Empirical Setting:} 10-year daily historical observations across Bitcoin, Ethereum, S\&P 500, and CBOE VIX. \\
+\textbf{Econometric Methodology:} Out-of-sample rolling forecasts with Diebold--Mariano pairwise equal predictive accuracy tests. \\
+\textbf{Empirical Results \& Summary:} The null hypothesis is \textbf{REJECTED} ($p = 0.078 > 0.01$). Despite marginal point-forecast improvements ($< 1\%$ RMSE reduction), deep sequence models fail to deliver statistically significant superiority over parsimonious GARCH specifications.
+\end{abstract}
+
+\section{Introduction}
+Non-linear volatility dynamics in digital assets present unique modeling challenges \citep{bollerslev1986generalized}. We benchmark overparameterized deep neural networks against parsimonious econometric baselines.
+
+\section{Empirical Results}
+Table~\ref{tab:dl_vol} compares nowcasting accuracy across horizons. Figure~\ref{fig:dl} shows model tracking paths.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{fig1_dl_volatility_nowcasting.png}
+\caption{Realized versus predicted volatility across deep learning and GARCH baselines.}
+\label{fig:dl}
+\end{figure}
+
+\input{results/table1_dl_volatility_performance.tex}
+
+\section{Conclusion}
+In financial environments characterized by structural regime breaks, parsimonious econometric models maintain competitive edge over deep recurrent architectures.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+\end{document}

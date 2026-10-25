@@ -1,5 +1,5 @@
 """
-Seed AutoResearch SQLite Database with verified empirical hypotheses from paper-hub papers.
+Seed hypoq SQLite Database with verified empirical hypotheses from paper-hub papers.
 """
 
 import os
@@ -8,7 +8,7 @@ import sys
 # Ensure root is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from autoresearch.db import init_db, record_hypothesis, create_session, DEFAULT_DB_PATH
+from hypoq.db import init_db, record_hypothesis, create_session, DEFAULT_DB_PATH
 
 
 def seed():

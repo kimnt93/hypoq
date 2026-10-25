@@ -9,7 +9,7 @@ export function getProjectRoot(): string {
     path.resolve(process.cwd(), '..', '..', '..'),
   ];
   for (const c of candidates) {
-    if (fs.existsSync(path.join(c, 'data')) && fs.existsSync(path.join(c, 'autoresearch.db'))) {
+    if (fs.existsSync(path.join(c, 'data')) && fs.existsSync(path.join(c, 'hypoq.db'))) {
       return c;
     }
   }
@@ -17,9 +17,9 @@ export function getProjectRoot(): string {
 }
 
 export function getDbPath(): string {
-  if (process.env.AUTORESEARCH_DB && fs.existsSync(process.env.AUTORESEARCH_DB)) {
-    return process.env.AUTORESEARCH_DB;
+  if (process.env.HYPOQ_DB && fs.existsSync(process.env.HYPOQ_DB)) {
+    return process.env.HYPOQ_DB;
   }
   const root = getProjectRoot();
-  return path.join(root, 'autoresearch.db');
+  return path.join(root, 'hypoq.db');
 }

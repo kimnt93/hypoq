@@ -27,13 +27,13 @@ Whenever an AI agent (Claude, Codex, Hermes, Pi, OMP) is awakened in this reposi
    * `latex-report-generation`: Compiling `templates/main.tex` to `main.pdf` via Tectonic.
    * `arxiv-paper-search`: Literature exploration and BibTeX extraction.
    * `paper-pdf-to-md`: PDF-to-Markdown document parsing using `anymd`.
-   * `autoresearch-loop`: Execution protocol for the 8-stage research cycle.
-   * `dedup-hypothesis-search`: FTS5 BM25 deduplication ranking in `autoresearch.db`.
+   * `hypoq-loop`: Execution protocol for the 8-stage research cycle.
+   * `dedup-hypothesis-search`: FTS5 BM25 deduplication ranking in `hypoq.db`.
 ---
 
 ## 2. Autonomous Research Execution Protocol
 
-All empirical research investigations must execute the **AutoResearch Cycle**:
+All empirical research investigations must execute the **hypoq Cycle**:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
 ### Non-Negotiables:
@@ -46,7 +46,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
    ```bash
    cd researches/<research_folder> && /home/kim/.local/bin/tectonic main.tex
    ```
-7. **Dual-Backend Persistence**: Register empirical metrics, $p$-values, effect sizes, and dense vector embeddings in SQLite (`autoresearch.db`) or PostgreSQL (via `DATABASE_URL`).
+7. **Dual-Backend Persistence**: Register empirical metrics, $p$-values, effect sizes, and dense vector embeddings in SQLite (`hypoq.db`) or PostgreSQL (via `DATABASE_URL`).
 
 ---
 

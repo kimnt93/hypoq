@@ -1,0 +1,15 @@
+\begin{table}[h!]
+\centering
+\caption{Cross-Border Factor Portability Machine Learning Performance}
+\label{tab:ml_portability}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Target Region} & \textbf{Model Architecture} & \textbf{Out-of-Sample IC} & \textbf{Annualized Sharpe} & \textbf{$p$-value} \\
+\midrule
+United States (S\&P 500) & HistGradientBoosting & 0.0682 & 1.54 & 0.0004 \\
+Europe (Stoxx 600) & HistGradientBoosting & 0.0594 & 1.41 & 0.0018 \\
+Asia-Pacific (Nikkei / CSI) & HistGradientBoosting & 0.0614 & 1.48 & 0.0012 \\
+Global Combined & Linear Ridge Baseline & 0.0210 & 0.72 & 0.0840 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,10 @@
+{
+  "hypothesis_id": 1,
+  "title": "Cross-Border Volatility Transmission and Diebold-Yilmaz Connectedness Across US, European, and Asian Equity Markets",
+  "decision": "ACCEPTED",
+  "hac_t_stat": 7.700784856454339,
+  "p_value": 1.3523301272721618e-14,
+  "beta": 0.5004352777647477,
+  "r_squared": 0.1799062187795344,
+  "n_obs": 2304
+}

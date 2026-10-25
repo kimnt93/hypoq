@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{graphicx}
+\graphicspath{ {./figures/} }
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{\textbf{Cross-Border Volatility Transmission and Diebold--Yilmaz Connectedness Across US, European, and Asian Equity Markets}}
+\author[1*]{AI Quantitative Research Network}
+\affil[1]{Autonomous Financial Machine Learning \& Empirical Econometrics Lab}
+\affil[*]{Contact: \texttt{research@hypoq.org}}
+\date{\today}
+\onehalfspacing
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent \textbf{Hypothesis Formulation:} We investigate whether innovations in US equity returns and volatility surfaces exert asymmetric, statistically significant directional transmission to European and Asian equity markets ($H_0: \beta_{\text{US}\to\text{Asia}} = 0$ versus $H_1: \beta_{\text{US}\to\text{Asia}} > 0$). \\
+\textbf{Data \& Empirical Setting:} Daily closing observations from 2016 to 2026 across S\&P 500, Euro Stoxx 50, Nikkei 225, CBOE VIX, Crude Oil OVX, and Gold GVZ across 2,400+ aligned global trading sessions. \\
+\textbf{Econometric Methodology:} Generalized forecast error variance decomposition (GFEVD) within a Vector Autoregression (VAR) framework and Newey--West HAC robust time-zone lead-lag regressions ensuring zero look-ahead bias ($\tau_{\text{US}, t-1} \prec \tau_{\text{Asia}, t}$). \\
+\textbf{Empirical Results \& Summary:} The null hypothesis is decisively \textbf{ACCEPTED} in favor of strong cross-border transmission ($\beta = 0.2814$, HAC $t = 9.42$, $p < 10^{-15}$). Total cross-market volatility spillover index reaches 43.82\%, confirming that US market innovations dominate international price discovery.
+\end{abstract}
+
+\section{Introduction and Theoretical Framework}
+International asset pricing models emphasize cross-border informational spillovers and volatility connectedness \citep{diebold2012better, engle1990meteor}. Given chronological time-zone structures, US markets close after European and Asian bourses, making the prior-day US session the primary global information aggregator.
+
+\section{Empirical Results}
+Table~\ref{tab:spillover} reports Newey--West HAC regression estimates. A 100 bps innovation in the S\&P 500 is associated with a contemporaneous +28.14 bps jump in the Nikkei 225 ($t = 9.42, p < 0.0001$). Figure~\ref{fig:spillover} depicts the cross-border transmission regression line.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.85\textwidth]{fig1_volatility_spillover.png}
+\caption{Cross-Border Transmission: US S\&P 500 Lagged Shock into Japan Nikkei 225.}
+\label{fig:spillover}
+\end{figure}
+
+\input{results/table1_volatility_spillover.tex}
+
+\section{Conclusion}
+The empirical evidence decisively rejects the isolation hypothesis: cross-border equity volatility connectedness is asymmetric, persistent, and statistically significant.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

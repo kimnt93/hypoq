@@ -8,7 +8,7 @@ templates
 scripts
 .agents
 assets
-autoresearch
+hypoq
 *.db
 *.parquet
 *.py

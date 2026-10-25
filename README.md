@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for global financial economics, cross-border equity factor modeling, sovereign yield curve term structure, macroeconomic spillovers, cryptocurrency microstructure, and multi-asset derivatives across **Asia**, the **United States**, **Europe**, and decentralized digital asset markets. **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
+**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for global financial economics, cross-border equity factor modeling, sovereign yield curve term structure, macroeconomic spillovers, cryptocurrency microstructure, and multi-asset derivatives across **Asia**, the **United States**, **Europe**, and decentralized digital asset markets. **hypoq** operationalizes an autonomous agent research loop inspired by the hypoq paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
 
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
@@ -38,7 +38,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 │ • Persistence: SQLite / PostgreSQL (Dense Semantic Vector Search via Gemini/HF) │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ Live Host Volume Mounts
-                                    │ (./data, ./autoresearch.db, ./researches)
+                                    │ (./data, ./hypoq.db, ./researches)
 ┌───────────────────────────────────▼────────────────────────────────────┐
 │ DOCKER CONTAINER (Web UI & Audit Display on Port 3030)                 │
 │ • Service: hypoq-web (Next.js 16 + TypeScript + Tailwind CSS)          │
@@ -60,7 +60,7 @@ Every research investigation adheres to strict empirical non-negotiables:
    * **Deep Learning**: Non-linear volatility nowcasting and neural sequence modeling with `pytorch`.
    * **Reinforcement Learning**: Continuous asset allocation and order execution agents using `stable-baselines3` under realistic transaction friction hurdles.
    * **Econometrics & Statistics**: Newey--West HAC robust covariance, Augmented Dickey-Fuller (ADF) unit roots, event-study Cumulative Abnormal Returns (CAR), and error-correction mean-reversion with `statsmodels`.
-4. **Autonomous Serialization**: Every study compiles into a publication-ready LaTeX paper (`main.pdf`) using Tectonic and registers empirical metrics into `autoresearch.db`.
+4. **Autonomous Serialization**: Every study compiles into a publication-ready LaTeX paper (`main.pdf`) using Tectonic and registers empirical metrics into `hypoq.db`.
 
 ---
 
@@ -102,7 +102,7 @@ make install
 
 ### 2. Web UI Display via Docker Compose (Port 3030)
 
-The Docker container displays the Next.js web application and dashboard, with live volume mounts to the host's `data/`, `autoresearch.db`, and `researches/` directories:
+The Docker container displays the Next.js web application and dashboard, with live volume mounts to the host's `data/`, `hypoq.db`, and `researches/` directories:
 
 ```bash
 # Start Next.js web display container

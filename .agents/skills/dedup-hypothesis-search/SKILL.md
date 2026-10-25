@@ -9,7 +9,7 @@ tags: [search, deduplication, semantic-search, vector-embeddings, gemini, huggin
 # Deduplication & Hypothesis Search Skill
 
 ## Overview
-To prevent wasted compute and redundant empirical exploration, this skill provides dense semantic vector search over historical hypotheses stored in `autoresearch.db` (SQLite) or PostgreSQL (configured via `DATABASE_URL`). It replaces rigid keyword matching with neural embeddings that compute cosine similarity over hypothesis concepts, null/alt formulations, and empirical findings.
+To prevent wasted compute and redundant empirical exploration, this skill provides dense semantic vector search over historical hypotheses stored in `hypoq.db` (SQLite) or PostgreSQL (configured via `DATABASE_URL`). It replaces rigid keyword matching with neural embeddings that compute cosine similarity over hypothesis concepts, null/alt formulations, and empirical findings.
 
 ### Embedding Providers Supported
 1. **Google Gemini (`text-embedding-004`)**: Activated when `GEMINI_API_KEY` is provided. Free tier, 768 dimensions.
@@ -34,7 +34,7 @@ DATABASE_URL="postgresql://user:pass@localhost:5432/hypoq" python run.py --searc
 
 ## Python Integration
 ```python
-from autoresearch.db import search_hypotheses
+from hypoq.db import search_hypotheses
 
 def query_semantic_dedup(query_str: str, top_k: int = 5, min_score: float = 0.3):
     """

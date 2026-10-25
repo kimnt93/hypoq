@@ -39,7 +39,7 @@ def search_arxiv(query: str, max_results: int = 5) -> List[Dict]:
     }
     url = base_url + urllib.parse.urlencode(params)
     
-    req = urllib.request.Request(url, headers={"User-Agent": "AutoResearch/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "hypoq/1.0"})
     with urllib.request.urlopen(req, timeout=15) as resp:
         xml_data = resp.read()
         
