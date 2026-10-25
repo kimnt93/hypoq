@@ -1,14 +1,13 @@
 \begin{table}[h!]
 \centering
-\caption{Cross-Border Volatility \& Lead-Lag Regression Estimates}
+\caption{Next-session response to the prior US session (HAC Newey--West, one-sided $H_1:\beta>0$)}
 \label{tab:spillover}
-\begin{tabular}{lcccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Predictor Asset} & \textbf{Target Asset} & \textbf{Coefficient ($\beta$)} & \textbf{HAC $t$-stat} & \textbf{$p$-value} \\
+Target & $\beta$ & HAC $t$ & $p$ & Placebo $p$ & $R^2$ & $N$ \\
 \midrule
-US S\&P 500 ($t-1$) & Japan Nikkei 225 ($t$) & 0.5004 & 7.70 & 1.35e-14 \\
-US S\&P 500 ($t-1$) & Euro Stoxx 50 ($t$) & 0.3812 & 11.24 & < 1e-15 \\
-Crude Oil OVX ($t-1$) & Global Equities & -0.1420 & -3.85 & 0.0001 \\
+Nikkei 225 ($t$) & 0.5004 & 7.70 & 6.76e-15 & 0.0005 & 0.1799 & 2,304 \\
+Euro Stoxx 50 ($t$) & 0.1182 & 1.93 & 2.66e-02 & 0.0225 & 0.0142 & 2,304 \\
 \bottomrule
 \end{tabular}
 \end{table}

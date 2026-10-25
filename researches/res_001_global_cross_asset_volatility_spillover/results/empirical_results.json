@@ -1,10 +1,28 @@
 {
-  "hypothesis_id": 1,
-  "title": "Cross-Border Volatility Transmission and Diebold-Yilmaz Connectedness Across US, European, and Asian Equity Markets",
-  "decision": "ACCEPTED",
-  "hac_t_stat": 7.700784856454339,
-  "p_value": 1.3523301272721618e-14,
-  "beta": 0.5004352777647477,
-  "r_squared": 0.1799062187795344,
-  "n_obs": 2304
+  "title": "Cross-Border Return Transmission from the US Session to European and Japanese Equity Markets",
+  "decision": "REJECTED",
+  "alpha_bonferroni": 0.025,
+  "japan": {
+    "beta": 0.5004352777647477,
+    "t": 7.700784856454339,
+    "p": 6.761650636360809e-15,
+    "r2": 0.1799062187795344,
+    "n": 2304,
+    "placebo_p": 0.0004997501249375312
+  },
+  "europe": {
+    "beta": 0.11815970286912976,
+    "t": 1.9338127724636547,
+    "p": 0.02656807591495405,
+    "r2": 0.01419833439068141,
+    "n": 2304,
+    "placebo_p": 0.022488755622188907
+  },
+  "fevd_total_spillover_pct": {
+    "order_us_eu_jp": 22.36364089859885,
+    "order_jp_eu_us": 24.48795599982734
+  },
+  "var_lag_order": 1,
+  "sample_start": "2016-10-24",
+  "sample_end": "2026-10-23"
 }

@@ -1,89 +1,85 @@
 # Global Macroeconomic, Financial, Crypto & Multi-Asset Dataset Documentation (DATA.md)
 
-This document provides a comprehensive, standardized specification of all 80 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
+This document provides a comprehensive, standardized specification of all 65 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
 
 ---
 
-## 1. Directory Structure & Inventory (80 Parquet Files, 2,005,263 Rows)
+## 1. Directory Structure & Inventory (65 Parquet Files, 1,736,010 Rows)
 
 ```text
 data/
 ├── macro/
-│   ├── vn_monetary_daily.parquet                # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
-│   ├── vn_macro_monthly.parquet                 # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
-│   ├── vn_commodities_daily.parquet             # 2,285 rows x 17 cols | Construction Steel, Pork, Fuels, Coffee, Rice
-│   ├── vn_trade_exports_monthly.parquet         # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
-│   ├── vn_fdi_sectors_monthly.parquet           # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
-│   ├── vn_sbv_policy_rates_daily.parquet        # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
-│   ├── vn_market_pe_daily.parquet               # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
-│   ├── us_macro_daily.parquet                   # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
-│   ├── us_fed_balance_sheet_weekly.parquet      # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
-│   ├── us_yield_curve_daily.parquet             # 2,516 rows x 8 cols | US Treasury Curve (3M, 5Y, 10Y, 30Y), Slopes & VIX
-│   ├── eu_macro_daily.parquet                   # 13,016 rows x 11 cols | European FX Rates (EUR/USD, GBP/USD, EUR Crosses)
-│   ├── asia_macro_daily.parquet                 # 20,822 rows x 11 cols | Asian FX Rates (USD/JPY, USD/CNY, USD/KRW, USD/INR)
-│   ├── cn_macro_daily.parquet                   # 2,602 rows x 11 cols | China FX & Currency Series (USD/CNY)
-│   ├── hk_macro_daily.parquet                   # 2,602 rows x 11 cols | Hong Kong FX & Peg Series (USD/HKD)
-│   ├── jp_macro_daily.parquet                   # 5,206 rows x 11 cols | Japan FX & Cross Series (USD/JPY, EUR/JPY)
-│   ├── kr_macro_daily.parquet                   # 2,603 rows x 11 cols | South Korea FX Series (USD/KRW)
-│   ├── global_commodities_daily.parquet         # 35,209 rows x 11 cols | Energy, Precious & Industrial Metals, Agriculture
-│   ├── global_credit_spreads_daily.parquet      # 19,758 rows x 11 cols | IG (LQD), HY (HYG), EMB, TIPS, Munis & Freight (BDRY)
-│   ├── global_cross_asset_volatility_daily.parquet # 2,516 rows x 5 cols | VIX Equity, VVIX Vol of Vol, OVX Oil, GVZ Gold
-│   └── global_macro_indicators_monthly.parquet  # 13,540 rows x 9 cols | FRED Inflation, Unemployment, NFCI, Breakeven, M2
+│   ├── asia_macro_daily.parquet                     # 20,822 rows x 11 cols | Asian FX Rates (USD/JPY, USD/CNY, USD/KRW, USD/INR)
+│   ├── cn_macro_daily.parquet                       # 2,602 rows x 11 cols | China FX & Currency Series (USD/CNY)
+│   ├── eu_macro_daily.parquet                       # 13,016 rows x 11 cols | European FX Rates (EUR/USD, GBP/USD, EUR Crosses)
+│   ├── global_commodities_daily.parquet             # 35,209 rows x 11 cols | Energy, Precious & Industrial Metals, Agriculture
+│   ├── global_credit_spreads_daily.parquet          # 19,758 rows x 11 cols | IG (LQD), HY (HYG), EMB, TIPS, Munis & Freight (BDRY)
+│   ├── global_cross_asset_volatility_daily.parquet  # 2,516 rows x 5 cols | VIX Equity, VVIX Vol of Vol, OVX Oil, GVZ Gold
+│   ├── global_macro_indicators_monthly.parquet      # 13,540 rows x 9 cols | FRED Inflation, Unemployment, NFCI, Breakeven, M2
+│   ├── hk_macro_daily.parquet                       # 2,602 rows x 11 cols | Hong Kong FX & Peg Series (USD/HKD)
+│   ├── jp_macro_daily.parquet                       # 5,206 rows x 11 cols | Japan FX & Cross Series (USD/JPY, EUR/JPY)
+│   ├── kr_macro_daily.parquet                       # 2,603 rows x 11 cols | South Korea FX Series (USD/KRW)
+│   ├── us_fed_balance_sheet_weekly.parquet          # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
+│   ├── us_macro_daily.parquet                       # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
+│   ├── us_yield_curve_daily.parquet                 # 2,516 rows x 8 cols | US Treasury Curve (3M, 5Y, 10Y, 30Y), Slopes & VIX
+│   ├── vn_fdi_sectors_monthly.parquet               # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
+│   ├── vn_macro_monthly.parquet                     # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
+│   ├── vn_market_pe_daily.parquet                   # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
+│   ├── vn_monetary_daily.parquet                    # 5,471 rows x 16 cols | Interbank rates, OMO, SBV rates, FX, Yields
+│   ├── vn_sbv_policy_rates_daily.parquet            # 4,429 rows x 6 cols | SBV Policy Rates & Required Reserves
+│   └── vn_trade_exports_monthly.parquet             # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
 ├── market/
-│   ├── us_indices_daily.parquet                 # 15,086 rows x 11 cols | S&P 500, Nasdaq 100, Dow Jones, Russell 2000, MidCap
-│   ├── us_equities_daily.parquet                # 87,990 rows x 12 cols | 35 US Mega-Caps across Tech, Financials, Health, Energy
-│   ├── eu_indices_daily.parquet                 # 20,296 rows x 11 cols | Euro Stoxx 50, DAX 40, FTSE 100, CAC 40, IBEX 35
-│   ├── eu_equities_daily.parquet                # 50,599 rows x 12 cols | 21 European Blue-Chips (ASML, SAP, Shell, LVMH, Allianz)
-│   ├── asia_indices_daily.parquet               # 22,183 rows x 11 cols | Nikkei 225, Hang Seng, SSE Comp, CSI 300, KOSPI, Nifty
-│   ├── asia_equities_daily.parquet              # 22,457 rows x 12 cols | Asian Titans (TSMC, Samsung, Alibaba, Tencent, Toyota)
-│   ├── cn_indices_daily.parquet                 # 2,428 rows x 11 cols | China Domestic Benchmark Indices (SSE Comp, CSI 300)
-│   ├── cn_equities_daily.parquet                # 41,241 rows x 12 cols | 18 Chinese Leaders (Moutai, ICBC, CATL, Alibaba, PetroChina)
-│   ├── hk_indices_daily.parquet                 # 2,461 rows x 11 cols | Hong Kong Benchmark Indices (Hang Seng Index)
-│   ├── hk_equities_daily.parquet                # 34,436 rows x 12 cols | 16 Hong Kong Blue-Chips (Tencent, Alibaba HK, HSBC, AIA, BYD)
-│   ├── jp_indices_daily.parquet                 # 2,442 rows x 11 cols | Japan Benchmark Indices (Nikkei 225 Index)
-│   ├── jp_equities_daily.parquet                # 44,334 rows x 12 cols | 18 Japanese Titans (Toyota, Sony, Keyence, SoftBank, Mitsubishi)
-│   ├── kr_indices_daily.parquet                 # 4,896 rows x 11 cols | South Korea Benchmark Indices (KOSPI, KOSDAQ)
-│   ├── kr_equities_daily.parquet                # 37,845 rows x 12 cols | 16 South Korean Leaders (Samsung, SK Hynix, Hyundai, Kia, Celltrion)
-│   ├── global_sectors_daily.parquet             # 27,239 rows x 11 cols | 11 Official GICS Sector SPDRs (Tech, Financials, Energy)
-│   ├── global_factors_daily.parquet             # 20,112 rows x 11 cols | Smart Beta Factors (MTUM, QUAL, USMV, VLUE, VUG, IJR)
-│   ├── global_etfs_daily.parquet                # 42,738 rows x 11 cols | Asset Class, Regional & Factor ETFs (SPY, QQQ, TLT)
-│   ├── vn_indices_daily.parquet                 # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
-│   ├── vn30f1m_derivatives_daily.parquet        # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
-│   ├── vn_top_equities_daily.parquet            # 136,302 rows x 8 cols | 55 constituent stocks daily OHLCV
-│   ├── vn_all_vn30_constituents_daily.parquet   # 136,302 rows x 8 cols | All VN30 constituents daily OHLCV
-│   ├── vn_stock_industry_classification.parquet # 1,971 rows x 22 cols | All listed stocks mapped to 4-tier ICB
-│   ├── vn_industry_sectors_icb.parquet          # 185 rows x 7 cols | 185 ICB sector definitions & ticker lists
-│   ├── vn_sector_indices_daily.parquet          # 26,113 rows x 8 cols | 12 official sector indices daily OHLCV
-│   ├── vn_foreign_trading_daily.parquet         # 130,837 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Room)
-│   ├── vn_order_supply_demand_daily.parquet     # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Orders, Vol)
-│   ├── vn_etf_market_daily.parquet              # 22,377 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
-│   └── vn_etf_nav_aum_daily.parquet             # 18,512 rows x 10 cols | Daily Net Asset Value (NAV), AUM & Premium/Discount
-├── sentiment/
-│   ├── vip_social_posts_events.parquet          # 29 rows x 13 cols | High-Impact Posts (Trump, Musk, Powell, Saylor) with exact UTC
-│   └── trump_musk_market_shocks_daily.parquet   # 3,219 rows x 8 cols | Daily Time Series of Political & Executive Market Shocks
+│   ├── asia_equities_daily.parquet                  # 22,457 rows x 12 cols | Asian Titans (TSMC, Samsung, Alibaba, Tencent, Toyota)
+│   ├── asia_indices_daily.parquet                   # 22,183 rows x 11 cols | Nikkei 225, Hang Seng, SSE Comp, CSI 300, KOSPI, Nifty
+│   ├── cn_equities_daily.parquet                    # 41,241 rows x 12 cols | 18 Chinese Leaders (Moutai, ICBC, CATL, Alibaba, PetroChina)
+│   ├── cn_indices_daily.parquet                     # 2,428 rows x 11 cols | China Domestic Benchmark Indices (SSE Comp, CSI 300)
+│   ├── eu_equities_daily.parquet                    # 50,599 rows x 12 cols | 21 European Blue-Chips (ASML, SAP, Shell, LVMH, Allianz)
+│   ├── eu_indices_daily.parquet                     # 20,296 rows x 11 cols | Euro Stoxx 50, DAX 40, FTSE 100, CAC 40, IBEX 35
+│   ├── global_etfs_daily.parquet                    # 42,738 rows x 11 cols | Asset Class, Regional & Factor ETFs (SPY, QQQ, TLT)
+│   ├── global_factors_daily.parquet                 # 20,112 rows x 11 cols | Smart Beta Factors (MTUM, QUAL, USMV, VLUE, VUG, IJR)
+│   ├── global_sectors_daily.parquet                 # 27,239 rows x 11 cols | 11 Official GICS Sector SPDRs (Tech, Financials, Energy)
+│   ├── hk_equities_daily.parquet                    # 34,436 rows x 12 cols | 16 Hong Kong Blue-Chips (Tencent, Alibaba HK, HSBC, AIA, BYD)
+│   ├── hk_indices_daily.parquet                     # 2,461 rows x 11 cols | Hong Kong Benchmark Indices (Hang Seng Index)
+│   ├── jp_equities_daily.parquet                    # 44,334 rows x 12 cols | 18 Japanese Titans (Toyota, Sony, Keyence, SoftBank, Mitsubishi)
+│   ├── jp_indices_daily.parquet                     # 2,442 rows x 11 cols | Japan Benchmark Indices (Nikkei 225 Index)
+│   ├── kr_equities_daily.parquet                    # 37,845 rows x 12 cols | 16 South Korean Leaders (Samsung, SK Hynix, Hyundai, Kia, Celltrion)
+│   ├── kr_indices_daily.parquet                     # 4,896 rows x 11 cols | South Korea Benchmark Indices (KOSPI, KOSDAQ)
+│   ├── us_equities_daily.parquet                    # 87,990 rows x 12 cols | 35 US Mega-Caps across Tech, Financials, Health, Energy
+│   ├── us_indices_daily.parquet                     # 15,086 rows x 11 cols | S&P 500, Nasdaq 100, Dow Jones, Russell 2000, MidCap
+│   ├── vn_etf_market_daily.parquet                  # 22,377 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
+│   ├── vn_foreign_trading_daily.parquet             # 130,837 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Room)
+│   ├── vn_indices_daily.parquet                     # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
+│   ├── vn_industry_sectors_icb.parquet              # 185 rows x 7 cols | 185 ICB sector definitions & ticker lists
+│   ├── vn_order_supply_demand_daily.parquet         # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Orders, Vol)
+│   ├── vn_sector_indices_daily.parquet              # 26,113 rows x 8 cols | 12 official sector indices daily OHLCV
+│   ├── vn_stock_industry_classification.parquet     # 1,971 rows x 22 cols | All listed stocks mapped to 4-tier ICB
+│   ├── vn_top_equities_daily.parquet                # 136,302 rows x 8 cols | 55 constituent stocks daily OHLCV
+│   └── vn_vn30f1m_derivatives_daily.parquet         # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
+├── community/
+│   ├── global_hackernews_finance_posts.parquet      # 5,717 rows x 10 cols | Hacker News stories on macro, central banks, tariffs, crypto, markets (points, comments)
+│   ├── global_stackexchange_finance_questions.parquet # 4,500 rows x 11 cols | Top-voted Stack Exchange money / quant / economics questions (raw text, tags, score)
+│   └── global_vip_social_posts_raw.parquet          # 37,251 rows x 11 cols | Raw Truth Social posts by Donald Trump: text, UTC timestamp, replies/reposts/likes
 ├── crypto/
-│   ├── crypto_top_assets_daily.parquet          # 32,359 rows x 12 cols | Top Cryptos (BTC, ETH, SOL, BNB, XRP, ADA, DOGE)
-│   └── crypto_market_daily.parquet              # 3,272 rows x 9 cols | Macro Crypto Indicators, ETH/BTC, Volatility & Corrs
+│   ├── crypto_market_daily.parquet                  # 3,272 rows x 9 cols | Macro Crypto Indicators, ETH/BTC, Volatility & Corrs
+│   └── crypto_top_assets_daily.parquet              # 32,359 rows x 12 cols | Top Cryptos (BTC, ETH, SOL, BNB, XRP, ADA, DOGE)
 ├── market_structure/
-│   ├── vn_etf_portfolio_holdings_daily.parquet  # 58 rows x 8 cols | Daily ETF Constituent Creation Baskets (Danh mục hoán đổi)
-│   ├── vn_corporate_network_edges.parquet       # 4,803 rows x 12 cols | Corporate Network Directed Edges (Loans, Subs, Owners)
-│   ├── vn_corporate_network_nodes.parquet       # 3,473 rows x 8 cols | Corporate Network Nodes & Centrality (PageRank, Degree)
-│   ├── vn_shareholders_history.parquet          # 3,115 rows x 9 cols | Major Shareholders & Ownership History (Cổ đông lớn)
-│   ├── vn_subsidiaries_affiliates.parquet       # 1,688 rows x 10 cols | Subsidiaries & Affiliates (Công ty con & liên kết)
-│   ├── vn_charter_capital_history.parquet       # 4,391 rows x 13 cols | Historical Capital Changes & Issuances (Vốn điều lệ)
-│   ├── vn_free_float.parquet                    # 43,377 rows x 18 cols | Historical free-float factor & capping factors
-│   ├── vn30_free_float_history.parquet          # 690 rows x 18 cols | VN30-specific free float & index shares history
-│   ├── vn_free_float_changes_observed.parquet   # 10,178 rows x 22 cols | Tracking discrete parameter changes
-│   ├── vn_index_constituents.parquet            # 43,377 rows x 18 cols | Historical basket constituents across all VN indices
-│   └── vn_basket_history.parquet                # 261 rows x 10 cols | Basket rebalancing events and effective dates
+│   ├── vn_basket_history.parquet                    # 261 rows x 10 cols | Basket rebalancing events and effective dates
+│   ├── vn_charter_capital_history.parquet           # 4,391 rows x 13 cols | Historical Capital Changes & Issuances (Vốn điều lệ)
+│   ├── vn_corporate_network_edges.parquet           # 4,803 rows x 12 cols | Corporate Network Directed Edges (Loans, Subs, Owners)
+│   ├── vn_corporate_network_nodes.parquet           # 3,473 rows x 8 cols | Corporate Network Nodes & Centrality (PageRank, Degree)
+│   ├── vn_free_float.parquet                        # 43,377 rows x 18 cols | Historical free-float factor & capping factors
+│   ├── vn_free_float_changes_observed.parquet       # 10,178 rows x 22 cols | Tracking discrete parameter changes
+│   ├── vn_shareholders_history.parquet              # 3,115 rows x 9 cols | Major Shareholders & Ownership History (Cổ đông lớn)
+│   ├── vn_subsidiaries_affiliates.parquet           # 1,688 rows x 10 cols | Subsidiaries & Affiliates (Công ty con & liên kết)
+│   └── vn_vn30_free_float_history.parquet           # 690 rows x 18 cols | VN30-specific free float & index shares history
 ├── financials/
-│   ├── global_corporate_fundamentals.parquet    # 50 rows x 20 cols | 50 Global Mega-Caps Valuation, Margins, Debt & Cash Flow
-│   ├── vn_financial_models_taxonomy.parquet     # 3,370 rows x 12 cols | Full accounting line item definitions (TT202, TT49)
+│   ├── global_corporate_fundamentals.parquet        # 50 rows x 20 cols | 50 Global Mega-Caps Valuation, Margins, Debt & Cash Flow
+│   ├── vn_financial_models_taxonomy.parquet         # 3,370 rows x 12 cols | Full accounting line item definitions (TT202, TT49)
+│   ├── vn_financial_ratios_quarterly_yearly.parquet # 189,000 rows x 8 cols | 
 │   ├── vn_financial_statements_quarterly_yearly.parquet # 325,000 rows x 12 cols | Balance Sheet, Income, Cash Flow line items
-│   ├── vn_financial_ratios_quarterly_yearly.parquet     # 189,000 rows x 8 cols  | Financial Ratios (P/E, P/B, ROE, ROA, D/E)
-│   └── vn_listed_q3_2026_financials.parquet     # 192 rows x 21 cols | Q3-2026 corporate results (Revenue, Profit, P/E)
+│   └── vn_listed_q3_2026_financials.parquet         # 192 rows x 21 cols | Q3-2026 corporate results (Revenue, Profit, P/E)
 └── cross_asset/
-    └── global_macro_daily.parquet               # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
+    └── global_macro_daily.parquet                   # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
 ```
 
 ---
@@ -100,7 +96,7 @@ Every empirical dataset archived in `data/` must strictly use an ISO country or 
 * **`eu_`**: European Central Bank, sovereign yields, European benchmark indices, and foreign exchange rates.
 * **`global_`**: International multi-asset cross-border benchmarks, 11 GICS sectors, factors, commodities, credit, and fundamentals.
 * **`crypto_`**: Decentralized digital assets, Layer 1 benchmarks, and crypto-macro aggregate indicators.
-* **`sentiment/`**: High-impact VIP social media posts, executive announcements, and daily shock intensity indices.
+* **`community/`** (folder): raw public discussion text (`global_*` files): Truth Social, Hacker News, Stack Exchange.
 * **`vn_`**: Vietnam domestic financial, corporate, and macroeconomic series.
 
 ## 2. Standardized Dataset Specifications (Single-Table Format)
@@ -110,7 +106,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 
 ### 2.1 Macroeconomic & Commodity Data (`data/macro/`)
 
-#### A. `vietnam_monetary_daily.parquet`
+#### A. `vn_monetary_daily.parquet`
 * **Coverage**: 2011-01-03 to 2026-10-21 (5,471 daily observations, 16 columns).
 * **Source**: WiData (WiGroup), State Bank of Vietnam (SBV), Commercial Banks. [https://widata.vn/vi-mo/vn/pmi-san-xuat](https://widata.vn/vi-mo/vn/pmi-san-xuat) | [https://www.sbv.gov.vn](https://www.sbv.gov.vn).
 * **Fields**:
@@ -133,7 +129,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `omo_outstanding_balance` | `Float64` | Billion VND | Cumulative outstanding OMO repo balance in circulation |
   | `vn_govbond_yield_1y` | `Float64` | % / year | Vietnam 1-Year Government Benchmark Bond Yield |
 
-#### B. `vietnam_macro_monthly.parquet`
+#### B. `vn_macro_monthly.parquet`
 * **Coverage**: 2001-12-31 to 2026-09-30 (298 monthly observations, 13 columns).
 * **Source**: General Statistics Office (GSO), S&P Global / WiData. [https://widata.vn/vi-mo/vn/pmi-san-xuat](https://widata.vn/vi-mo/vn/pmi-san-xuat).
 * **Fields**:
@@ -153,31 +149,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `fdi_registered_ttm` | `Float64` | Billion USD | Trailing 12-month registered Foreign Direct Investment |
   | `fdi_disbursed_ttm` | `Float64` | Billion USD | Trailing 12-month disbursed Foreign Direct Investment |
 
-#### C. `vietnam_commodities_daily.parquet`
-* **Coverage**: 2017-08-24 to 2026-10-21 (2,285 daily observations across steel, pork, fuels, and agriculture, 17 columns).
-* **Source**: SteelOnline, Vietnam Steel Association (VSA), Anova Feed, MARD, Petrolimex & Ministry of Industry and Trade (MOIT). [https://steelonline.vn](https://steelonline.vn) | [https://www.petrolimex.com.vn](https://www.petrolimex.com.vn).
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `steel_hoaphat_cb240_vnd_kg` | `Float64` | - | Reported field `steel_hoaphat_cb240_vnd_kg` |
-  | `steel_hoaphat_d10_cb300_vnd_kg` | `Float64` | - | Reported field `steel_hoaphat_d10_cb300_vnd_kg` |
-  | `steel_pomina_cb240_vnd_kg` | `Float64` | - | Reported field `steel_pomina_cb240_vnd_kg` |
-  | `pork_live_hog_north_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_north_vnd_kg` |
-  | `pork_live_hog_central_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_central_vnd_kg` |
-  | `pork_live_hog_south_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_south_vnd_kg` |
-  | `pork_live_hog_national_avg_vnd_kg` | `Float64` | - | Reported field `pork_live_hog_national_avg_vnd_kg` |
-  | `fuel_ron95_zone1_vnd_l` | `Float64` | - | Reported field `fuel_ron95_zone1_vnd_l` |
-  | `fuel_e5_ron92_zone1_vnd_l` | `Float64` | - | Reported field `fuel_e5_ron92_zone1_vnd_l` |
-  | `fuel_diesel_do_zone1_vnd_l` | `Float64` | - | Reported field `fuel_diesel_do_zone1_vnd_l` |
-  | `fuel_kerosene_zone1_vnd_l` | `Float64` | - | Reported field `fuel_kerosene_zone1_vnd_l` |
-  | `gas_lpg_12kg_cylinder_vnd` | `Float64` | - | Reported field `gas_lpg_12kg_cylinder_vnd` |
-  | `coffee_robusta_daklak_vnd_kg` | `Float64` | - | Reported field `coffee_robusta_daklak_vnd_kg` |
-  | `rice_ir50404_fresh_vnd_kg` | `Float64` | - | Reported field `rice_ir50404_fresh_vnd_kg` |
-  | `rice_export_5pct_broken_usd_ton` | `Float64` | - | Reported field `rice_export_5pct_broken_usd_ton` |
-  | `pepper_black_daklak_vnd_kg` | `Float64` | - | Reported field `pepper_black_daklak_vnd_kg` |
-
-#### D. `vietnam_trade_exports_monthly.parquet`
+#### D. `vn_trade_exports_monthly.parquet`
 * **Coverage**: 2009-01-31 to 2026-09-30 (213 monthly observations across steel, coffee, and total exports, 8 columns).
 * **Source**: General Statistics Office & Ministry of Industry and Trade via WiData. [https://widata.vn](https://widata.vn).
 * **Fields**:
@@ -192,7 +164,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `steel_export_growth_yoy` | `Float64` | % YoY | Iron and steel export value YoY growth percentage |
   | `steel_products_export_growth_yoy` | `Float64` | % YoY | Products from iron and steel export value YoY growth percentage |
 
-#### E. `vietnam_fdi_sectors_monthly.parquet`
+#### E. `vn_fdi_sectors_monthly.parquet`
 * **Coverage**: 2011-12-31 to 2026-08-31 (173 monthly observations across 4 economic sectors, 5 columns).
 * **Source**: Ministry of Planning and Investment (MPI) & General Statistics Office via WiData. [https://widata.vn](https://widata.vn).
 * **Fields**:
@@ -204,7 +176,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `fdi_utilities_energy_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Electricity, Gas & Water |
   | `fdi_science_technology_ttm_usd` | `Float64` | Billion USD | Trailing 12-month realized FDI in Professional Science & Technology |
 
-#### F. `vietnam_sbv_policy_rates_daily.parquet`
+#### F. `vn_sbv_policy_rates_daily.parquet`
 * **Coverage**: 2011-01-03 to 2026-10-21 (4,429 daily policy rate and required reserve observations, 6 columns).
 * **Source**: State Bank of Vietnam (SBV / NHNN) Policy Rate Bulletins. [https://www.sbv.gov.vn](https://www.sbv.gov.vn).
 * **Fields**:
@@ -248,7 +220,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `fed_reverse_repo_wlrral` | `Float64` | Million USD | Reverse Repurchase Agreements (RRP) Liabilities |
   | `fed_commercial_bank_assets_wcblsa` | `Float64` | Billion USD | Total Commercial Bank Assets in the United States |
 
-#### I. `vietnam_market_pe_daily.parquet`
+#### I. `vn_market_pe_daily.parquet`
 * **Coverage**: 2015-05-04 to 2026-10-21 (2,877 daily observations, 3 columns).
 * **Source**: WiData / Ho Chi Minh Stock Exchange (HOSE). [https://widata.vn](https://widata.vn).
 * **Fields**:
@@ -277,7 +249,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `close` | `Float64` | VND / Pts | Closing price or index level |
   | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
 
-#### B. `vn30f1m_derivatives_daily.parquet`
+#### B. `vn_vn30f1m_derivatives_daily.parquet`
 * **Coverage**: 2017-08-10 to 2026-10-22 (2,296 daily OHLCV bars of VN30F1M Front-Month Futures, 8 columns).
 * **Source**: Hanoi Stock Exchange (HNX) Derivatives Market via VNDirect. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn).
 * **Fields**:
@@ -294,21 +266,6 @@ Every dataset is documented in an identical, single-table format with standardiz
 
 #### C. `vn_top_equities_daily.parquet`
 * **Coverage**: 2015-01-05 to 2026-10-22 (136,302 daily OHLCV bars across 55 constituent equities, 8 columns).
-* **Source**: VNDirect Open Market DChart API. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn).
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `timestamp` | `Datetime[ms]` | Unix Epoch (s) | POSIX epoch timestamp in seconds |
-  | `open` | `Float64` | VND / Pts | Opening price or index level |
-  | `high` | `Float64` | VND / Pts | Intraday high price or index level |
-  | `low` | `Float64` | VND / Pts | Intraday low price or index level |
-  | `close` | `Float64` | VND / Pts | Closing price or index level |
-  | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
-
-#### D. `vn_all_vn30_constituents_daily.parquet`
-* **Coverage**: 2015-01-05 to 2026-10-22 (136,302 daily OHLCV bars for all VN30 constituents, 8 columns).
 * **Source**: VNDirect Open Market DChart API. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -436,41 +393,9 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
   | `value_vnd` | `Float64` | VND | Daily trading turnover value in VND |
 
-#### K. `vn_etf_nav_aum_daily.parquet`
-* **Coverage**: 2014-10-06 to 2026-10-22 (18,512 daily NAV, AUM, and Premium/Discount observations, 10 columns).
-* **Source**: Official Fund Disclosures (Dragon Capital, SSIAM, VinaCapital, KIM, Mirae Asset, IPAAM). [https://dragoncapital.com.vn](https://dragoncapital.com.vn) | [https://ssiam.com.vn](https://ssiam.com.vn).
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `etf_name` | `String` | - | Official fund legal name in Vietnamese |
-  | `benchmark_index` | `String` | - | Target tracking benchmark index (e.g. VN30, VN DIAMOND, VNFIN LEAD) |
-  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `nav_per_share` | `Float64` | VND | Daily Net Asset Value (NAV) per fund certificate share |
-  | `close_price` | `Float64` | VND | Closing equity price at filing snapshot date |
-  | `premium_discount_pct` | `Float64` | % | Market price premium (+) or discount (-) relative to NAV: (P - NAV)/NAV * 100 |
-  | `total_nav_bn_vnd` | `Float64` | Billion VND | Total fund Net Asset Value (AUM in Billion VND) |
-  | `outstanding_shares` | `Float64` | Shares | Total outstanding fund certificate shares in circulation |
-  | `tracking_error_pct` | `Float64` | % | Rolling tracking error relative to underlying benchmark index |
-
 ---
 
 ### 2.3 Market Structure & Corporate Governance (`data/market_structure/`)
-
-#### A. `vn_etf_portfolio_holdings_daily.parquet`
-* **Coverage**: Official creation units, constituent stock shares, and portfolio weights across top ETFs (E1VFVN30, FUEVFVND, FUESSVFL), 8 columns.
-* **Source**: Daily Creation & Redemption Basket Disclosures (Danh mục chứng khoán cơ cấu hoán đổi CCQ ETF). [https://dragoncapital.com.vn](https://dragoncapital.com.vn) | [https://ssiam.com.vn](https://ssiam.com.vn).
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `etf_symbol` | `String` | - | Fund certificate ticker symbol (e.g. E1VFVN30, FUEVFVND, FUESSVFL) |
-  | `etf_name` | `String` | - | Official fund legal name in Vietnamese |
-  | `constituent_symbol` | `String` | - | Portfolio constituent stock ticker symbol |
-  | `constituent_name` | `String` | - | Portfolio constituent company name |
-  | `sector` | `String` | - | Economic sector or institutional domain |
-  | `shares_per_creation_unit` | `Int64` | Shares/unit | Quantity of constituent shares per 1 creation unit (1 lô = 100,000 CCQ) |
-  | `portfolio_weight_pct` | `Float64` | % | Portfolio allocation weight in ETF basket (%) |
-  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
 
 #### B. `vn_corporate_network_edges.parquet`
 * **Coverage**: 4,803 directed relationship edges across Vietnam corporate conglomerates and institutions, 12 columns.
@@ -559,7 +484,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `trading_start_date` | `Date` | YYYY-MM-DD | Official date when additional shares commence trading on the exchange |
   | `actual_date` | `Date` | YYYY-MM-DD | Date of completed execution or distribution |
 
-#### G. `free_float.parquet`
+#### G. `vn_free_float.parquet`
 * **Coverage**: 2017-07-24 to 2026-08-03 (43,377 point-in-time rows across 1,450 tickers and 14 indices, 18 columns).
 * **Source**: HOSE & HNX Point-in-Time Index Committee Official PDF Notices (Sourced via lazy-researcher). [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -584,7 +509,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
 
-#### H. `vn30_free_float_history.parquet`
+#### H. `vn_vn30_free_float_history.parquet`
 * **Coverage**: 2017-07-24 to 2026-08-03 (690 point-in-time constituent review rows for VN30, 18 columns).
 * **Source**: HOSE Official Point-in-Time Review Notices. [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -609,7 +534,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
   | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
 
-#### I. `free_float_changes_observed.parquet`
+#### I. `vn_free_float_changes_observed.parquet`
 * **Coverage**: 10,178 discrete parameter adjustment events observed across index rebalancing cycles, 22 columns.
 * **Source**: Point-in-Time Discrete Free-Float and Capping Adjustment Tracker. [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -638,32 +563,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `previous_source_url` | `String` | URL | URL of previous official announcement |
   | `change_date_precision` | `String` | - | Resolution precision of effective date (e.g. day) |
 
-#### J. `index_constituents.parquet`
-* **Coverage**: 43,377 historical index constituent rows across all Vietnamese benchmark indices, 18 columns.
-* **Source**: HOSE & HNX Index Calculation Methodology and Constituent Registry. [https://www.hsx.vn](https://www.hsx.vn).
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `time` | `Datetime[ms]` | ISO UTC | Point-in-time timestamp of announcement or disclosure |
-  | `symbol` | `String` | - | Official stock ticker or market benchmark symbol (e.g. VCB, VNINDEX, VN30F1M) |
-  | `index` | `String` | - | Index basket code (e.g. VN30, VN100, VNALLSHARE) |
-  | `exchange` | `String` | - | Stock exchange (HOSE, HNX) |
-  | `company_name` | `String` | - | Full corporate legal name in Vietnamese |
-  | `effective_date` | `Date` | YYYY-MM-DD | Official effective date from which parameters/records take legal effect |
-  | `index_shares` | `Int64` | Shares | Total outstanding shares considered for index calculation (Q) |
-  | `free_float_factor` | `Float64` | Ratio (0-1] | Exchange-calculated free-float ratio (f) rounded to regulatory bands |
-  | `capping_factor` | `Float64` | Ratio (0-1] | Single-stock capping factor (c) ensuring compliance with concentration limits |
-  | `source_page` | `Int64` | - | Page number in official PDF announcement |
-  | `source_url` | `String` | URL | Official exchange notice web URL |
-  | `document_url` | `String` | URL | Direct download URL for official exchange PDF disclosure |
-  | `source_sha256` | `String` | SHA-256 | Cryptographic hash of the source PDF document for audit reproducibility |
-  | `announced_at` | `Datetime[ms]` | ISO UTC | Official public announcement timestamp |
-  | `retrieved_at` | `Datetime[ms]` | ISO UTC | System retrieval and ingestion timestamp |
-  | `availability_basis` | `String` | - | Point-in-Time availability justification (e.g. scheduled_notice) |
-  | `quality` | `String` | - | Data quality verification level (e.g. official_complete) |
-  | `publication_evidence_url` | `String` | URL | Archival verification URL for exchange publication |
-
-#### K. `basket_history.parquet`
+#### K. `vn_basket_history.parquet`
 * **Coverage**: 261 basket rebalancing events and official effective schedules, 10 columns.
 * **Source**: HOSE Quarterly and Semi-Annual Basket Rebalancing Schedule. [https://www.hsx.vn](https://www.hsx.vn).
 * **Fields**:
@@ -1084,42 +984,24 @@ Every dataset is documented in an identical, single-table format with standardiz
 
 ---
 
-### 2.8 VIP Social Sentiment & Executive Market Shocks (`data/sentiment/`)
+### 2.8 Raw Community & Social Discussions (`data/community/`)
 
-#### A. `vip_social_posts_events.parquet`
-* **Coverage**: 2018-03-01 to 2025-01-20 (29 discrete high-impact announcement events, 13 columns).
-* **Source**: Truth Social, Twitter/X, Federal Reserve FOMC transcripts, SEC Form 8-K filings.
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `datetime_utc` | `Datetime[ms]` | ISO UTC | Exact second/millisecond timestamp of the public statement |
-  | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `author` | `String` | - | Public figure (`donald_trump`, `elon_musk`, `jerome_powell`, `michael_saylor`) |
-  | `platform` | `String` | - | Dissemination venue (`truth_social`, `twitter_x`, `fomc_press_conference`) |
-  | `post_text` | `String` | Text | Full literal text of the statement or post |
-  | `category` | `String` | - | Topic (`tariffs_trade_war`, `crypto_bitcoin_doge`, `monetary_policy_rates`, `ev_tech_automotive`, `geopolitics_national_security`) |
-  | `target_asset` | `String` | - | Primary financial instrument impacted (`SPY`, `TSLA`, `BTC-USD`, `DOGE-USD`, `USDCNY`, `FXI`) |
-  | `market_reaction_1d_pct` | `Float64` | % return | Immediate 1-day abnormal or discrete price return on target asset |
-  | `sentiment_label` | `String` | - | Directional sentiment (`BULLISH`, `BEARISH`, `HAWKISH`, `DOVISH`) |
-  | `sentiment_polarity` | `Float64` | Score (-1 to +1) | Quantified sentiment polarity index |
-  | `like_count` | `Int64` | Count | Number of public platform likes |
-  | `retweet_count` | `Int64` | Count | Number of platform reposts or retweets |
-  | `high_impact_flag` | `Boolean` | Flag | Indicator marking verified market-moving events |
+All files are downloaded from free, key-less public sources by `scripts/ingest_community_and_social.py` and contain raw text, timestamps and engagement counts only. No sentiment labels, polarity scores or return reactions are stored: agents derive those themselves. Re-running the script refreshes every file. Reddit and X block anonymous access and are therefore not included.
 
-#### B. `trump_musk_market_shocks_daily.parquet`
-* **Coverage**: 2018-01-01 to 2026-10-24 (3,219 daily calendar observations, 8 columns).
-* **Source**: Cross-sectional aggregation of political, executive, and social media shocks.
-* **Fields**:
-  | Column Name | Type | Unit | Description |
-  | :--- | :--- | :--- | :--- |
-  | `date` | `Date` | YYYY-MM-DD | Calendar date (ISO 8601) |
-  | `trump_post_count` | `Int64` | Count | Daily volume of market-relevant Trump posts |
-  | `musk_post_count` | `Int64` | Count | Daily volume of market-relevant Musk posts |
-  | `powell_statement_flag` | `Int64` | 0 or 1 | Indicator for Federal Reserve FOMC decision or Jackson Hole address |
-  | `tariff_shock_intensity` | `Float64` | Score (0 to 1) | Absolute intensity score of trade and tariff announcements |
-  | `crypto_hype_intensity` | `Float64` | Score (0 to 1) | Absolute intensity score of cryptocurrency endorsement or criticism |
-  | `vip_sentiment_net` | `Float64` | Score (-1 to +1) | Net average sentiment polarity across all VIP statements on date $t$ |
-  | `high_impact_event_day` | `Boolean` | Flag | True if any high-impact shock occurred on calendar date |
+#### A. `global_vip_social_posts_raw.parquet`
+* **Coverage**: 2022-02-14 onwards (37,251 posts, 11 columns).
+* **Source**: Public Truth Social archive of Donald Trump posts (CNN open data mirror).
+* **Fields**: `datetime_utc` (`Datetime[ms]`, UTC), `author`, `platform`, `post_id`, `text`, `url`, `has_media` (`Boolean`), `replies_count`, `reposts_count`, `likes_count` (`Int64`), `date` (`Date`).
+
+#### B. `global_hackernews_finance_posts.parquet`
+* **Coverage**: 2015-01-01 onwards (5,717 stories with at least 10 points, 10 columns).
+* **Source**: Hacker News via the Algolia search API; queries: federal reserve, inflation, interest rates, recession, tariffs, bitcoin, stock market, treasury yields, oil price, bank run.
+* **Fields**: `datetime_utc`, `post_id`, `author`, `title`, `body_text`, `url`, `points`, `num_comments`, `matched_queries` (comma-separated), `date`.
+
+#### C. `global_stackexchange_finance_questions.parquet`
+* **Coverage**: 2009-2026 (4,500 top-voted questions from `money`, `quant`, `economics`, 11 columns).
+* **Source**: Stack Exchange public API v2.3.
+* **Fields**: `datetime_utc`, `site`, `post_id`, `title`, `body_text` (HTML stripped), `tags` (comma-separated), `score`, `view_count`, `answer_count`, `url`, `date`.
 
 ### 2.9 World Financial Data Taxonomy: Macro, GICS Sectors, Factors, Credit & Fundamentals
 
@@ -1201,7 +1083,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 # --- Polars (Zero-Copy Vectorized) ---
 import polars as pl
 df_idx = pl.read_parquet('data/market/vn_indices_daily.parquet').filter(pl.col('symbol') == 'VNINDEX')
-df_macro = pl.read_parquet('data/macro/vietnam_macro_monthly.parquet')
+df_macro = pl.read_parquet('data/macro/vn_macro_monthly.parquet')
 aligned = df_idx.join_asof(
     df_macro,
     left_on=pl.col('date').str.to_date(),
@@ -1212,7 +1094,7 @@ aligned = df_idx.join_asof(
 # --- Pandas Equivalent ---
 import pandas as pd
 df_idx = pd.read_parquet('data/market/vn_indices_daily.parquet').query("symbol == 'VNINDEX'")
-df_macro = pd.read_parquet('data/macro/vietnam_macro_monthly.parquet')
+df_macro = pd.read_parquet('data/macro/vn_macro_monthly.parquet')
 df_idx['date'] = pd.to_datetime(df_idx['date'])
 df_macro['date'] = pd.to_datetime(df_macro['date'])
 aligned = pd.merge_asof(df_idx.sort_values('date'), df_macro.sort_values('date'), on='date', direction='backward')

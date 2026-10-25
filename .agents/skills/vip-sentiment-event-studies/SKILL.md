@@ -1,6 +1,6 @@
 ---
 name: vip-sentiment-event-studies
-description: Quantify financial market reactions, price jump dynamics, Cumulative Abnormal Returns (CAR), volatility spikes, and liquidity shifts triggered by high-impact executive, political, and central bank social media announcements (Trump, Musk, Powell, Saylor).
+description: Quantify financial market reactions, price jump dynamics, Cumulative Abnormal Returns (CAR), volatility spikes, and liquidity shifts triggered by high-impact executive, political, and central bank social media announcements (Trump, Powell, Saylor).
 version: 1.0.0
 author: AI Quantitative Research Network
 tags: [sentiment, event-studies, car, jump-diffusion, social-media, trump, musk, market-shocks]
@@ -12,8 +12,8 @@ tags: [sentiment, event-studies, car, jump-diffusion, social-media, trump, musk,
 This skill specifies the quantitative protocol for measuring financial market reactions to unscheduled, high-impact social media posts, political executive announcements, and central bank statements from market-moving figures (**Donald Trump**, **Elon Musk**, **Jerome Powell**, **Michael Saylor**).
 
 Empirical datasets leveraged:
-* `data/sentiment/vip_social_posts_events.parquet` (Micro-level event registry with exact UTC timestamps, authors, text, sentiment polarity, and immediate next-day asset reactions).
-* `data/sentiment/trump_musk_market_shocks_daily.parquet` (Daily time series tracking Trump post volume, Musk tweet volume, tariff shock intensity, and crypto hype indices).
+* `data/community/global_vip_social_posts_raw.parquet` (37k raw Truth Social posts by Donald Trump since 2022-02: exact UTC timestamp, text, replies, reposts, likes). It contains NO sentiment or reaction columns: derive keyword flags, counts or your own text features, and join returns yourself.
+* `data/community/global_hackernews_finance_posts.parquet` and `global_stackexchange_finance_questions.parquet` (raw discussion text for topic-attention proxies).
 * `data/market/us_equities_daily.parquet` (`TSLA`, `SPY`, `AAPL`, `NVDA`, `AMZN`)
 * `data/crypto/crypto_top_assets_daily.parquet` (`BTC-USD`, `DOGE-USD`, `ETH-USD`)
 * `data/macro/asia_macro_daily.parquet` & `cn_macro_daily.parquet` (`USDCNY=X`)
@@ -93,39 +93,38 @@ def compute_event_car(
 
 ---
 
-## 2. Lead-Lag Regressions & Post Volatility Spillover
+## 2. Lead-Lag Regressions on Daily Post Counts
 
-Quantifies the sensitivity of asset volatility and returns to daily VIP shock intensity indices:
-$$R_{i, t} = \alpha + \beta_1 \text{TariffShock}_t + \beta_2 \text{CryptoHype}_t + \beta_3 \Delta \text{VIX}_t + \epsilon_t$$
-$$\sigma_{i, t}^{30d} = \gamma_0 + \gamma_1 \text{TrumpPosts}_t + \gamma_2 \text{MuskPosts}_t + \eta_t$$
+Aggregate the raw posts into daily features strictly dated by the post timestamp, then regress returns of the **next** session on them (the post can only affect sessions after it is published):
 
 ```python
 import polars as pl
 import statsmodels.api as sm
 
-def estimate_vip_shock_sensitivity(
-    asset_file: str = "data/market/us_equities_daily.parquet",
-    asset_symbol: str = "TSLA",
-    shocks_file: str = "data/sentiment/trump_musk_market_shocks_daily.parquet"
+def estimate_post_sensitivity(
+    asset_file: str = "data/market/us_indices_daily.parquet",
+    asset_symbol: str = "^GSPC",
+    posts_file: str = "data/community/global_vip_social_posts_raw.parquet",
+    keyword: str = r"\btariffs?\b",
 ):
-    df_asset = pl.read_parquet(asset_file).filter(pl.col("symbol") == asset_symbol).sort("date")
-    df_shocks = pl.read_parquet(shocks_file).sort("date")
-    
-    merged = df_asset.join(df_shocks, on="date", how="inner").drop_nulls()
-    
-    y = merged["returns"].to_numpy()
-    X = sm.add_constant(merged.select(["musk_post_count", "trump_post_count", "vip_sentiment_net"]).to_numpy())
-    
-    ols = sm.OLS(y, X).fit(cov_type="HAC", cov_kwds={"maxlags": 5})
-    return {
-        "asset": asset_symbol,
-        "musk_beta": float(ols.params[1]),
-        "musk_pvalue": float(ols.pvalues[1]),
-        "trump_beta": float(ols.params[2]),
-        "trump_pvalue": float(ols.pvalues[2]),
-        "r2": float(ols.rsquared)
-    }
+    asset = pl.read_parquet(asset_file).filter(pl.col("symbol") == asset_symbol).sort("date")
+    posts = pl.read_parquet(posts_file).with_columns(
+        pl.col("text").str.to_lowercase().str.contains(keyword).cast(pl.Int32).alias("kw"),
+        (pl.col("date") + pl.duration(days=1)).alias("next_day"),
+    )
+    # map every post to the first trading session strictly after its publication date
+    mapped = posts.sort("next_day").join_asof(
+        asset.select(pl.col("date").alias("session")), left_on="next_day", right_on="session", strategy="forward"
+    ).drop_nulls("session")
+    daily = mapped.group_by("session").agg(pl.len().alias("post_count"), pl.col("kw").sum().alias("keyword_posts"))
+    merged = asset.join(daily, left_on="date", right_on="session", how="left").fill_null(0).drop_nulls()
+    X = sm.add_constant(merged.select(["post_count", "keyword_posts"]).to_numpy())
+    ols = sm.OLS(merged["returns"].to_numpy(), X).fit(cov_type="HAC", cov_kwds={"maxlags": 5})
+    return {"beta_posts": float(ols.params[1]), "p_posts": float(ols.pvalues[1]),
+            "beta_keyword": float(ols.params[2]), "p_keyword": float(ols.pvalues[2]), "r2": float(ols.rsquared)}
 ```
+
+A complete worked example (placebo-tested) is `researches/res_002_vip_tariff_posts_event_study/code/run_pipeline.py`.
 
 ---
 

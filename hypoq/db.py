@@ -745,3 +745,41 @@ def record_experiment(
     finally:
         conn.close()
     return exp_id
+
+
+def find_hypothesis_id_by_title(title: str, db_path: Optional[str] = None) -> Optional[int]:
+    """Returns the id of the hypothesis with this exact title, if any."""
+    init_db(db_path)
+    backend, _ = parse_db_uri(db_path)
+    conn = get_connection(db_path)
+    try:
+        if backend == "postgres":
+            with conn.cursor() as cur:
+                cur.execute("SELECT id FROM hypotheses WHERE title = %s ORDER BY id DESC LIMIT 1", (title,))
+                row = cur.fetchone()
+            return row["id"] if row else None
+        row = conn.execute(
+            "SELECT id FROM hypotheses WHERE title = ? ORDER BY id DESC LIMIT 1", (title,)
+        ).fetchone()
+        return row[0] if row else None
+    finally:
+        conn.close()
+
+
+def upsert_hypothesis(title: str, db_path: Optional[str] = None, **fields: Any) -> int:
+    """Idempotent registration: re-running a pipeline updates its row instead of duplicating it."""
+    existing = find_hypothesis_id_by_title(title, db_path)
+    if existing is None:
+        return record_hypothesis(title=title, db_path=db_path, **fields)
+    update_hypothesis_status(
+        existing,
+        status=fields.get("status", "PENDING"),
+        metric_name=fields.get("metric_name"),
+        metric_value=fields.get("metric_value"),
+        p_value=fields.get("p_value"),
+        summary_findings=fields.get("summary_findings"),
+        report_dir=fields.get("report_dir"),
+        pdf_path=fields.get("pdf_path"),
+        db_path=db_path,
+    )
+    return existing

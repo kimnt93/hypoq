@@ -8,6 +8,8 @@ Usage:
     python run.py --agent=claude --topic="Order flow imbalance price impact"
     python run.py --search="tightly held shares"
     python run.py --list [--status=ACCEPTED]
+    python run.py --agents=claude,codex --topic="..." --execute   # actually launch the agent CLIs
+    python run.py --audit                                          # integrity-check every research folder
     python run.py --web [--port=8080]
 """
 
@@ -26,7 +28,13 @@ from hypoq.db import (
     get_hypothesis,
     DEFAULT_DB_PATH,
 )
-from hypoq.harness import ResearchSession, SUPPORTED_AGENTS
+from hypoq.harness import (
+    ResearchSession,
+    SUPPORTED_AGENTS,
+    audit_research,
+    list_research_dirs,
+    print_audit,
+)
 
 
 def format_table(rows: List[dict], headers: List[str], keys: List[str]):
@@ -100,6 +108,16 @@ def main():
         help="Filter hypotheses by status",
     )
     parser.add_argument(
+        "--execute",
+        action="store_true",
+        help="Launch the agent CLIs (default only writes their prompts under runs/<session>/)",
+    )
+    parser.add_argument(
+        "--audit",
+        action="store_true",
+        help="Verify every researches/* folder is reproducible and consistent with the database",
+    )
+    parser.add_argument(
         "--web",
         action="store_true",
         help="Start the interactive research web dashboard",
@@ -159,6 +177,12 @@ def main():
         )
         return
 
+    # Mode 2b: Research integrity audit
+    if args.audit:
+        reports = [audit_research(d, args.db) for d in list_research_dirs()]
+        print_audit(reports)
+        sys.exit(0 if all(r["ok"] for r in reports) else 1)
+
     # Mode 3: Start Web Server
     if args.web:
         from api import run_server
@@ -179,7 +203,7 @@ def main():
             domain=args.domain,
             db_path=args.db,
         )
-        session.run(verbose=True)
+        session.run(verbose=True, execute=args.execute)
         return
 
     # If no flags provided, show help

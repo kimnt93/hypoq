@@ -58,7 +58,7 @@ $$\text{Basis}_t = \ln(F_t) - \ln(S_t), \quad \text{Carry}_t = r_{\text{interban
 ```python
 import polars as pl
 
-f_df = pl.read_parquet("data/market/vn30f1m_derivatives_daily.parquet").select([
+f_df = pl.read_parquet("data/market/vn_vn30f1m_derivatives_daily.parquet").select([
     pl.col("date").str.to_date(),
     pl.col("close").alias("f_close")
 ])
@@ -85,7 +85,7 @@ basis_df = (
 import polars as pl
 
 prices = pl.read_parquet("data/market/vn_top_equities_daily.parquet")
-floats = pl.read_parquet("data/market_structure/free_float.parquet")
+floats = pl.read_parquet("data/market_structure/vn_free_float.parquet")
 
 # Join point-in-time float factor
 weighted = (

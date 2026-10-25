@@ -1,9 +1,0 @@
-{
-  "hypothesis_id": 3,
-  "title": "Multi-Horizon Volatility Nowcasting with Deep Recurrent Sequence Models Across Crypto and Traditional Equities",
-  "decision": "REJECTED",
-  "metric_name": "Diebold-Mariano p-value",
-  "metric_value": 0.078,
-  "p_value": 0.078,
-  "rmse_reduction_pct": 0.88
-}

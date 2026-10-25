@@ -9,11 +9,11 @@ Welcome to **hypoq** (**Hypothesis $\times$ Quant**), the autonomous AI quantita
 Whenever an AI agent (Claude, Codex, Hermes, Pi, OMP) is awakened in this repository, it must strictly orient itself by reading the following foundational files:
 
 1. **[`RESEARCH.md`](RESEARCH.md)**: Defines the research taxonomy across active quantitative domains, required modeling paradigms (Machine Learning with `scikit-learn`, Deep Learning with `pytorch`, Reinforcement Learning with `stable-baselines3`, and Econometrics with `statsmodels`), and strict causality invariants.
-2. **[`DATA.md`](DATA.md)**: Details the quantitative data lake (80 Parquet files under `data/`, 2.0M+ rows, strictly < 100MB per file for GitHub safety), schema dictionaries, and the standardized jurisdiction prefix standard (`cn_`, `hk_`, `jp_`, `kr_`, `asia_`, `us_`, `eu_`, `global_`, `crypto_`, `sentiment/`, `vn_`).
+2. **[`DATA.md`](DATA.md)**: Details the quantitative data lake (65 Parquet files under `data/`, 1.7M+ rows, strictly < 100MB per file for GitHub safety), schema dictionaries, and the standardized jurisdiction prefix standard (`cn_`, `hk_`, `jp_`, `kr_`, `asia_`, `us_`, `eu_`, `global_`, `crypto_`, `sentiment/`, `vn_`).
 3. **[`.agents/skills/`](.agents/skills/)**: Contains 18 self-contained skills adhering to the [AgentSkills.io](https://agentskills.io) standard:
    * `chunked-data-exploration`: Exploring, scanning, filtering, and streaming partitioned / chunked Parquet files with zero RAM bloat.
    * `world-data-taxonomy-modeling`: Multi-domain modeling across FRED macro, 11 GICS sectors, factors, credit spreads, and global valuation ratios.
-   * `vip-sentiment-event-studies`: Quantifying market reactions, CAR, price jumps, and volatility surges around Trump, Musk, and Powell announcements.
+   * `vip-sentiment-event-studies`: Quantifying market reactions, CAR, price jumps, and volatility surges around Trump (Truth Social) and other executive announcements.
    * `global-macro-cross-asset`: Cross-border macroeconomic transmission, sovereign yield curves, FX pass-through, and commodity shock propagation.
    * `crypto-quantitative-modeling`: Cryptocurrency microstructure, high-volatility regime modeling, crypto-macro spillover, and tail risk (VaR/CVaR).
    * `global-equity-factor-modeling`: Multi-region equity factor modeling (Fama-French, momentum, quality, low-vol) across US, EU, and Asia.
@@ -58,7 +58,7 @@ make install   # Configures .venv via uv and automatically starts default SQLite
 
 # Data Ingestion & Integrity Verification
 make download  # Triggers master WiData, regulatory filing, and macro ingestion
-make verify    # Audits row counts, schemas, and nullness across all 80 Parquet datasets
+make verify    # Audits row counts, schemas, and nullness across all 65 Parquet datasets
 
 # Database & Web UI Stack (Docker Compose)
 make install-pg       # Launches PostgreSQL via Docker Compose & initializes semantic database

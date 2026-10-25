@@ -1,0 +1,27 @@
+{
+  "title": "Tariff-Related Executive Social Media Posts and Next-Day US Equity and Implied Volatility Reactions",
+  "decision": "REJECTED",
+  "n_tariff_posts": 428,
+  "n_event_days": 237,
+  "n_sessions": 1117,
+  "bonferroni_alpha": 0.016666666666666666,
+  "measures": {
+    "abs_return": {
+      "event_mean": 0.007355340773040224,
+      "baseline_mean": 0.00724419896474318,
+      "placebo_p": 0.7720455908818237
+    },
+    "signed_return": {
+      "event_mean": -0.00022600545164452396,
+      "baseline_mean": 0.0002578512849340399,
+      "placebo_p": 0.3747250549890022
+    },
+    "vix_change": {
+      "event_mean": 0.008095959504143461,
+      "baseline_mean": 0.0007313409414391327,
+      "placebo_p": 0.06958608278344332
+    }
+  },
+  "sample_start": "2022-05-12",
+  "sample_end": "2026-10-23"
+}

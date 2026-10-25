@@ -16,10 +16,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing path parameter' }, { status: 400 });
   }
 
-  const root = getProjectRoot();
-  const absPath = path.resolve(root, relPath);
+  const allowedRoot = path.resolve(getProjectRoot(), 'data');
+  const absPath = path.resolve(getProjectRoot(), relPath);
 
-  if (!absPath.startsWith(root) || !fs.existsSync(absPath)) {
+  if (
+    !absPath.startsWith(allowedRoot + path.sep) ||
+    !absPath.toLowerCase().endsWith('.parquet') ||
+    !fs.existsSync(absPath)
+  ) {
     return NextResponse.json({ error: 'File not found or outside root' }, { status: 404 });
   }
 

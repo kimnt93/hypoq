@@ -5,7 +5,7 @@ Transforms:
 1. Date strings ("YYYY-MM-DD") -> pl.Date
 2. Integer epoch timestamps (Int64 seconds) -> pl.Datetime("ms")
 3. ISO datetime strings ("YYYY-MM-DDTHH:MM:SSZ") -> pl.Datetime("ms")
-Strictly eliminates raw String dates and raw Int64 timestamps across all 36 Parquet datasets.
+Strictly eliminates raw String dates and raw Int64 timestamps across all Parquet datasets.
 """
 
 import os

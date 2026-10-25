@@ -1,16 +1,13 @@
 #!/usr/bin/env python3
 """
-Vietnam ETFs Market, NAV, AUM & Portfolio Holdings Ingestion Pipeline.
-Acquires and structures official Point-in-Time datasets for Vietnamese ETFs:
-1. ETF Daily Market OHLCV & Volume (14 domestic listed ETFs + VanEck VNM + Fubon 00885)
-2. ETF Daily Net Asset Value (NAV), Total AUM, Outstanding Shares & Premium/Discount
-3. ETF Daily Portfolio Holdings & Creation Basket Constituents (Danh mục hoán đổi CCQ)
+Vietnam ETFs Market Ingestion Pipeline.
+Downloads daily OHLCV and volume for the listed Vietnamese ETFs plus VanEck VNM and Fubon 00885.
 
-Outputs:
-- vnresearch/data/market/vn_etf_market_daily.parquet
-- vnresearch/data/market/vn_etf_nav_aum_daily.parquet
-- vnresearch/data/market_structure/vn_etf_portfolio_holdings_daily.parquet
-- vnresearch/figures_overview/fig8_etf_market_dynamics.png (PNG only)
+NAV, AUM and creation-basket holdings are NOT generated here: no free, key-less source publishes them
+and simulating them would contaminate hypothesis tests. Agents may add them only from a real source.
+
+Output:
+- data/market/vn_etf_market_daily.parquet
 """
 
 import os
@@ -260,185 +257,11 @@ def fetch_etf_market_data():
     return df_bars
 
 
-def build_etf_nav_aum_series(df_bars):
-    print("\n>>> [2/3] Building ETF Daily Net Asset Value (NAV), AUM & Premium/Discount Time Series...")
-    
-    # Baseline fund assets calibrated from official disclosures
-    # E1VFVN30: ~6,000 to 12,000 Billion VND AUM
-    # FUEVFVND: ~10,000 to 25,000 Billion VND AUM (largest FOL ETF)
-    # FUESSVFL: ~2,500 to 5,000 Billion VND AUM
-    # Other ETFs: ~500 to 2,000 Billion VND AUM
-    
-    nav_rows = []
-    for ticker, meta in ETF_METADATA.items():
-        sub = df_bars.filter(pl.col("symbol") == ticker).sort("date")
-        if len(sub) == 0:
-            continue
-        
-        # In Vietnam, ETF premium/discount:
-        # FUEVFVND trades at a persistent foreign premium (+2% to +8%) due to FOL saturation
-        # E1VFVN30 & FUESSVFL trade tightly around NAV (-0.5% to +0.5%)
-        np.random.seed(42 + len(ticker))
-        for row in sub.iter_rows(named=True):
-            p = row["close"]
-            d = row["date"]
-            if ticker == "FUEVFVND":
-                prem_pct = float(np.random.normal(3.2, 1.2))  # persistent foreign premium
-            elif ticker == "FUESSVFL":
-                prem_pct = float(np.random.normal(0.4, 0.6))
-            else:
-                prem_pct = float(np.random.normal(0.05, 0.45))
-            
-            nav_val = round(p / (1.0 + prem_pct / 100.0), 2)
-            
-            # Base AUM estimate
-            if ticker == "FUEVFVND":
-                base_shares = 850000000.0
-            elif ticker == "E1VFVN30":
-                base_shares = 320000000.0
-            elif ticker == "FUESSVFL":
-                base_shares = 180000000.0
-            else:
-                base_shares = 65000000.0
-
-            total_nav_bn = round((nav_val * base_shares) / 1e9, 2)
-            te_pct = abs(prem_pct) * 0.25
-
-            nav_rows.append({
-                "symbol": ticker,
-                "etf_name": meta["name"],
-                "benchmark_index": meta["benchmark"],
-                "date": d,
-                "nav_per_share": float(nav_val),
-                "close_price": float(p),
-                "premium_discount_pct": float(prem_pct),
-                "total_nav_bn_vnd": float(total_nav_bn),
-                "outstanding_shares": float(base_shares),
-                "tracking_error_pct": float(te_pct)
-            })
-
-    schema = {
-        "symbol": pl.Utf8,
-        "etf_name": pl.Utf8,
-        "benchmark_index": pl.Utf8,
-        "date": pl.Utf8,
-        "nav_per_share": pl.Float64,
-        "close_price": pl.Float64,
-        "premium_discount_pct": pl.Float64,
-        "total_nav_bn_vnd": pl.Float64,
-        "outstanding_shares": pl.Float64,
-        "tracking_error_pct": pl.Float64
-    }
-    df_nav = pl.DataFrame(nav_rows, schema=schema).sort(["symbol", "date"])
-    out_path = os.path.join(MARKET_DIR, "vn_etf_nav_aum_daily.parquet")
-    df_nav.write_parquet(out_path)
-    print(f"    - Saved vn_etf_nav_aum_daily.parquet ({len(df_nav):,} daily NAV observations across {df_nav['symbol'].n_unique()} ETFs)")
-    return df_nav
-
-
-def build_etf_portfolio_holdings():
-    print("\n>>> [3/3] Structuring ETF Daily Constituent Portfolio Holdings (Creation Baskets)...")
-
-    # Load VN30 free float parameters to replicate real creation baskets
-    ff_path = os.path.join(STRUCT_DIR, "vn30_free_float_history.parquet")
-    df_ff = pl.read_parquet(ff_path) if os.path.exists(ff_path) else pl.DataFrame()
-
-    # Load ICB sector mappings
-    stocks_path = os.path.join(MARKET_DIR, "vn_stock_industry_classification.parquet")
-    df_stocks = pl.read_parquet(stocks_path) if os.path.exists(stocks_path) else pl.DataFrame()
-    sector_map = {}
-    if len(df_stocks) > 0:
-        for r in df_stocks.iter_rows(named=True):
-            sector_map[r["symbol"]] = (r.get("company_name", r["symbol"]), r.get("icb_level2_en", "General"))
-
-    holdings_rows = []
-
-    # 1. E1VFVN30 Creation Basket (Replicates VN30)
-    vn30_constituents = [
-        ("ACB", 4200, 7.8), ("BID", 600, 1.2), ("BVH", 300, 0.4), ("CTG", 1800, 2.8),
-        ("FPT", 3600, 10.4), ("GAS", 400, 1.1), ("GVR", 500, 0.8), ("HDB", 4500, 5.2),
-        ("HPG", 9500, 13.5), ("MBB", 6200, 7.5), ("MSN", 2400, 6.2), ("MWG", 3800, 8.9),
-        ("PLX", 400, 0.6), ("POW", 1800, 0.7), ("SAB", 600, 1.2), ("SHB", 5400, 3.1),
-        ("SSB", 3100, 2.5), ("SSI", 3200, 3.4), ("STB", 5100, 6.8), ("TCB", 5600, 8.2),
-        ("TPB", 2400, 2.1), ("VCB", 800, 2.6), ("VHM", 2200, 3.5), ("VIB", 2800, 3.1),
-        ("VIC", 2500, 3.8), ("VJC", 800, 2.4), ("VNM", 3000, 6.5), ("VPB", 7800, 8.4),
-        ("VRE", 2600, 2.2), ("PDR", 1200, 1.1)
-    ]
-    for sym, shares, weight in vn30_constituents:
-        c_name, sec = sector_map.get(sym, (sym, "Financials" if sym in ["ACB", "VCB", "TCB", "MBB"] else "General"))
-        holdings_rows.append({
-            "etf_symbol": "E1VFVN30",
-            "etf_name": "Quỹ ETF DCVFMVN30",
-            "constituent_symbol": sym,
-            "constituent_name": c_name,
-            "sector": sec,
-            "shares_per_creation_unit": int(shares),
-            "portfolio_weight_pct": float(weight),
-            "effective_date": "2026-10-21"
-        })
-
-    # 2. FUEVFVND Creation Basket (Replicates VN DIAMOND Index - FOL Leaders)
-    diamond_constituents = [
-        ("MWG", 12500, 14.8), ("FPT", 8900, 15.2), ("PNJ", 4500, 8.6), ("REE", 4200, 7.5),
-        ("GMD", 3800, 6.4), ("ACB", 9200, 11.2), ("MBB", 11500, 9.8), ("TCB", 8400, 9.5),
-        ("VPB", 9800, 8.2), ("CTG", 3600, 4.5), ("TPB", 4200, 3.1), ("MSB", 4600, 2.8),
-        ("OCB", 3900, 2.2), ("KDH", 3400, 3.1), ("NLG", 2800, 2.5), ("VRE", 4100, 2.8)
-    ]
-    for sym, shares, weight in diamond_constituents:
-        c_name, sec = sector_map.get(sym, (sym, "Retail" if sym == "MWG" else "Technology" if sym == "FPT" else "Banks"))
-        holdings_rows.append({
-            "etf_symbol": "FUEVFVND",
-            "etf_name": "Quỹ ETF DCVFMVN DIAMOND",
-            "constituent_symbol": sym,
-            "constituent_name": c_name,
-            "sector": sec,
-            "shares_per_creation_unit": int(shares),
-            "portfolio_weight_pct": float(weight),
-            "effective_date": "2026-10-21"
-        })
-
-    # 3. FUESSVFL Creation Basket (Replicates VNFIN LEAD Index - Banking & Financials)
-    finlead_constituents = [
-        ("TCB", 12800, 15.6), ("MBB", 14200, 14.8), ("VPB", 15600, 14.2), ("ACB", 11400, 13.5),
-        ("CTG", 5800, 8.9), ("HDB", 7200, 7.8), ("STB", 6800, 7.2), ("SSI", 6500, 6.8),
-        ("VND", 4200, 3.8), ("VCI", 2400, 3.5), ("HCM", 2100, 2.8), ("TPB", 3600, 2.5)
-    ]
-    for sym, shares, weight in finlead_constituents:
-        c_name, sec = sector_map.get(sym, (sym, "Banks" if "B" in sym else "Financial Services"))
-        holdings_rows.append({
-            "etf_symbol": "FUESSVFL",
-            "etf_name": "Quỹ ETF SSIAM VNFIN LEAD",
-            "constituent_symbol": sym,
-            "constituent_name": c_name,
-            "sector": sec,
-            "shares_per_creation_unit": int(shares),
-            "portfolio_weight_pct": float(weight),
-            "effective_date": "2026-10-21"
-        })
-
-    schema = {
-        "etf_symbol": pl.Utf8,
-        "etf_name": pl.Utf8,
-        "constituent_symbol": pl.Utf8,
-        "constituent_name": pl.Utf8,
-        "sector": pl.Utf8,
-        "shares_per_creation_unit": pl.Int64,
-        "portfolio_weight_pct": pl.Float64,
-        "effective_date": pl.Utf8
-    }
-    df_holdings = pl.DataFrame(holdings_rows, schema=schema).sort(["etf_symbol", "portfolio_weight_pct"], descending=[False, True])
-    out_path = os.path.join(STRUCT_DIR, "vn_etf_portfolio_holdings_daily.parquet")
-    df_holdings.write_parquet(out_path)
-    print(f"    - Saved vn_etf_portfolio_holdings_daily.parquet ({len(df_holdings)} constituent holding rows across top ETFs)")
-
-
 def run_all():
     print("=" * 80)
     print("STARTING VIETNAMESE ETFS COMPLETE DATASET INGESTION")
     print("=" * 80)
-    df_bars = fetch_etf_market_data()
-    df_nav = build_etf_nav_aum_series(df_bars)
-    build_etf_portfolio_holdings()
+    fetch_etf_market_data()
     print("=" * 80)
     print("COMPLETED ALL ETF INGESTION STEPS!")
     print("=" * 80)

@@ -20,7 +20,8 @@ FIN_DIR = os.path.join(DATA_DIR, "financials")
 CROSS_DIR = os.path.join(DATA_DIR, "cross_asset")
 
 STRUCT_DIR = os.path.join(DATA_DIR, "market_structure")
-LAZY_DATA_DIR = "/home/kim/Documents/vietquant/lazy-researcher/datasets/vn_market_structure"
+LAZY_DATA_DIR = os.environ.get("HYPOQ_VN_STRUCTURE_DIR", "/home/kim/Documents/vietquant/lazy-researcher/datasets/vn_market_structure")
+WIDATA_SNAPSHOT = os.environ.get("HYPOQ_WIDATA_JSON", "/tmp/widata_cleaned_macro_series.json")
 
 for d in [MACRO_DIR, MARKET_DIR, FIN_DIR, CROSS_DIR, STRUCT_DIR]:
     os.makedirs(d, exist_ok=True)
@@ -51,12 +52,7 @@ def build_market_structure():
         df_ffc.write_parquet(os.path.join(STRUCT_DIR, "vn_free_float_changes_observed.parquet"))
         print(f"    - Saved vn_free_float_changes_observed.parquet ({len(df_ffc):,} rows)")
 
-    # 5.3 Index constituents
-    const_path = os.path.join(LAZY_DATA_DIR, "index_constituents.csv")
-    if os.path.exists(const_path):
-        df_const = pl.read_csv(const_path)
-        df_const.write_parquet(os.path.join(STRUCT_DIR, "vn_index_constituents.parquet"))
-        print(f"    - Saved vn_index_constituents.parquet ({len(df_const):,} rows)")
+    # (index_constituents.csv is byte-identical to free_float.csv and is therefore not duplicated)
 
     # 5.4 Basket history
     basket_path = os.path.join(LAZY_DATA_DIR, "basket_history.csv")
@@ -72,7 +68,10 @@ def build_widata_macro():
     print(">>> 1. Processing WiData Macro Datasets...")
     
     # 1.1 All raw macro series (long table)
-    with open('/tmp/widata_cleaned_macro_series.json', 'r') as f:
+    if not os.path.exists(WIDATA_SNAPSHOT):
+        print(f"    ! {WIDATA_SNAPSHOT} not found; keeping existing vn_* macro parquet files.")
+        return
+    with open(WIDATA_SNAPSHOT, 'r') as f:
         raw_series = json.load(f)
 
     long_rows = []
@@ -453,12 +452,15 @@ def build_corporate_and_microstructure():
         run_all()
     except Exception as e:
         print(f"    ! Error running corporate & microstructure ingestion: {e}")
+
 def build_global_multi_asset():
     print(">>> 8. Ingesting Global Multi-Asset Markets (Asia, US, EU, Commodities, Crypto)...")
     try:
         from scripts.ingest_global_data import run_all
         run_all()
     except Exception as e:
+        print(f"    ! Error running global multi-asset ingestion: {e}")
+
 def build_country_markets():
     print(">>> 9. Ingesting Country-Specific Markets (CN, HK, JP, KR)...")
     try:
@@ -468,7 +470,7 @@ def build_country_markets():
         print(f"    ! Error running country markets ingestion: {e}")
 
 def build_community_and_social():
-    print(">>> 10. Ingesting Raw Community & Social Discussions (Reddit, X, VIP)...")
+    print(">>> 10. Ingesting Raw Community & Social Discussions (Truth Social, Hacker News, Stack Exchange)...")
     try:
         from scripts.ingest_community_and_social import run_all
         run_all()

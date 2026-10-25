@@ -2,9 +2,9 @@
 """
 Split and normalize widata_macro_all_series into clean, domain-grouped wide Parquet tables.
 Replaces the unpivoted long format with explicit English-named column datasets:
-1. vietnam_trade_exports_monthly.parquet
-2. vietnam_fdi_sectors_monthly.parquet
-3. vietnam_sbv_policy_rates_daily.parquet
+1. vn_trade_exports_monthly.parquet
+2. vn_fdi_sectors_monthly.parquet
+3. vn_sbv_policy_rates_daily.parquet
 4. us_fed_balance_sheet_weekly.parquet
 """
 
@@ -41,9 +41,9 @@ def split_macro():
         if old_col in piv_trade.columns:
             piv_trade = piv_trade.rename({old_col: new_col})
 
-    trade_path = os.path.join(MACRO_DIR, "vietnam_trade_exports_monthly.parquet")
+    trade_path = os.path.join(MACRO_DIR, "vn_trade_exports_monthly.parquet")
     piv_trade.write_parquet(trade_path)
-    print(f"    - Saved vietnam_trade_exports_monthly.parquet ({len(piv_trade):,} rows x {len(piv_trade.columns)} cols)")
+    print(f"    - Saved vn_trade_exports_monthly.parquet ({len(piv_trade):,} rows x {len(piv_trade.columns)} cols)")
 
     # 2. Foreign Direct Investment (FDI) Sectors (Table 236)
     print(">>> [2/4] Pivoting FDI Sector Disbursed Capital...")
@@ -60,9 +60,9 @@ def split_macro():
         if old_col in piv_fdi.columns:
             piv_fdi = piv_fdi.rename({old_col: new_col})
 
-    fdi_path = os.path.join(MACRO_DIR, "vietnam_fdi_sectors_monthly.parquet")
+    fdi_path = os.path.join(MACRO_DIR, "vn_fdi_sectors_monthly.parquet")
     piv_fdi.write_parquet(fdi_path)
-    print(f"    - Saved vietnam_fdi_sectors_monthly.parquet ({len(piv_fdi):,} rows x {len(piv_fdi.columns)} cols)")
+    print(f"    - Saved vn_fdi_sectors_monthly.parquet ({len(piv_fdi):,} rows x {len(piv_fdi.columns)} cols)")
 
     # 3. State Bank of Vietnam Policy Rates & Reserve Requirements (Table 250)
     print(">>> [3/4] Pivoting SBV Policy Rates & Required Reserves...")
@@ -80,9 +80,9 @@ def split_macro():
         if old_col in piv_sbv.columns:
             piv_sbv = piv_sbv.rename({old_col: new_col})
 
-    sbv_path = os.path.join(MACRO_DIR, "vietnam_sbv_policy_rates_daily.parquet")
+    sbv_path = os.path.join(MACRO_DIR, "vn_sbv_policy_rates_daily.parquet")
     piv_sbv.write_parquet(sbv_path)
-    print(f"    - Saved vietnam_sbv_policy_rates_daily.parquet ({len(piv_sbv):,} rows x {len(piv_sbv.columns)} cols)")
+    print(f"    - Saved vn_sbv_policy_rates_daily.parquet ({len(piv_sbv):,} rows x {len(piv_sbv.columns)} cols)")
 
     # 4. Federal Reserve Balance Sheet (Tables 99 & 89)
     print(">>> [4/4] Pivoting Federal Reserve Weekly Balance Sheet...")

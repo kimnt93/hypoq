@@ -48,16 +48,16 @@ print(preview)
 import polars as pl
 
 df = pl.read_parquet(
-    "data/market/vn_etf_nav_aum_daily.parquet",
-    columns=["date", "symbol", "nav_per_share", "premium_discount_pct"]
+    "data/market/vn_etf_market_daily.parquet",
+    columns=["date", "symbol", "close", "volume"]
 )
 
 summary = df.group_by("symbol").agg([
     pl.col("date").min().alias("start_date"),
     pl.col("date").max().alias("end_date"),
     pl.len().alias("n_observations"),
-    pl.col("premium_discount_pct").null_count().alias("null_premiums"),
-    pl.col("nav_per_share").mean().alias("mean_nav")
+    pl.col("close").null_count().alias("null_closes"),
+    pl.col("close").mean().alias("mean_close")
 ]).sort("n_observations", descending=True)
 
 print(summary)

@@ -1,9 +1,0 @@
-{
-  "hypothesis_id": 2,
-  "title": "Cross-Border Portability of Momentum and Quality Factor Premia Across Global Equity Markets",
-  "decision": "ACCEPTED",
-  "metric_name": "Out-of-Sample IC",
-  "metric_value": 0.0614,
-  "p_value": 0.0012,
-  "sharpe_ratio": 1.48
-}

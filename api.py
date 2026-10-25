@@ -2,7 +2,7 @@
 hypoq API Server & Dashboard Explorer.
 Serves interactive HTML UI for:
 1. Hypotheses tracker (Accepted / Rejected / Inconclusive with metrics & test stats)
-2. Dataset Explorer (All 36 Parquet files with live Polars preview)
+2. Dataset Explorer (All 65 Parquet files with live Polars preview)
 3. Research Paper & PDF Reports Viewer
 4. Real-time FTS5 Search & Deduplication Engine
 """
@@ -25,6 +25,17 @@ from hypoq.db import (
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def resolve_inside(rel_path: str, subdir: str, suffix: str):
+    """Resolves rel_path under BASE_DIR/subdir; returns None unless it is an existing file with `suffix` inside it."""
+    root = os.path.realpath(os.path.join(BASE_DIR, subdir))
+    target = os.path.realpath(os.path.join(BASE_DIR, rel_path))
+    if os.path.commonpath([root, target]) != root:
+        return None
+    if not target.lower().endswith(suffix) or not os.path.isfile(target):
+        return None
+    return target
 
 
 def get_dataset_inventory() -> List[Dict[str, Any]]:
@@ -407,9 +418,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     <nav>
         <button class="active" onclick="showTab('hypotheses')">Hypotheses & Results</button>
-        <button onclick="showTab('datasets')">Data Lake (36 Parquets)</button>
+        <button onclick="showTab('datasets')">Data Lake (65 Parquets)</button>
         <button onclick="showTab('reports')">Research Manuscripts & PDFs</button>
-        <a href="/explorer" style="text-decoration:none;"><button type="button" style="border-color: var(--accent); color: var(--accent);">Data Lake Explorer (index.html) &rarr;</button></a>
     </nav>
 </header>
 
@@ -428,14 +438,14 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     <div class="stat-card">
         <div class="label">Data Lake Parquets</div>
-        <div class="value" style="color: var(--accent);" id="stat-datasets">36</div>
+        <div class="value" style="color: var(--accent);" id="stat-datasets">0</div>
     </div>
 </div>
 
 <!-- TAB 1: HYPOTHESES -->
 <div id="tab-hypotheses" class="tab-content active">
     <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search hypotheses using FTS5 BM25 text match (e.g. tightly held, basis, order flow)..." onkeydown="if(event.key==='Enter') executeSearch()">
+        <input type="text" id="searchInput" placeholder="Semantic search over hypotheses (e.g. tariff posts, volatility spillover, credit spreads)..." onkeydown="if(event.key==='Enter') executeSearch()">
         <button onclick="executeSearch()">Search</button>
         <button style="background: var(--surface-hover); border: 1px solid var(--border); color: var(--text);" onclick="resetFilter()">Reset</button>
     </div>
@@ -455,7 +465,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 <!-- TAB 2: DATASETS -->
 <div id="tab-datasets" class="tab-content">
-    <h2 style="color: var(--text-heading); margin-bottom: 16px;">Quantitative Data Lake Architecture (36 Parquet Datasets)</h2>
+    <h2 style="color: var(--text-heading); margin-bottom: 16px;">Quantitative Data Lake Architecture (65 Parquet Datasets)</h2>
     <table class="data-table">
         <thead>
             <tr>
@@ -553,8 +563,8 @@ async function loadHypotheses(query = '', status = '') {
                     <div><strong>H1 (Alt):</strong> ${h.alt_hypothesis}</div>
                 </div>
                 <div class="hypo-meta">
-                    <div>Primary Metric: <strong>${h.metric_name || 'N/A'}: ${h.metric_value !== null ? h.metric_value : '--'}</strong></div>
-                    <div>p-Value: <strong>${h.p_value !== null ? h.p_value : '--'}</strong></div>
+                    <div>Primary Metric: <strong>${h.metric_name || 'N/A'}: ${fmtNum(h.metric_value)}</strong></div>
+                    <div>p-Value: <strong>${fmtNum(h.p_value)}</strong></div>
                     <div>Updated: <strong>${(h.updated_at || '').substring(0, 10)}</strong></div>
                 </div>
                 ${h.summary_findings ? `<div style="margin-top: 10px; font-size: 13px; color: var(--text);"><strong>Findings:</strong> ${h.summary_findings}</div>` : ''}
@@ -667,8 +677,17 @@ async function loadReports() {
     });
 }
 
+function fmtNum(v) {
+    if (v === null || v === undefined) return '--';
+    const a = Math.abs(v);
+    return (a !== 0 && (a < 1e-3 || a >= 1e6)) ? Number(v).toExponential(2) : Number(v).toPrecision(4);
+}
+
 // Initial load
 loadHypotheses();
+fetch('/api/datasets').then(r => r.json()).then(d => {
+    document.getElementById('stat-datasets').innerText = d.length;
+});
 </script>
 </body>
 </html>
@@ -691,28 +710,11 @@ class HypoqHandler(BaseHTTPRequestHandler):
             self.wfile.write(HTML_TEMPLATE.encode("utf-8"))
             return
 
-        # 1b. Static Data Lake Explorer (index.html)
-        if path == "/explorer" or path == "/index.html":
-            explorer_path = os.path.join(BASE_DIR, "index.html")
-            if os.path.exists(explorer_path):
-                with open(explorer_path, "rb") as f:
-                    content = f.read()
-                self.send_response(200)
-                self.send_header("Content-Type", "text/html; charset=utf-8")
-                self.end_headers()
-                self.wfile.write(content)
-                return
         # 2. PDF Serving
         if path == "/pdf":
             rel_pdf = query.get("path", [""])[0]
-            # Security: normalize path and prevent directory traversal outside BASE_DIR / parent
-            target_path = os.path.abspath(os.path.join(BASE_DIR, rel_pdf))
-            allowed_root = os.path.abspath(os.path.join(BASE_DIR, ".."))
-            if not os.path.exists(target_path):
-                alt_path = os.path.abspath(os.path.join(BASE_DIR, "..", rel_pdf))
-                if os.path.exists(alt_path):
-                    target_path = alt_path
-            if not target_path.startswith(allowed_root) or not os.path.exists(target_path):
+            target_path = resolve_inside(rel_pdf, "researches", ".pdf")
+            if target_path is None:
                 self.send_error(404, "PDF file not found")
                 return
 
@@ -760,8 +762,8 @@ class HypoqHandler(BaseHTTPRequestHandler):
         # 5. API: Dataset Preview (Polars)
         if path == "/api/dataset_preview":
             rel_path = query.get("path", [""])[0]
-            abs_path = os.path.abspath(os.path.join(BASE_DIR, rel_path))
-            if not os.path.exists(abs_path):
+            abs_path = resolve_inside(rel_path, "data", ".parquet")
+            if abs_path is None:
                 self.send_response(404)
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
@@ -812,7 +814,7 @@ class HypoqHandler(BaseHTTPRequestHandler):
 def run_server(port: int = 8080, db_path: str = DEFAULT_DB_PATH):
     """Starts the hypoq API server."""
     os.environ["HYPOQ_DB"] = db_path
-    server_address = ("0.0.0.0", port)
+    server_address = (os.environ.get("HYPOQ_HOST", "127.0.0.1"), port)
     httpd = HTTPServer(server_address, HypoqHandler)
     print(f"\n🌐 [hypoq API] Server live at http://127.0.0.1:{port}")
     print(f"   Database : {db_path}")

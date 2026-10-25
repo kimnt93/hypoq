@@ -9,7 +9,7 @@ tags: [hypoq, loop, workflow, evomap, lifecycle]
 # hypoq Loop Skill
 
 ## Overview
-This skill operationalizes the autonomous quantitative research lifecycle inspired by the hypoq paradigm and EvoMap architecture:
+This skill operationalizes the autonomous quantitative research lifecycle inspired by the AutoResearch paradigm and EvoMap architecture:
 
 ## The 8-Stage Lifecycle
 

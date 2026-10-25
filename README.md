@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for global financial economics, cross-border equity factor modeling, sovereign yield curve term structure, macroeconomic spillovers, cryptocurrency microstructure, and multi-asset derivatives across **Asia**, the **United States**, **Europe**, and decentralized digital asset markets. **hypoq** operationalizes an autonomous agent research loop inspired by the hypoq paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
+**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for global financial economics, cross-border equity factor modeling, sovereign yield curve term structure, macroeconomic spillovers, cryptocurrency microstructure, and multi-asset derivatives across **Asia**, the **United States**, **Europe**, and decentralized digital asset markets. **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
 
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
@@ -32,7 +32,7 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 │ HOST MACHINE (Native Quantitative Research Engine)                     │
 │ • Environment: Python 3.12 managed via uv (make install)               │
 │ • Modeling: Polars, Statsmodels, Scikit-Learn, PyTorch, SB3            │
-│ • Ingestion: scripts/download_all.py -> data/ (80 Parquet files)       │
+│ • Ingestion: scripts/download_all.py -> data/ (65 Parquet files)       │
 │ • Pipeline: researches/res_*/code/run_pipeline.py                      │
 │ • Typesetting: Tectonic engine -> main.tex -> main.pdf                 │
 │ • Persistence: SQLite / PostgreSQL (Dense Semantic Vector Search via Gemini/HF) │
@@ -66,32 +66,12 @@ Every research investigation adheres to strict empirical non-negotiables:
 
 ## 📊 Empirical Research Study Examples
 
-> **Note**: The empirical studies below serve as reproducible reference examples produced across the four modeling paradigms. Researchers can execute new hypothesis loops via CLI or autonomous agents.
+> **Note**: The studies below are reproducible reference examples. Every number in their tables, figures, papers and database rows is computed by `researches/<id>/code/run_pipeline.py`, and decisions come from the test, not from the author. Null results are published as such. `python run.py --audit` enforces this for every folder.
 
 | ID | Domain | Paradigm | Status | Key Metric | Title & Focus |
 | :--- | :--- | :--- | :---: | :---: | :--- |
-| **001** | Microstructure | Econometrics | **ACCEPTED** | $t = 11.46$ | Order Book Imbalance and Contemporaneous Price Impact in VN30 Equities |
-| **002** | Factor Alpha | Machine Learning | **REJECTED** | $R^2 = 0.057$ | Cross-Sectional Return Predictability with Gradient Boosted Trees |
-| **003** | Macro Volatility | Deep Learning | **REJECTED** | $t = -0.22$ | Multi-Horizon Volatility Nowcasting with Recurrent Neural Networks |
-| **004** | Asset Allocation | Reinforcement Learning | **ACCEPTED** | Sharpe $= 1.49$ | Dynamic Portfolio Allocation with Proximal Policy Optimization (PPO) |
-| **005** | Derivatives | Econometrics | **ACCEPTED** | $t = -5.48$ | Futures-Cash Basis Discount and Arbitrage Bands in VN30 Derivatives |
-| **006** | Macro Transmission | Econometrics | **ACCEPTED** | $t = 6.92$ | Monetary Transmission, Cross-Border Spillovers, and NAV Parity in Vietnamese ETFs |
-
----
-
-## 📚 Core Documentation
-
-* **[`RESEARCH.md`](RESEARCH.md)**: Research taxonomy across global quantitative domains (Asia, CN, HK, JP, KR, US, Europe, Commodities, Crypto, VIP Sentiment, and World Taxonomy), modeling paradigms, and causality invariants.
-* **[`DATA.md`](DATA.md)**: Standardized data lake inventory (80 Parquet files, 2.0M+ rows, strictly < 100MB per file for GitHub safety) and standardized jurisdiction naming standard (`cn_`, `hk_`, `jp_`, `kr_`, `asia_`, `us_`, `eu_`, `global_`, `crypto_`, `sentiment/`, `vn_`).
-* **[`AGENTS.md`](AGENTS.md)**: Multi-agent execution protocol, CLI orchestration, and agent workflow guidelines.
-* **[`.agents/skills/`](.agents/skills/)**: Modular skills suite (18 AgentSkills covering chunked data exploration, world data taxonomy, VIP sentiment event studies, global macro, crypto modeling, factor pricing, data discovery, ML/DL/RL, stats, charts, and LaTeX).
-* **[`templates/`](templates/)**: Standard Research Future LaTeX manuscript template compiled with standalone Tectonic.
-
----
-
-## 🚀 Quickstart
-
-### 1. Research Environment Setup via `uv` (Host Machine)
+| **001** | Macro transmission | Econometrics | **REJECTED** | Nikkei $t = 7.70$, Euro Stoxx $t = 1.93$ | Cross-border return transmission from the US session to European and Japanese equities (the Japan leg is significant, the Europe leg fails the Bonferroni threshold) |
+| **002** | Sentiment events | Econometrics | **REJECTED** | placebo $p \ge 0.07$ | Tariff-related Truth Social posts and next-day S&P 500 / VIX reactions |
 
 All quantitative analysis, ML/DL/RL training, and LaTeX paper compilations execute directly on the host using **`uv`**:
 
@@ -120,11 +100,20 @@ Open **`http://localhost:3030`** (or `http://<server-ip>:3030`) in your browser.
 ### 3. Multi-Agent CLI Harness (`run.py`)
 
 ```bash
-# Wake up concurrent AI research agents (Codex, Claude, Hermes)
-python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
+# Write the protocol prompt for each agent under runs/<session>/ (dry run)
+python run.py --agents=claude,codex --topic="Euro area credit spread shocks and bank equity returns"
 
-# Search historical hypotheses with FTS5 BM25 text ranking to prevent duplicate research
+# Actually launch the agent CLIs in parallel, then audit what they produced
+python run.py --agents=claude,codex --topic="..." --execute
+
+# Verify every researches/* folder is reproducible and consistent with the database
+python run.py --audit
+
+# Dense semantic search over past hypotheses to prevent duplicate research
 python run.py --search="order flow imbalance"
+
+# Start the JSON API + dashboard (api.py)
+python run.py --web --port 8080
 
 # List all recorded hypotheses and empirical decisions
 python run.py --list
@@ -138,7 +127,7 @@ python run.py --list --status=ACCEPTED
 ```bash
 make install          # Install host Python research stack (.venv) & start default SQLite stack
 make download         # Ingest regulatory filings, WiData macro, and build Parquet datasets
-make verify           # Audit schema integrity and row counts across all 80 Parquet files
+make verify           # Audit schema integrity and row counts across all 65 Parquet files
 make install-pg       # Launch PostgreSQL via Docker Compose & initialize semantic DB
 make install-sqlite   # Launch SQLite & Next.js web container via Docker Compose
 make start            # Launch Next.js web display container on Docker (port 3030)

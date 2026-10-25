@@ -13,13 +13,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Missing path parameter' }, { status: 400 });
   }
 
-  const root = getProjectRoot();
-  let absPath = path.resolve(root, relPath);
-  if (!fs.existsSync(absPath)) {
-    absPath = path.resolve(root, '..', relPath);
-  }
+  const allowedRoot = path.resolve(getProjectRoot(), 'researches');
+  const absPath = path.resolve(getProjectRoot(), relPath);
 
-  if (!fs.existsSync(absPath)) {
+  if (
+    !absPath.startsWith(allowedRoot + path.sep) ||
+    !absPath.toLowerCase().endsWith('.pdf') ||
+    !fs.existsSync(absPath)
+  ) {
     return NextResponse.json({ error: 'PDF file not found' }, { status: 404 });
   }
 
