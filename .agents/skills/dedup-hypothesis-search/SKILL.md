@@ -2,7 +2,7 @@
 name: dedup-hypothesis-search
 description: Search existing research hypotheses using dense semantic vector embeddings (Google Gemini text-embedding-004 or open-source Hugging Face all-MiniLM-L6-v2) across SQLite or PostgreSQL backends to eliminate duplicate experiments.
 version: 2.0.0
-author: AI Quantitative Research Network
+author: hypoq
 tags: [search, deduplication, semantic-search, vector-embeddings, gemini, huggingface, postgres, sqlite]
 ---
 

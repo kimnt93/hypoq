@@ -1,6 +1,6 @@
 # Research Future LaTeX Template for Quantitative Financial Economics
 
-This LaTeX template is adapted from the Overleaf **Research Future Template** (`https://www.overleaf.com/latex/templates/research-future-template/dqwvghptfcmj`) published by the Science Partner Journal Program, customized specifically for **Autonomous Financial Research Reports** within `vnresearch` and `paper-hub`.
+This LaTeX template is adapted from the Overleaf **Research Future Template** (`https://www.overleaf.com/latex/templates/research-future-template/dqwvghptfcmj`) published by the Science Partner Journal Program, customized specifically for **Autonomous Financial Research Reports** within hypoq.
 
 ---
 

@@ -2,7 +2,7 @@
 name: charts-visualization
 description: Render publication-grade financial charts and econometric figures using Polars and Seaborn/Matplotlib, outputting exclusively high-DPI PNGs.
 version: 1.0.0
-author: kim / vnresearch
+author: hypoq
 tags: [visualization, seaborn, matplotlib, polars, charts, figures]
 ---
 
@@ -17,7 +17,7 @@ This skill defines formatting rules and code recipes for creating figures in qua
 - Plotting event-study abnormal return windows $[-10, +10]$ with confidence bands.
 
 ## Non-Negotiable Styling Rules
-1. **Output Format**: Strictly save **PNG** files (`dpi=200` to `300`). Zero PDF reports in `vnresearch/`.
+1. **Output Format**: Strictly save **PNG** files (`dpi=200` to `300`). Zero PDF reports in the repository (only the compiled `main.pdf` of each study).
 2. **Typography**: Clean sans-serif fonts, explicit axis labels with units (e.g. `Return (%)`, `Spread (bps)`, `Date`).
 3. **Palette**: Professional colorblind-safe palettes (e.g., Deep, Muted, Colorblind, or `#1f77b4`, `#d62728`, `#2ca02c`).
 4. **Layout**: Tight layout (`plt.tight_layout()` or `bbox_inches="tight"`), no unnecessary borders, soft grid (`alpha=0.3`).

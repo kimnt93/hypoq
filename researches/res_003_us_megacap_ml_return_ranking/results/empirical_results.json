@@ -1,0 +1,35 @@
+{
+  "title": "Gradient-Boosted Ranking of Next-Week Returns in US Mega-Cap Equities: A Walk-Forward Test",
+  "decision": "ACCEPTED",
+  "models": {
+    "gbm": {
+      "mean_ic": 0.01332374591561741,
+      "hac_t": 1.7955300811119743,
+      "p_one_sided": 0.036284642243840294,
+      "n_days": 1959,
+      "ic_positive_share": 0.5273098519652885
+    },
+    "ridge": {
+      "mean_ic": -0.004750023670620537,
+      "hac_t": -0.42604818937649186,
+      "p_one_sided": 0.6649636339787789,
+      "n_days": 1959,
+      "ic_positive_share": 0.5028075548749362
+    },
+    "momentum": {
+      "mean_ic": 0.010636408495059,
+      "hac_t": 0.8569923430972289,
+      "p_one_sided": 0.1957245581424638,
+      "n_days": 1959,
+      "ic_positive_share": 0.5181214905564063
+    },
+    "gbm_top_minus_bottom_third_5d": {
+      "mean": 0.0012047783188442916,
+      "hac_t": 1.557329315517549,
+      "note": "gross of costs, overlapping 5-day windows"
+    }
+  },
+  "sample": "2019-01-02 to 2026-10-16",
+  "n_stocks": 35,
+  "horizon_days": 5
+}

@@ -23,6 +23,8 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import yfinance as yf
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.yf_common import fetch_ticker_dataframe
 from datetime import datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -33,90 +35,6 @@ CRYPTO_DIR = os.path.join(DATA_DIR, "crypto")
 
 for d in [MARKET_DIR, MACRO_DIR, CRYPTO_DIR]:
     os.makedirs(d, exist_ok=True)
-
-
-def fetch_ticker_dataframe(tickers_meta: dict, period: str = "10y") -> pl.DataFrame:
-    """
-    Downloads historical daily data from Yahoo Finance for a mapping of tickers to metadata.
-    Robustly handles single or multi-ticker batches with retries.
-    """
-    records = []
-    ticker_keys = list(tickers_meta.keys())
-    print(f"    - Fetching {len(ticker_keys)} assets over period '{period}'...")
-
-    try:
-        data = yf.download(
-            ticker_keys,
-            period=period,
-            interval="1d",
-            group_by="ticker",
-            auto_adjust=False,
-            progress=False,
-            threads=True,
-        )
-    except Exception as e:
-        print(f"    ! Error during batch download: {e}. Falling back to iterative fetch.")
-        data = None
-
-    for tick, meta in tickers_meta.items():
-        try:
-            df_tick = None
-            if data is not None and not data.empty:
-                if len(ticker_keys) == 1:
-                    df_tick = data
-                elif tick in data.columns.levels[0]:
-                    df_tick = data[tick].dropna(how="all")
-            
-            # Fallback single download if missing in batch
-            if df_tick is None or len(df_tick) == 0:
-                single_t = yf.Ticker(tick)
-                df_tick = single_t.history(period=period, auto_adjust=False)
-
-            if df_tick is not None and len(df_tick) > 0:
-                df_tick = df_tick.reset_index()
-                # Standardize date column
-                date_col = "Date" if "Date" in df_tick.columns else df_tick.columns[0]
-                df_tick["clean_date"] = pd.to_datetime(df_tick[date_col]).dt.strftime("%Y-%m-%d")
-                df_tick = df_tick.dropna(subset=["Close"]).sort_values("clean_date")
-
-                # Compute returns
-                closes = df_tick["Close"].astype(float).values
-                returns = np.zeros(len(closes))
-                if len(closes) > 1:
-                    returns[1:] = (closes[1:] - closes[:-1]) / np.where(closes[:-1] == 0, np.nan, closes[:-1])
-                df_tick["returns"] = returns
-
-                for _, row in df_tick.iterrows():
-                    rec = {
-                        "date": str(row["clean_date"]),
-                        "symbol": tick,
-                        "open": float(row["Open"]) if pd.notnull(row.get("Open")) else None,
-                        "high": float(row["High"]) if pd.notnull(row.get("High")) else None,
-                        "low": float(row["Low"]) if pd.notnull(row.get("Low")) else None,
-                        "close": float(row["Close"]) if pd.notnull(row.get("Close")) else None,
-                        "adj_close": float(row["Adj Close"]) if pd.notnull(row.get("Adj Close")) else (float(row["Close"]) if pd.notnull(row.get("Close")) else None),
-                        "volume": float(row["Volume"]) if pd.notnull(row.get("Volume")) else 0.0,
-                        "returns": float(row["returns"]) if pd.notnull(row.get("returns")) else 0.0,
-                    }
-                    rec.update(meta)
-                    records.append(rec)
-
-                print(f"      + {tick} ({meta.get('name', meta.get('index_name', meta.get('asset_name', '')))}): {len(df_tick):,} bars")
-            else:
-                print(f"      ! Warning: No data returned for {tick}")
-        except Exception as err:
-            print(f"      ! Failed to process {tick}: {err}")
-
-    if not records:
-        return pl.DataFrame()
-
-    df_out = (
-        pl.DataFrame(records)
-        .with_columns(pl.col("date").str.to_date("%Y-%m-%d"))
-        .sort(["symbol", "date"])
-        .unique(subset=["symbol", "date"], keep="last")
-    )
-    return df_out
 
 
 def build_us_markets():
@@ -365,7 +283,7 @@ def build_us_yield_curve():
         })
 
     df_yc = (
-        pl.DataFrame(pivot_data)
+        pl.DataFrame(pivot_data, infer_schema_length=None)
         .with_columns(pl.col("date").str.to_date("%Y-%m-%d"))
         .sort("date")
         .unique(subset=["date"], keep="last")
@@ -432,7 +350,7 @@ def build_crypto_markets():
         sub = df_crypto_raw.filter(pl.col("symbol") == sym).sort("date")
         ret_series = sub["returns"].to_pandas()
         vol30 = ret_series.rolling(30).std() * np.sqrt(365)
-        sub = sub.with_columns(pl.Series("volatility_30d", vol30.fillna(0.0).values))
+        sub = sub.with_columns(pl.Series("volatility_30d", vol30.values, nan_to_null=True))
         crypto_augmented.append(sub)
 
     df_crypto = pl.concat(crypto_augmented).sort(["symbol", "date"])
@@ -451,33 +369,36 @@ def build_crypto_markets():
             "close": "eth_close", "volume": "eth_volume", "returns": "eth_returns"
         })
 
-        sp500_file = os.path.join(MARKET_DIR, "us_indices_daily.parquet")
-        gold_file = os.path.join(MACRO_DIR, "global_commodities_daily.parquet")
+        def _as_date(expr):
+            return expr.cast(pl.Utf8).str.slice(0, 10).str.to_date("%Y-%m-%d", strict=False)
 
-        df_sp = pl.read_parquet(sp500_file).filter(pl.col("symbol") == "^GSPC").select(["date", "returns"]).rename({"returns": "sp500_returns"}) if os.path.exists(sp500_file) else None
-        df_gold = pl.read_parquet(gold_file).filter(pl.col("symbol") == "GC=F").select(["date", "returns"]).rename({"returns": "gold_returns"}) if os.path.exists(gold_file) else None
+        def _rolling_corr_trading_days(other_df, other_col, out_col):
+            """30-observation rolling correlation of BTC with an asset that trades on weekdays only.
+            Computed on the dates both trade (no weekend nulls), then matched back by date."""
+            joined = btc_sub.select(["date", "btc_returns"]).join(other_df, on="date", how="inner").sort("date")
+            return joined.select(["date", pl.rolling_corr(pl.col("btc_returns"), pl.col(other_col), window_size=30).alias(out_col)])
 
         combined = btc_sub.join(eth_sub, on="date", how="inner")
-        if df_sp is not None:
-            combined = combined.join(df_sp, on="date", how="left")
-        if df_gold is not None:
-            combined = combined.join(df_gold, on="date", how="left")
+        sp500_file = os.path.join(MARKET_DIR, "us_indices_daily.parquet")
+        gold_file = os.path.join(MACRO_DIR, "global_commodities_daily.parquet")
+        for fpath, sym, col, out_col in [
+            (sp500_file, "^GSPC", "sp500_returns", "btc_sp500_corr_30d"),
+            (gold_file, "GC=F", "gold_returns", "btc_gold_corr_30d"),
+        ]:
+            if not os.path.exists(fpath):
+                continue
+            other = (
+                pl.read_parquet(fpath).filter(pl.col("symbol") == sym)
+                .select([_as_date(pl.col("date")).alias("date"), pl.col("returns").alias(col)])
+                .drop_nulls()
+            )
+            combined = combined.join(_rolling_corr_trading_days(other, col, out_col), on="date", how="left")
 
         comb_pd = combined.sort("date").to_pandas()
         comb_pd["eth_btc_ratio"] = comb_pd["eth_close"] / np.where(comb_pd["btc_close"] == 0, np.nan, comb_pd["btc_close"])
         comb_pd["crypto_top_volume_sum"] = comb_pd["btc_volume"] + comb_pd["eth_volume"]
         comb_pd["btc_vol_30d"] = comb_pd["btc_returns"].rolling(30).std() * np.sqrt(365)
         comb_pd["eth_vol_30d"] = comb_pd["eth_returns"].rolling(30).std() * np.sqrt(365)
-
-        if "sp500_returns" in comb_pd.columns:
-            comb_pd["btc_sp500_corr_30d"] = comb_pd["btc_returns"].rolling(30).corr(comb_pd["sp500_returns"])
-        else:
-            comb_pd["btc_sp500_corr_30d"] = None
-
-        if "gold_returns" in comb_pd.columns:
-            comb_pd["btc_gold_corr_30d"] = comb_pd["btc_returns"].rolling(30).corr(comb_pd["gold_returns"])
-        else:
-            comb_pd["btc_gold_corr_30d"] = None
 
         select_cols = [
             "date", "btc_close", "eth_close", "eth_btc_ratio", "crypto_top_volume_sum",

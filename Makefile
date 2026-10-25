@@ -1,13 +1,13 @@
 # ==============================================================================
-# vnresearch — Standalone Quantitative Financial & Macroeconomic Data Lake
-# Repository: https://github.com/kimnt93/vnresearch.git
+# hypoq — Hypothesis x Quant: autonomous research harness and free, real data lake
+# Repository: https://github.com/kimnt93/hypoq.git
 # ==============================================================================
 
 PYTHON ?= $(shell if [ -f .venv/bin/python3 ]; then echo $$(pwd)/.venv/bin/python3; elif [ -f ../.venv/bin/python3 ]; then echo $$(cd .. && pwd)/.venv/bin/python3; else which python3; fi)
 ANYMD ?= $(shell which anymd || echo "/home/kim/.bun/bin/anymd")
 UV ?= $(shell which uv || echo "/home/kim/.local/bin/uv")
 
-.PHONY: all install download verify parse-doc help clean start stop install-pg install-postgres install-sqlite setup-pg setup-sqlite
+.PHONY: all install download verify audit seed test api parse-doc help clean start stop install-pg install-postgres install-sqlite setup-pg setup-sqlite
 
 # Default target downloads and builds all datasets
 all: download
@@ -18,7 +18,11 @@ help:
 	@echo "========================================================================"
 	@echo " make install          Install host research stack (.venv) & start default SQLite stack"
 	@echo " make download         Download, parse with anymd, and build all datasets"
-	@echo " make verify           Validate integrity and row counts of all Parquet files"
+	@echo " make verify           Data-quality audit of all Parquet files (duplicates, nulls, OHLC, staleness)"
+	@echo " make audit            Research integrity audit (code, results JSON, PDF and database must agree)"
+	@echo " make seed             Re-run every researches/*/code/run_pipeline.py and refresh the database"
+	@echo " make test             Run the pytest suite"
+	@echo " make api              Start the JSON API + dashboard (api.py) on http://127.0.0.1:8080"
 	@echo " make start            Start Next.js web UI display container on Docker"
 	@echo " make install-pg       Start PostgreSQL with Docker Compose & initialize semantic DB"
 	@echo " make install-sqlite   Start SQLite & Next.js web container with Docker Compose"
@@ -41,7 +45,7 @@ install:
 	$(MAKE) install-sqlite
 
 download:
-	@echo ">>> Starting Complete Data Ingestion Pipeline via anymd..."
+	@echo ">>> Starting complete free-data ingestion pipeline..."
 	$(PYTHON) scripts/download_all.py
 	@echo ">>> All datasets successfully downloaded and verified!"
 
@@ -49,13 +53,25 @@ verify:
 	@echo ">>> Validating Parquet Datasets Integrity..."
 	$(PYTHON) scripts/verify_datasets.py
 
+audit:
+	$(PYTHON) run.py --audit
+
+seed:
+	$(PYTHON) scripts/seed_database.py
+
+test:
+	$(PYTHON) -m pytest -q
+
+api:
+	$(PYTHON) run.py --web --port 8080
+
 parse-doc:
 	@if [ -z "$(FILE)" ]; then echo "Usage: make parse-doc FILE=<path_or_url> [PAGES=1-5]"; exit 1; fi
 	$(ANYMD) $(FILE) $(if $(PAGES),-p $(PAGES),)
 
 clean:
 	@echo ">>> Cleaning temporary caches and artifacts..."
-	@rm -rf /tmp/widata* /tmp/anymd* .pytest_cache __pycache__
+	@rm -rf /tmp/anymd* .pytest_cache __pycache__
 	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	@echo "    Done."
 

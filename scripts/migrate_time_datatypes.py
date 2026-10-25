@@ -24,6 +24,11 @@ DATETIME_COLUMNS = [
     "time", "announced_at", "retrieved_at", "created_date", "modified_date"
 ]
 
+def _iso_to_datetime(expr):
+    """ISO-8601 string (with or without a trailing Z) -> naive UTC Datetime[ms]."""
+    return expr.str.to_datetime(strict=False, time_zone="UTC").dt.replace_time_zone(None).cast(pl.Datetime("ms"))
+
+
 def migrate_file(fpath):
     rel_path = os.path.relpath(fpath, DATA_DIR)
     df = pl.read_parquet(fpath)
@@ -57,12 +62,16 @@ def migrate_file(fpath):
         # 3. ISO / Datetime strings -> pl.Datetime('ms')
         elif c_lower in DATETIME_COLUMNS and "Datetime" not in type_str:
             exprs.append(
-                pl.col(col).cast(pl.Utf8).str.to_datetime(strict=False).cast(pl.Datetime("ms")).alias(col)
+                _iso_to_datetime(pl.col(col).cast(pl.Utf8)).alias(col)
             )
             converted_cols.append(f"{col} ({type_str} -> Datetime[ms])")
 
     if exprs:
         df_new = df.with_columns(exprs)
+        for col in df.columns:
+            if df_new[col].null_count() > df[col].null_count():
+                raise ValueError(f"{rel_path}: converting '{col}' created "
+                                 f"{df_new[col].null_count() - df[col].null_count():,} new nulls; aborting")
         df_new.write_parquet(fpath)
         print(f"  [CONVERTED] {rel_path:<50s} | {', '.join(converted_cols)}")
         return 1

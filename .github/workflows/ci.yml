@@ -1,0 +1,16 @@
+name: ci
+on:
+  push:
+  pull_request:
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install light dependencies (torch / stable-baselines3 are only needed to re-run the DL and RL studies)
+        run: pip install polars pyarrow numpy pandas scipy statsmodels scikit-learn requests beautifulsoup4 yfinance matplotlib pytest
+      - name: Unit tests and data-lake audit
+        run: python -m pytest -q

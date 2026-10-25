@@ -2,7 +2,7 @@
 name: polars-fast-data
 description: High-performance, zero-copy data manipulation using Polars, including point-in-time backward joins, rolling windows, and vectorized financial calculations.
 version: 1.0.0
-author: kim / vnresearch
+author: hypoq
 tags: [polars, dataframe, performance, zero-copy, point-in-time]
 ---
 

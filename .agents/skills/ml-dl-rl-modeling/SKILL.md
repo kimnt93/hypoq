@@ -2,7 +2,7 @@
 name: ml-dl-rl-modeling
 description: Train, evaluate, and benchmark Machine Learning (Scikit-Learn), Deep Learning (PyTorch), and Reinforcement Learning (Stable-Baselines3) models for quantitative financial economics, return prediction, regime nowcasting, and dynamic portfolio optimization.
 version: 1.0.0
-author: AI Quantitative Research Network
+author: hypoq
 tags: [machine-learning, deep-learning, reinforcement-learning, pytorch, stable-baselines3, scikit-learn, statsmodels]
 ---
 
@@ -18,11 +18,17 @@ This skill establishes standardized architectures for empirical financial modeli
 * **Data & Econometrics**: `polars` (zero-copy extraction, PIT backward joins), `statsmodels` (HAC Newey--West benchmarks), `numpy`, `scipy`.
 
 ## When to Use
-- **ML (Supervised Learning)**: When predicting cross-sectional equity returns, earnings surprises (SUE), or default risk from multidimensional accounting ratios and order flow features (inspired by Paper 010).
-- **DL (Deep Representation Learning)**: When modeling high-dimensional non-linear macroeconomic regime transitions or mixed-frequency volatility surfaces (inspired by Paper 003).
-- **RL (Policy Optimization)**: When designing dynamic multi-asset rebalancing policies or central bank Taylor rule optimization with transaction costs and drawdown penalties (inspired by Papers 003 and 012).
+- **ML (Supervised Learning)**: When predicting cross-sectional equity returns, earnings surprises (SUE), or default risk from multidimensional accounting ratios and order flow features.
+- **DL (Deep Representation Learning)**: When modeling high-dimensional non-linear macroeconomic regime transitions or mixed-frequency volatility surfaces.
+- **RL (Policy Optimization)**: When designing dynamic multi-asset rebalancing policies or central bank Taylor rule optimization with transaction costs and drawdown penalties.
 
 ---
+
+## Complete, audited reference implementations (copy these)
+* ML: `researches/res_003_us_megacap_ml_return_ranking/code/run_pipeline.py` (walk-forward gradient boosting, embargo, cross-sectional rank IC, HAC inference, ridge and momentum benchmarks).
+* DL: `researches/res_004_volatility_nowcasting_lstm_vs_har/code/run_pipeline.py` (LSTM vs HAR, chronological split with purge, multiple seeds, QLIKE, Diebold-Mariano with Bonferroni).
+* RL: `researches/res_005_ppo_multi_asset_allocation/code/run_pipeline.py` (custom gymnasium environment, PPO ensemble, costs, stationary-bootstrap Sharpe test against a pre-specified benchmark).
+Rules that apply to all three: fix hyper-parameters before the test period, never tune on test data, compare against simple benchmarks, report null results.
 
 ## 1. Machine Learning Recipe (Scikit-Learn Purged TimeSeriesSplit)
 

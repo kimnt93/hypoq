@@ -15,6 +15,9 @@ import concurrent.futures
 from datetime import datetime
 import requests
 import polars as pl
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.vnd_common import vnd_get_data
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -23,6 +26,11 @@ STRUCT_DIR = os.path.join(DATA_DIR, "market_structure")
 
 for d in [MARKET_DIR, STRUCT_DIR]:
     os.makedirs(d, exist_ok=True)
+
+def _f(value):
+    """float(value) or None: a missing API field must stay missing, never become 0."""
+    return float(value) if value is not None else None
+
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -57,9 +65,9 @@ def fetch_shareholders(symbols=None):
     def _fetch_one(sym):
         url = f"https://api-finfo.vndirect.com.vn/v4/shareholders?q=code:{sym}&size=1000"
         try:
-            r = requests.get(url, headers=HEADERS, timeout=12)
-            if r.status_code == 200:
-                data = r.json().get("data", [])
+            data_all = vnd_get_data(url, HEADERS, 12)
+            if data_all is not None:
+                data = data_all
                 out = []
                 for item in data:
                     out.append({
@@ -68,8 +76,8 @@ def fetch_shareholders(symbols=None):
                         "shareholder_name": item.get("shareholderName"),
                         "role_type": item.get("roleType"),
                         "en_role_type": item.get("enRoleType"),
-                        "number_of_shares": float(item.get("numberOfShares", 0.0)) if item.get("numberOfShares") is not None else 0.0,
-                        "ownership_pct": float(item.get("ownershipPct", 0.0)) if item.get("ownershipPct") is not None else 0.0,
+                        "number_of_shares": _f(item.get("numberOfShares")),
+                        "ownership_pct": _f(item.get("ownershipPct")),
                         "group_pct": float(item.get("groupPct", 0.0)) if item.get("groupPct") is not None else None,
                         "effective_date": item.get("effectiveDate")
                     })
@@ -114,9 +122,9 @@ def fetch_subsidiaries_and_affiliates(symbols=None):
     def _fetch_one(sym):
         url = f"https://api-finfo.vndirect.com.vn/v4/company_relations?q=code:{sym}&size=1000"
         try:
-            r = requests.get(url, headers=HEADERS, timeout=12)
-            if r.status_code == 200:
-                data = r.json().get("data", [])
+            data_all = vnd_get_data(url, HEADERS, 12)
+            if data_all is not None:
+                data = data_all
                 out = []
                 for item in data:
                     out.append({
@@ -173,9 +181,9 @@ def fetch_charter_capital_history(symbols=None):
     def _fetch_one(sym):
         url = f"https://api-finfo.vndirect.com.vn/v4/events?q=code:{sym}~group:investorRight&size=1000"
         try:
-            r = requests.get(url, headers=HEADERS, timeout=12)
-            if r.status_code == 200:
-                data = r.json().get("data", [])
+            data_all = vnd_get_data(url, HEADERS, 12)
+            if data_all is not None:
+                data = data_all
                 out = []
                 for item in data:
                     out.append({
@@ -238,27 +246,27 @@ def fetch_foreign_trading_daily(symbols=None):
     def _fetch_one(sym):
         url = f"https://api-finfo.vndirect.com.vn/v4/foreigns?q=code:{sym}&size=3000"
         try:
-            r = requests.get(url, headers=HEADERS, timeout=15)
-            if r.status_code == 200:
-                data = r.json().get("data", [])
+            data_all = vnd_get_data(url, HEADERS, 15)
+            if data_all is not None:
+                data = data_all
                 out = []
                 for item in data:
                     tdate = item.get("tradingDate")
                     if not tdate:
                         continue
-                    tot_room = float(item.get("totalRoom", 0.0)) if item.get("totalRoom") is not None else 0.0
-                    cur_room = float(item.get("currentRoom", 0.0)) if item.get("currentRoom") is not None else 0.0
-                    room_pct = (cur_room / tot_room * 100.0) if tot_room > 0 else 0.0
+                    tot_room = _f(item.get("totalRoom"))
+                    cur_room = _f(item.get("currentRoom"))
+                    room_pct = (cur_room / tot_room * 100.0) if (tot_room and cur_room is not None) else None
                     out.append({
                         "symbol": sym,
                         "date": tdate,
                         "floor": item.get("floor"),
-                        "buy_val": float(item.get("buyVal", 0.0)) if item.get("buyVal") is not None else 0.0,
-                        "sell_val": float(item.get("sellVal", 0.0)) if item.get("sellVal") is not None else 0.0,
-                        "net_val": float(item.get("netVal", 0.0)) if item.get("netVal") is not None else 0.0,
-                        "buy_vol": float(item.get("buyVol", 0.0)) if item.get("buyVol") is not None else 0.0,
-                        "sell_vol": float(item.get("sellVol", 0.0)) if item.get("sellVol") is not None else 0.0,
-                        "net_vol": float(item.get("netVol", 0.0)) if item.get("netVol") is not None else 0.0,
+                        "buy_val": _f(item.get("buyVal")),
+                        "sell_val": _f(item.get("sellVal")),
+                        "net_val": _f(item.get("netVal")),
+                        "buy_vol": _f(item.get("buyVol")),
+                        "sell_vol": _f(item.get("sellVol")),
+                        "net_vol": _f(item.get("netVol")),
                         "total_room": tot_room,
                         "current_room": cur_room,
                         "room_pct": room_pct
@@ -307,28 +315,28 @@ def fetch_order_supply_demand_daily(symbols=None):
     def _fetch_one(sym):
         url = f"https://api-finfo.vndirect.com.vn/v4/trading_statistics?q=code:{sym}&size=3000"
         try:
-            r = requests.get(url, headers=HEADERS, timeout=15)
-            if r.status_code == 200:
-                data = r.json().get("data", [])
+            data_all = vnd_get_data(url, HEADERS, 15)
+            if data_all is not None:
+                data = data_all
                 out = []
                 for item in data:
                     tdate = item.get("tradingDate")
                     if not tdate:
                         continue
-                    bvol = float(item.get("bidVol", 0.0)) if item.get("bidVol") is not None else 0.0
-                    ovol = float(item.get("offerVol", 0.0)) if item.get("offerVol") is not None else 0.0
-                    imbalance = ((bvol - ovol) / (bvol + ovol)) if (bvol + ovol) > 0 else 0.0
+                    bvol = _f(item.get("bidVol"))
+                    ovol = _f(item.get("offerVol"))
+                    imbalance = ((bvol - ovol) / (bvol + ovol)) if (bvol is not None and ovol is not None and bvol + ovol > 0) else None
                     out.append({
                         "symbol": sym,
                         "date": tdate,
                         "floor": item.get("floor"),
-                        "bid_order": float(item.get("bidOrder", 0.0)) if item.get("bidOrder") is not None else 0.0,
+                        "bid_order": _f(item.get("bidOrder")),
                         "bid_vol": bvol,
-                        "offer_order": float(item.get("offerOrder", 0.0)) if item.get("offerOrder") is not None else 0.0,
+                        "offer_order": _f(item.get("offerOrder")),
                         "offer_vol": ovol,
-                        "avg_bid_vol": float(item.get("avgBidVol", 0.0)) if item.get("avgBidVol") is not None else 0.0,
-                        "avg_offer_vol": float(item.get("avgOfferVol", 0.0)) if item.get("avgOfferVol") is not None else 0.0,
-                        "net_vol": float(item.get("netVol", 0.0)) if item.get("netVol") is not None else (bvol - ovol),
+                        "avg_bid_vol": _f(item.get("avgBidVol")),
+                        "avg_offer_vol": _f(item.get("avgOfferVol")),
+                        "net_vol": _f(item.get("netVol")) if item.get("netVol") is not None else ((bvol - ovol) if (bvol is not None and ovol is not None) else None),
                         "order_imbalance": imbalance
                     })
                 return out

@@ -2,7 +2,7 @@
 name: data-discovery
 description: Discover, inspect schemas, temporal ranges, row counts, and summary statistics across Parquet datasets, ingest new data series via scripts, synchronize DATA.md documentation, and perform continuous incremental updates.
 version: 1.1.0
-author: kim / vnresearch
+author: hypoq
 tags: [data, discovery, parquet, schema, datasets, ingestion, documentation, incremental, updates]
 ---
 
@@ -81,52 +81,49 @@ print(null_summary)
 When a user requests a new data series (e.g., Vietnam Corporate Bond Yields, Credit Growth Targets, Shipping Freight Rates, or Sovereign CDS Spreads):
 
 ### Step 1: Create Dedicated Ingestion Script
-Create a new script under `scripts/ingest_<domain>_<dataset_name>.py` (or extend `scripts/build_datasets.py`):
+**Hard rule: every row must come from an HTTP response or a parsed official document. Never hand-type, interpolate, simulate or
+"calibrate" rows, and never zero-fill missing values (keep them `null`).** If no free, real source exists, do not create the dataset.
+Free sources that work without a key: FRED (`fredgraph.csv`), World Bank API, SEC EDGAR (needs a descriptive `User-Agent`), Yahoo Finance
+(`scripts/yf_common.py`), VNDirect finfo, Federal Reserve JSON feeds, Hacker News (Algolia), Stack Exchange, Mastodon. Sources that need a
+login (Reddit, X) are skipped unless the owner supplies a token through environment variables.
+
+Create a script under `scripts/ingest_<domain>_<dataset_name>.py`. This template is a working script (`scripts/ingest_vn_cpi_inflation_annual.py`) (World Bank annual CPI inflation for Vietnam):
 ```python
 #!/usr/bin/env python3
 """
-Ingest script for Vietnam Corporate Bond Index.
-Source: HNX / FiinPro / WiData API
-Output: data/market/vn_corporate_bonds_daily.parquet
+Ingest script: World Bank annual CPI inflation (FP.CPI.TOTL.ZG) for a country.
+Source : https://api.worldbank.org (free, no key)
+Output : data/macro/vn_cpi_inflation_annual.parquet
 """
-
 import os
-import requests
+
 import polars as pl
-from datetime import datetime
+import requests
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(BASE_DIR, "data", "market")
-os.makedirs(DATA_DIR, exist_ok=True)
+OUTPUT_FILE = os.path.join(BASE_DIR, "data", "macro", "vn_cpi_inflation_annual.parquet")
+URL = "https://api.worldbank.org/v2/country/VNM/indicator/FP.CPI.TOTL.ZG"
 
-OUTPUT_FILE = os.path.join(DATA_DIR, "vn_corporate_bonds_daily.parquet")
 
-def fetch_and_build():
-    print(f">>> Ingesting corporate bond series into {OUTPUT_FILE}...")
-    
-    # 1. Fetch raw data from API or parse document using anymd
-    # raw_records = fetch_from_api(...)
-    raw_records = [
-        {"date": "2026-01-02", "bond_index": 105.4, "yield_to_maturity": 7.85, "volume_vnd": 450e9},
-        {"date": "2026-01-05", "bond_index": 105.6, "yield_to_maturity": 7.82, "volume_vnd": 510e9},
-    ]
-
-    # 2. Structure into Polars DataFrame with strict typing
+def fetch_and_build() -> pl.DataFrame:
+    resp = requests.get(URL, params={"format": "json", "per_page": 200}, timeout=60)
+    resp.raise_for_status()
+    records = resp.json()[1]
     df = (
-        pl.DataFrame(raw_records)
-        .with_columns([
-            pl.col("date").str.to_date(),
-            pl.col("bond_index").cast(pl.Float64),
-            pl.col("yield_to_maturity").cast(pl.Float64),
-            pl.col("volume_vnd").cast(pl.Float64),
-        ])
+        pl.DataFrame(
+            [{"year": int(r["date"]), "cpi_inflation_pct": r["value"]} for r in records],
+            schema={"year": pl.Int32, "cpi_inflation_pct": pl.Float64},
+        )
+        .drop_nulls("cpi_inflation_pct")           # missing years stay missing
+        .with_columns(pl.date(pl.col("year"), 12, 31).alias("date"))  # reference-period end, NOT an availability date
         .sort("date")
     )
-
-    # 3. Serialize to Parquet with Zstandard compression
+    if df.is_empty():
+        raise RuntimeError("World Bank returned no data; refusing to write an empty dataset")
     df.write_parquet(OUTPUT_FILE, compression="zstd")
-    print(f">>> Successfully serialized {len(df)} rows to {OUTPUT_FILE}")
+    print(f">>> {len(df)} rows -> {OUTPUT_FILE}")
     return df
+
 
 if __name__ == "__main__":
     fetch_and_build()
@@ -135,11 +132,11 @@ if __name__ == "__main__":
 ### Step 2: Register in Master Ingestion Pipeline
 Add the new ingest step to `scripts/download_all.py` so that `make download` runs it automatically:
 ```python
-from scripts.ingest_corporate_bonds import fetch_and_build as build_corporate_bonds
+from scripts.ingest_vn_cpi_inflation_annual import fetch_and_build as build_vn_cpi
 
 def run_download_all():
     # ...
-    build_corporate_bonds()
+    build_vn_cpi()
 ```
 
 ---
@@ -190,17 +187,22 @@ Update the directory inventory tree and total row count:
 ```text
 data/
 ├── market/
-│   ├── vn_corporate_bonds_daily.parquet # 1,245 rows x 4 cols | Bond index, YTM, volume
+│   ├── vn_cpi_inflation_annual.parquet # 30 rows x 3 cols | World Bank annual CPI inflation
 ```
 
 ### 2. Add Standardized Single-Table Specification
 ```markdown
-#### X. `vn_corporate_bonds_daily.parquet`
-* **Coverage**: 2020-01-02 to 2026-10-23 (1,245 daily observations, 4 columns).
-* **Source**: Hanoi Stock Exchange (HNX) / FiinPro.
+#### X. `vn_cpi_inflation_annual.parquet`
+* **Coverage**: 1996-12-31 to 2025-12-31 (30 annual observations, 3 columns).
+* **Source**: World Bank API, indicator `FP.CPI.TOTL.ZG`.
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
+  | `year` | `Int32` | Year | Calendar year |
+  | `cpi_inflation_pct` | `Float64` | % | Annual CPI inflation |
+  | `date` | `Date` | YYYY-MM-DD | Reference-period end (publication happens months later: lag it) |
+
+--- | :--- | :--- | :--- |
   | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
   | `bond_index` | `Float64` | Index | Benchmark Corporate Bond Clean Price Index |
   | `yield_to_maturity` | `Float64` | % / year | Volume-weighted average yield to maturity |
@@ -210,7 +212,7 @@ data/
 ---
 
 ## 6. Validation Checklist Before Committing
-1. **Schema Integrity**: Run `make verify` (`python scripts/verify_datasets.py`) to confirm row counts, non-empty columns, and clean Parquet metadata.
+1. **Schema Integrity**: Run `make verify` (`python scripts/verify_datasets.py`): it fails on duplicate keys, all-null columns, non-positive prices, missing jurisdiction prefixes and files >= 100 MB, and warns on stale or short series.
 2. **Zero Look-Ahead Bias**: Ensure that low-frequency macro or corporate event dates reflect official public release timestamps (`\tau_{\text{info}} \le \tau_{\text{market}}`).
 3. **No Duplicate Rows**: Confirm uniqueness across primary key columns (`(date, symbol)` or `date`).
 4. **Zstandard Compression**: Confirm all output files use `compression="zstd"`.

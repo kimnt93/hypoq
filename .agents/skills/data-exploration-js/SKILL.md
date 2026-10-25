@@ -2,7 +2,7 @@
 name: data-exploration-js
 description: Explore, query, and transform Parquet datasets and SQLite databases directly in JavaScript/TypeScript using Arquero (JS pandas alternative), Hyparquet, and node:sqlite.
 version: 1.0.0
-author: kim / vnresearch
+author: hypoq
 tags: [javascript, node, arquero, hyparquet, sqlite, dataframe, fullstack]
 ---
 

@@ -2,7 +2,7 @@
 name: global-macro-cross-asset
 description: Model cross-border macroeconomic transmission, sovereign yield curves (US Treasuries, Bunds, JGBs), currency pass-through (USD, EUR, JPY, CNY, VND), and commodity price shock propagation using Vector Autoregressions (VAR/VECM), local projections, and Diebold-Yilmaz connectedness.
 version: 1.0.0
-author: AI Quantitative Research Network
+author: hypoq
 tags: [macro, yield-curve, cross-asset, fx-transmission, commodities, var, vecm, diebold-yilmaz, global]
 ---
 

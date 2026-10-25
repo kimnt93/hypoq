@@ -11,6 +11,9 @@ from datetime import datetime, timezone
 import requests
 import polars as pl
 import yfinance as yf
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.vnd_common import vnd_get_data
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -25,6 +28,11 @@ WIDATA_SNAPSHOT = os.environ.get("HYPOQ_WIDATA_JSON", "/tmp/widata_cleaned_macro
 
 for d in [MACRO_DIR, MARKET_DIR, FIN_DIR, CROSS_DIR, STRUCT_DIR]:
     os.makedirs(d, exist_ok=True)
+
+
+def _drop_zero_bars(df: pl.DataFrame) -> pl.DataFrame:
+    """Vendors emit open = high = low = 0 for sessions without a real bar; those rows are missing data, not prices."""
+    return df.filter(~((pl.col("open") == 0) & (pl.col("high") == 0) & (pl.col("low") == 0)))
 
 
 def build_market_structure():
@@ -93,7 +101,7 @@ def build_widata_macro():
                 'value': val
             })
 
-    df_long = pl.DataFrame(long_rows)
+    df_long = pl.DataFrame(long_rows, infer_schema_length=None)
     df_long.write_parquet(os.path.join(MACRO_DIR, "widata_macro_all_series.parquet"))
     print(f"    - Saved widata_macro_all_series.parquet ({len(df_long):,} rows, {df_long['series_id'].n_unique()} series)")
 
@@ -149,31 +157,13 @@ def build_widata_macro():
         pivot_monthly.write_parquet(os.path.join(MACRO_DIR, "vn_macro_monthly.parquet"))
         print(f"    - Saved vn_macro_monthly.parquet ({len(pivot_monthly):,} rows, {len(pivot_monthly.columns)-1} features)")
 
-    # 1.4 US Macro Series
-    us_series = {
-        'macro_111_dff': 'us_fed_funds_rate_dff',
-        'macro_111_dfedtaru': 'us_fed_target_upper',
-        'macro_111_dgs3mo': 'us_treasury_3m',
-        'macro_111_dgs2': 'us_treasury_2y',
-        'macro_111_dgs10': 'us_treasury_10y',
-        'macro_111_sofrvol': 'us_sofr_volume',
-        'macro_111_effrvol': 'us_effr_volume',
-        'macro_99_walcl': 'us_fed_total_assets_walcl',
-        'macro_117_m2sl_yoy': 'us_m2_money_supply_yoy'
-    }
-    sub_us = df_long.filter(pl.col("series_id").is_in(list(us_series.keys())))
-    if len(sub_us) > 0:
-        pivot_us = sub_us.pivot(on="series_id", index="date", values="value")
-        rename_map = {k: v for k, v in us_series.items() if k in pivot_us.columns}
-        pivot_us = pivot_us.rename(rename_map).sort("date")
-        pivot_us.write_parquet(os.path.join(MACRO_DIR, "us_macro_daily.parquet"))
-        print(f"    - Saved us_macro_daily.parquet ({len(pivot_us):,} rows, {len(pivot_us.columns)-1} features)")
+    # 1.4 US macro series are rebuilt directly from FRED by scripts/ingest_fred_us_macro.py
 
     # 1.5 Market Valuation P/E
     if os.path.exists('/tmp/widata_vnindex_pe_daily.json'):
         with open('/tmp/widata_vnindex_pe_daily.json') as f:
             pe_data = json.load(f)
-        df_pe = pl.DataFrame(pe_data).rename({"ngay": "date", "mack": "symbol"}).sort("date")
+        df_pe = pl.DataFrame(pe_data, infer_schema_length=None).rename({"ngay": "date", "mack": "symbol"}).sort("date")
         df_pe.write_parquet(os.path.join(MACRO_DIR, "vn_market_pe_daily.parquet"))
         print(f"    - Saved vn_market_pe_daily.parquet ({len(df_pe):,} rows)")
 
@@ -183,7 +173,7 @@ def build_financials():
     if os.path.exists('/tmp/kqkd_q3_2026.json'):
         with open('/tmp/kqkd_q3_2026.json') as f:
             kqkd_data = json.load(f)
-        df_fin = pl.DataFrame(kqkd_data).rename({
+        df_fin = pl.DataFrame(kqkd_data, infer_schema_length=None).rename({
             "mack": "symbol",
             "san": "exchange",
             "nganhcap4_vi": "industry_level4",
@@ -203,31 +193,39 @@ def build_financials():
             "trungbinh_vol_15ngay": "avg_vol_15d_kshares",
             "ngayup": "report_date"
         })
+        df_fin = df_fin.select([c for c in df_fin.columns if df_fin[c].null_count() < len(df_fin)])  # drop vendor columns that are entirely empty
         df_fin.write_parquet(os.path.join(FIN_DIR, "vn_listed_q3_2026_financials.parquet"))
         print(f"    - Saved vn_listed_q3_2026_financials.parquet ({len(df_fin):,} companies)")
 
 
-def fetch_vndirect_series(symbol, start_ts, end_ts):
+def fetch_vndirect_series(symbol, start_ts, end_ts, retries=3):
+    """Daily bars from the VNDirect dchart API; retries with back-off and returns [] only after every attempt failed."""
     url = f"https://dchart-api.vndirect.com.vn/dchart/history?resolution=D&symbol={symbol}&from={start_ts}&to={end_ts}"
-    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
-    if resp.status_code == 200:
-        data = resp.json()
-        if data.get("s") == "ok" or "t" in data:
-            timestamps = data["t"]
-            records = []
-            for i in range(len(timestamps)):
-                d_str = datetime.fromtimestamp(timestamps[i]).strftime("%Y-%m-%d")
-                records.append({
-                    "symbol": symbol,
-                    "date": d_str,
-                    "timestamp": timestamps[i],
-                    "open": float(data["o"][i]),
-                    "high": float(data["h"][i]),
-                    "low": float(data["l"][i]),
-                    "close": float(data["c"][i]),
-                    "volume": float(data["v"][i])
-                })
-            return records
+    for attempt in range(retries):
+        try:
+            resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=30)
+            if resp.status_code == 200:
+                data = resp.json()
+                if data.get("s") == "ok" and data.get("t"):
+                    return [
+                        {
+                            "symbol": symbol,
+                            "date": datetime.fromtimestamp(data["t"][i]).strftime("%Y-%m-%d"),
+                            "timestamp": data["t"][i],
+                            "open": float(data["o"][i]),
+                            "high": float(data["h"][i]),
+                            "low": float(data["l"][i]),
+                            "close": float(data["c"][i]),
+                            "volume": float(data["v"][i]),
+                        }
+                        for i in range(len(data["t"]))
+                    ]
+                if data.get("s") == "no_data":
+                    return []
+        except (requests.RequestException, ValueError) as exc:
+            print(f"      ! {symbol}: {type(exc).__name__}: {exc}")
+        time.sleep(2 ** attempt)
+    print(f"      ! {symbol}: VNDirect returned no usable response after {retries} attempts")
     return []
 
 
@@ -245,7 +243,7 @@ def build_market_data():
         time.sleep(0.5)
 
     if indices_records:
-        df_idx = pl.DataFrame(indices_records).sort(["symbol", "date"])
+        df_idx = _drop_zero_bars(pl.DataFrame(indices_records, infer_schema_length=None)).sort(["symbol", "date"])
         df_idx.write_parquet(os.path.join(MARKET_DIR, "vn_indices_daily.parquet"))
         print(f"    - Saved vn_indices_daily.parquet ({len(df_idx):,} rows)")
 
@@ -253,27 +251,14 @@ def build_market_data():
     f1m_records = fetch_vndirect_series("VN30F1M", start_ts, end_ts)
     print(f"    - Fetched VN30F1M: {len(f1m_records)} trading days")
     if f1m_records:
-        df_f1m = pl.DataFrame(f1m_records).sort("date")
+        df_f1m = pl.DataFrame(f1m_records, infer_schema_length=None).sort("date")
         df_f1m.write_parquet(os.path.join(MARKET_DIR, "vn_vn30f1m_derivatives_daily.parquet"))
         print(f"    - Saved vn_vn30f1m_derivatives_daily.parquet ({len(df_f1m):,} rows)")
 
     # 3.3 Leading Sector Constituent Equities
-    top_stocks = [
-        # Banking
-        "VCB", "BID", "CTG", "TCB", "MBB", "VPB", "ACB",
-        # Steel & Industrial
-        "HPG", "HSG",
-        # Tech & Telecom
-        "FPT",
-        # Retail & Consumer
-        "MWG", "MSN", "VNM", "DGW",
-        # Securities
-        "SSI", "VND", "VCI", "HCM",
-        # Real Estate
-        "VHM", "VIC", "KDH", "NVL",
-        # Energy & Utilities
-        "GAS", "PVD", "PVS", "REE"
-    ]
+    # Universe: the 65 liquid stocks used for every other VN microstructure dataset, plus names kept from earlier releases
+    from scripts.ingest_corporate_and_microstructure import DEFAULT_SYMBOLS
+    top_stocks = sorted(set(DEFAULT_SYMBOLS) | {"BVH", "DHG", "GVR", "TCX", "VPL", "DGW", "KDH", "NVL"})
 
     equity_records = []
     for stock in top_stocks:
@@ -283,7 +268,7 @@ def build_market_data():
         time.sleep(0.3)
 
     if equity_records:
-        df_eq = pl.DataFrame(equity_records).sort(["symbol", "date"])
+        df_eq = _drop_zero_bars(pl.DataFrame(equity_records, infer_schema_length=None)).sort(["symbol", "date"])
         df_eq.write_parquet(os.path.join(MARKET_DIR, "vn_top_equities_daily.parquet"))
         print(f"    - Saved vn_top_equities_daily.parquet ({len(df_eq):,} rows across {len(top_stocks)} tickers)")
 
@@ -325,7 +310,7 @@ def build_global_cross_asset():
             print(f"    ! Error fetching {tick}: {e}")
 
     if cross_records:
-        df_cross = pl.DataFrame(cross_records).sort(["asset_name", "date"])
+        df_cross = pl.DataFrame(cross_records, infer_schema_length=None).sort(["asset_name", "date"])
         df_cross.write_parquet(os.path.join(CROSS_DIR, "global_macro_daily.parquet"))
         print(f"    - Saved global_macro_daily.parquet ({len(df_cross):,} rows across {len(tickers)} global assets)")
 
@@ -336,7 +321,7 @@ def build_sectors_and_industries():
     # 6.1 Fetch ICB Industry Definitions
     url_ind = "https://api-finfo.vndirect.com.vn/v4/industry_classification?size=1000"
     try:
-        res_ind = requests.get(url_ind, headers=headers, timeout=15).json().get("data", [])
+        res_ind = vnd_get_data(url_ind, headers, 15) or []
         icb_rows = []
         stock_to_icb = {}
         for item in res_ind:
@@ -366,7 +351,7 @@ def build_sectors_and_industries():
                 stock_to_icb[ticker][f"icb_level{lvl}_en"] = en
                 stock_to_icb[ticker][f"icb_level{lvl}_vi"] = vi
 
-        df_icb = pl.DataFrame(icb_rows)
+        df_icb = pl.DataFrame(icb_rows, infer_schema_length=None)
         df_icb.write_parquet(os.path.join(MARKET_DIR, "vn_industry_sectors_icb.parquet"))
         print(f"    - Saved vn_industry_sectors_icb.parquet ({len(df_icb)} ICB definitions)")
     except Exception as e:
@@ -376,7 +361,7 @@ def build_sectors_and_industries():
     # 6.2 Fetch Listed Stocks & Map to Sector Hierarchy
     url_stocks = "https://api-finfo.vndirect.com.vn/v4/stocks?q=type:STOCK~floor:HOSE,HNX,UPCOM&size=3000"
     try:
-        res_stocks = requests.get(url_stocks, headers=headers, timeout=15).json().get("data", [])
+        res_stocks = vnd_get_data(url_stocks, headers, 15) or []
         stock_rows = []
         for s in res_stocks:
             ticker = s.get("code")
@@ -405,7 +390,7 @@ def build_sectors_and_industries():
                 "tax_code": s.get("taxCode"),
                 "company_id": s.get("companyId"),
             })
-        df_stocks = pl.DataFrame(stock_rows)
+        df_stocks = pl.DataFrame(stock_rows, infer_schema_length=None)
         df_stocks.write_parquet(os.path.join(MARKET_DIR, "vn_stock_industry_classification.parquet"))
         print(f"    - Saved vn_stock_industry_classification.parquet ({len(df_stocks)} listed stocks mapped)")
     except Exception as e:
@@ -441,7 +426,7 @@ def build_sectors_and_industries():
             print(f"    ! Error fetching sector index {idx}: {e}")
 
     if all_sector_bars:
-        df_sec_idx = pl.DataFrame(all_sector_bars).sort(["symbol", "date"])
+        df_sec_idx = _drop_zero_bars(pl.DataFrame(all_sector_bars, infer_schema_length=None)).sort(["symbol", "date"])
         df_sec_idx.write_parquet(os.path.join(MARKET_DIR, "vn_sector_indices_daily.parquet"))
         print(f"    - Saved vn_sector_indices_daily.parquet ({len(df_sec_idx):,} rows across {df_sec_idx['symbol'].n_unique()} sector indices)")
 

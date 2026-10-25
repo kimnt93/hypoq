@@ -2,7 +2,7 @@
 name: latex-report-generation
 description: Format, validate, and compile concise quantitative research reports into publication-ready PDFs using the Research Future LaTeX template and Tectonic.
 version: 1.0.0
-author: kim / vnresearch
+author: hypoq
 tags: [latex, tectonic, report, compilation, research-future, pdf]
 ---
 

@@ -7,13 +7,13 @@
   "bonferroni_alpha": 0.016666666666666666,
   "measures": {
     "abs_return": {
-      "event_mean": 0.007355340773040224,
-      "baseline_mean": 0.00724419896474318,
+      "event_mean": 0.007355340773040227,
+      "baseline_mean": 0.007244198964743176,
       "placebo_p": 0.7720455908818237
     },
     "signed_return": {
-      "event_mean": -0.00022600545164452396,
-      "baseline_mean": 0.0002578512849340399,
+      "event_mean": -0.00022600545164452195,
+      "baseline_mean": 0.0002578512849340393,
       "placebo_p": 0.3747250549890022
     },
     "vix_change": {

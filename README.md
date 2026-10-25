@@ -1,143 +1,180 @@
-# hypoq (Hypothesis × Quant) — Autonomous AI Quantitative Research Lab & Empirical Modeling Harness
+# hypoq (Hypothesis × Quant) — A Harness for Autonomous AI Quantitative Research
 
-> **hypoq** ($\text{Hypothesis} \times \text{Quant}$) — Where falsifiable scientific hypotheses meet institutional-grade quantitative modeling.
+> **hypoq** is a harness that lets AI coding agents (Claude, Codex, Hermes, Pi, OMP) run falsifiable quantitative research on a **free, real, point-in-time-aware data lake**, and then *proves* that what they report is what they computed.
 
 [![GitHub repository](https://img.shields.io/badge/GitHub-kimnt93%2Fhypoq-blue.svg?logo=github)](https://github.com/kimnt93/hypoq.git)
 [![ML / DL / RL Stack](https://img.shields.io/badge/ML%2FDL%2FRL-PyTorch%20%7C%20Stable--Baselines3%20%7C%20Scikit--Learn-ee4c2c.svg)](https://pytorch.org/)
 [![Econometrics](https://img.shields.io/badge/Stats-Statsmodels%20%7C%20Scipy%20%7C%20Polars-2ca02c.svg)](https://www.statsmodels.org/)
-[![Host Package Manager](https://img.shields.io/badge/uv-Fast%20Python%20Env-de5fe9.svg)](https://astral.sh/uv)
-[![Web Stack](https://img.shields.io/badge/Web-Next.js%2016%20%7C%20TypeScript%20%7C%20Arquero-black.svg)](https://nextjs.org/)
 [![Deployment](https://img.shields.io/badge/Deploy-Docker%20Compose-2496ed.svg)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-**hypoq** (**Hypothesis $\times$ Quant**) is an institutional-grade autonomous AI quantitative research lab, empirical modeling harness, and financial data lake. Designed for global financial economics, cross-border equity factor modeling, sovereign yield curve term structure, macroeconomic spillovers, cryptocurrency microstructure, and multi-asset derivatives across **Asia**, the **United States**, **Europe**, and decentralized digital asset markets. **hypoq** operationalizes an autonomous agent research loop inspired by the AutoResearch paradigm (with acknowledgments to Andrej Karpathy for early concepts) and EvoMap architecture:
-
-$$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
+![hypoq dashboard](assets/hypoq_ui.png)
 
 ---
 
-## 🖥️ Platform Dashboard
+## Why this exists
 
-![hypoq Platform Interface](assets/hypoq_ui.png)
+Autonomous research agents are fast and fluent, which makes it easy for them to produce convincing but unfounded results (typed-in numbers, simulated data, decisions chosen to look good).
+hypoq makes that structurally hard:
+
+1. **Real data only.** `data/` holds 70 Parquet files (3.1M rows) downloaded from free, key-less public sources. Nothing is simulated, hand-typed, interpolated or zero-filled. Paid or login-only sources are excluded.
+2. **Numbers are computed, never typed.** Each study is a script (`researches/<id>/code/run_pipeline.py`) that writes its tables, figures, paper and database row from the same results dictionary (`hypoq.pipeline.finalize`).
+3. **Decisions come from the test.** `ACCEPTED` means the pre-registered test supports $H_1$, `REJECTED` that it does not. Null results are published as such.
+4. **An audit gate.** `python run.py --audit` fails any study without code, without a PDF, or whose JSON, paper and database status disagree.
+5. **A deduplication memory.** Every hypothesis is stored with a dense embedding so agents see what was already tested before they start.
+
+```text
+Idea ─► Dedup ─► Plan ─► Code ─► Experiment ─► Analyse ─► Report (LaTeX/PDF) ─► DB sync ─► Audit
+```
 
 ---
 
-## ⚡ System Architecture: Host Modeling & Docker Web Display
+## Quick start
 
-**hypoq** enforces a strict architectural boundary between heavy quantitative computation and lightweight web visualization:
+```bash
+make install                       # uv sync + verifies the stack (PyTorch, SB3, statsmodels, polars)
+python run.py --list               # what has been tested so far
+python run.py --search "tariff announcements and equity volatility"   # semantic dedup
+make verify                        # data-quality audit of every Parquet file
+make audit                         # research integrity audit
+make test                          # unit tests
+make api                           # JSON API + dashboard on http://127.0.0.1:8080
+```
+
+### Launch agents
+
+```bash
+# 1) Dry run: writes one protocol prompt per agent under runs/<session>/
+python run.py --agents=claude,hermes --topic="Euro area credit spread shocks and bank equity returns"
+
+# 2) Real run: launches the agent CLIs in parallel in this checkout, logs them, then audits what they produced
+python run.py --agents=claude,hermes --topic="..." --execute
+```
+
+The prompt tells each agent the protocol, the integrity rules, the overlapping prior hypotheses (with status, metric and similarity) and every available dataset.
+Agent commands are defined in `hypoq/harness.py` (`DEFAULT_AGENT_COMMANDS`) and can be overridden per agent with `HYPOQ_AGENT_CMD_<NAME>` (placeholders `{prompt_file}` and `{root}`).
+
+| Agent | Default command | Status |
+| :--- | :--- | :--- |
+| `claude` | `claude -p … --permission-mode acceptEdits --allowedTools "Bash Edit Write Read Glob Grep"` | verified end to end |
+| `hermes` | `hermes -z … --yolo` | verified end to end |
+| `codex` | `codex exec -s workspace-write -C <repo> …` | flags match `--help`; needs a valid login |
+| `omp` | `omp -p … --approval-mode=yolo` | flags match `--help`; needs a valid login |
+| `pi` | `pi -p …` | flags match `--help`; needs a valid login |
+
+> **Security**: agents run unsandboxed on the host with shell access. Use the harness only in a trusted checkout (or a container/VM).
+
+---
+
+## Studies produced with the harness
+
+Every number below is computed by the study's own `run_pipeline.py`; re-run them all with `make seed`.
+
+| ID | Domain | Paradigm | Status | Key result | Title |
+| :--- | :--- | :--- | :---: | :--- | :--- |
+| [`001`](researches/res_001_global_cross_asset_volatility_spillover) | Macro transmission | Econometrics | **REJECTED** | Nikkei $t=7.70$; Euro Stoxx $t=1.93$ | Cross-Border Return Transmission from the US Session to European and Japanese Equity Markets |
+| [`002`](researches/res_002_vip_tariff_posts_event_study) | Sentiment events | Econometrics / event study | **REJECTED** | placebo $p\ge$ 0.07 | Tariff-Related Executive Social Media Posts and Next-Day US Equity and Implied Volatility Reactions |
+| [`003`](researches/res_003_us_megacap_ml_return_ranking) | Factor / return ranking | Machine learning | **ACCEPTED** | GBM IC 0.0133, $p=0.036$ | Gradient-Boosted Ranking of Next-Week Returns in US Mega-Cap Equities: A Walk-Forward Test |
+| [`004`](researches/res_004_volatility_nowcasting_lstm_vs_har) | Volatility forecasting | Deep learning | **INCONCLUSIVE** | S&P 500: DM $p=0.742$; Bitcoin: DM $p<0.001$ | Recurrent Neural Networks versus HAR for Five-Day-Ahead Volatility Forecasts of Equities and Bitcoin |
+| [`005`](researches/res_005_ppo_multi_asset_allocation) | Asset allocation | Reinforcement learning | **REJECTED** | Sharpe PPO 0.18 vs EW 1.17 | Proximal Policy Optimisation for Multi-Asset ETF Allocation under Transaction Costs |
+| [`006`](researches/res_006_earnings_8k_announcement_reaction) | Earnings events | Event study | **ACCEPTED** | mean $|$CAR$|$ 4.59% vs placebo 1.70% | Earnings Filings and Price Reactions: An Event Study of SEC 8-K Item 2.02 Announcements for US Mega-Caps |
+
+`ACCEPTED` = the pre-registered test supports $H_1$; `REJECTED` = it does not; `INCONCLUSIVE` = the evidence is mixed across the pre-specified tests. Study 001 is rejected because its Europe leg fails the Bonferroni threshold, and study 004 is inconclusive because the LSTM beats HAR for Bitcoin but not for the S&P 500.
+
+---
+
+## Data lake
+
+70 Parquet files across Asia, the United States, Europe, crypto, Vietnam and raw community text. Full schemas, provenance, refresh mode and caveats are in **[`DATA.md`](DATA.md)**.
+
+| Folder | Content | Source |
+| :--- | :--- | :--- |
+| `data/market/` | Indices, mega-cap equities and ETFs for US, EU, JP, KR, HK, CN, Asia aggregates; sector, factor and Vietnamese market data | Yahoo Finance, VNDirect |
+| `data/macro/` | Yield curve, Fed balance sheet, FOMC decisions, credit spreads, volatility indices, commodities, FX, Vietnamese macro | FRED, Yahoo Finance, FOMC statements, WiData snapshot |
+| `data/crypto/` | Top crypto assets and BTC/ETH aggregate indicators | Yahoo Finance |
+| `data/community/` | Truth Social posts, Fed statements and speeches, SEC 8-K filings, Hacker News, Stack Exchange, Mastodon (raw text, no sentiment) | public APIs |
+| `data/financials/` | Global fundamentals snapshot, Vietnamese statements and ratios | Yahoo Finance, VNDirect |
+| `data/market_structure/` | Vietnamese free float, baskets, ownership and corporate networks | exchange notices (snapshot), VNDirect |
+| `data/cross_asset/` | Cross-asset daily panel | Yahoo Finance |
+
+Refresh everything live with `make download` (about ten minutes), then `python scripts/update_data_docs.py` to resync the numbers in `DATA.md`.
+Two environment variables matter: `HYPOQ_CONTACT` (your own email, required politely by SEC EDGAR's fair-access policy) and `HYPOQ_VN_STRUCTURE_DIR` (location of the Vietnamese index-structure CSV snapshot).
+
+**Deliberately excluded**: Reddit and X (an account is required), paid fundamentals and consensus estimates, ETF NAV/AUM, and any synthetic series.
+
+**Point-in-time warnings** that agents must respect: Yahoo equity universes are today's large caps (survivorship bias); company fundamentals snapshots are as of the download date; Vietnamese statements carry no publication date and mix actuals with analyst estimates; many macro series are dated at the end of their reference period and published later. See `DATA.md` §1.2.
+
+---
+
+## Architecture
 
 ```text
 ┌────────────────────────────────────────────────────────────────────────┐
-│ HOST MACHINE (Native Quantitative Research Engine)                     │
-│ • Environment: Python 3.12 managed via uv (make install)               │
-│ • Modeling: Polars, Statsmodels, Scikit-Learn, PyTorch, SB3            │
-│ • Ingestion: scripts/download_all.py -> data/ (65 Parquet files)       │
-│ • Pipeline: researches/res_*/code/run_pipeline.py                      │
-│ • Typesetting: Tectonic engine -> main.tex -> main.pdf                 │
-│ • Persistence: SQLite / PostgreSQL (Dense Semantic Vector Search via Gemini/HF) │
+│ HOST (native research engine)                                          │
+│ • scripts/download_all.py  -> data/*.parquet (free public sources)     │
+│ • run.py / hypoq/harness.py -> prompts, agent launch, audit            │
+│ • researches/*/code/run_pipeline.py -> results, figures, main.pdf      │
+│ • hypoq/db.py -> SQLite (hypoq.db) or PostgreSQL (DATABASE_URL)        │
+│ • api.py -> JSON API + dashboard (read-only, localhost by default)     │
 └───────────────────────────────────┬────────────────────────────────────┘
-                                    │ Live Host Volume Mounts
-                                    │ (./data, ./hypoq.db, ./researches)
+                                    │ volume mounts (./data, ./hypoq.db, ./researches)
 ┌───────────────────────────────────▼────────────────────────────────────┐
-│ DOCKER CONTAINER (Web UI & Audit Display on Port 3030)                 │
-│ • Service: hypoq-web (Next.js 16 + TypeScript + Tailwind CSS)          │
-│ • Launch: make start / make stop                                       │
-│ • Real-time display of hypothesis cards, metric audits, & PDF reader   │
+│ DOCKER (Next.js dashboard, port 3030): hypothesis cards, PDFs, datasets│
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
----
+| Path | Purpose |
+| :--- | :--- |
+| `hypoq/` | `db.py` (dual backend, embeddings, `upsert_hypothesis`), `harness.py` (sessions, prompts, `audit_research`), `pipeline.py` (`finalize`), `report.py` (LaTeX), `embeddings.py` |
+| `scripts/` | Ingestion (`ingest_*.py`, `yf_common.py`, `vnd_common.py`), `verify_datasets.py`, `update_data_docs.py`, `seed_database.py` |
+| `researches/` | One folder per study: `code/`, `results/`, `figures/`, `main.tex`, `main.pdf`, `references.bib` |
+| `.agents/skills/` | 18 AgentSkills (data exploration, event studies, ML/DL/RL, PIT construction, LaTeX, dedup, the hypoq loop) |
+| `templates/` | LaTeX template |
+| `web/`, `Dockerfile`, `docker-compose.yml` | Next.js dashboard and PostgreSQL option |
+| `tests/` | pytest suite (database, audit, harness, API security, data quality) |
 
-## 🔬 Core Modeling Paradigms
-
-Every research investigation adheres to strict empirical non-negotiables:
-
-1. **Hypothesis-First**: Formulate explicit Null ($H_0$) and Alternative ($H_1$) hypotheses prior to modeling.
-2. **Point-in-Time (PIT) Causality**: Zero look-ahead bias ($\tau_{\text{info}} \le \tau_{\text{market}}$) enforced via zero-copy Polars backward joins (`join_asof`).
-3. **Four Quantitative Paradigms**:
-   * **Machine Learning**: Supervised return forecasting, cross-validation, and feature attribution using `scikit-learn`.
-   * **Deep Learning**: Non-linear volatility nowcasting and neural sequence modeling with `pytorch`.
-   * **Reinforcement Learning**: Continuous asset allocation and order execution agents using `stable-baselines3` under realistic transaction friction hurdles.
-   * **Econometrics & Statistics**: Newey--West HAC robust covariance, Augmented Dickey-Fuller (ADF) unit roots, event-study Cumulative Abnormal Returns (CAR), and error-correction mean-reversion with `statsmodels`.
-4. **Autonomous Serialization**: Every study compiles into a publication-ready LaTeX paper (`main.pdf`) using Tectonic and registers empirical metrics into `hypoq.db`.
-
----
-
-## 📊 Empirical Research Study Examples
-
-> **Note**: The studies below are reproducible reference examples. Every number in their tables, figures, papers and database rows is computed by `researches/<id>/code/run_pipeline.py`, and decisions come from the test, not from the author. Null results are published as such. `python run.py --audit` enforces this for every folder.
-
-| ID | Domain | Paradigm | Status | Key Metric | Title & Focus |
-| :--- | :--- | :--- | :---: | :---: | :--- |
-| **001** | Macro transmission | Econometrics | **REJECTED** | Nikkei $t = 7.70$, Euro Stoxx $t = 1.93$ | Cross-border return transmission from the US session to European and Japanese equities (the Japan leg is significant, the Europe leg fails the Bonferroni threshold) |
-| **002** | Sentiment events | Econometrics | **REJECTED** | placebo $p \ge 0.07$ | Tariff-related Truth Social posts and next-day S&P 500 / VIX reactions |
-
-All quantitative analysis, ML/DL/RL training, and LaTeX paper compilations execute directly on the host using **`uv`**:
+### Dashboard / API
 
 ```bash
-# Install all quantitative dependencies into .venv
-make install
+make api                 # python run.py --web  -> http://127.0.0.1:8080  (set HYPOQ_HOST to expose it)
+make install-sqlite      # Next.js dashboard in Docker on http://localhost:3030
+make install-pg          # same, with PostgreSQL + pgvector
 ```
 
-### 2. Web UI Display via Docker Compose (Port 3030)
+Endpoints (`api.py`): `/api/hypotheses?q=&status=`, `/api/datasets`, `/api/dataset_preview?path=`, `/api/reports`, `/pdf?path=`. File endpoints are restricted to `data/*.parquet` and `researches/**/*.pdf`.
 
-The Docker container displays the Next.js web application and dashboard, with live volume mounts to the host's `data/`, `hypoq.db`, and `researches/` directories:
+---
 
-```bash
-# Start Next.js web display container
-make start
-
-# View container status
-docker compose ps
-
-# Stop container
-make stop
-```
-
-Open **`http://localhost:3030`** (or `http://<server-ip>:3030`) in your browser.
-
-### 3. Multi-Agent CLI Harness (`run.py`)
+## Writing a new study by hand
 
 ```bash
-# Write the protocol prompt for each agent under runs/<session>/ (dry run)
-python run.py --agents=claude,codex --topic="Euro area credit spread shocks and bank equity returns"
-
-# Actually launch the agent CLIs in parallel, then audit what they produced
-python run.py --agents=claude,codex --topic="..." --execute
-
-# Verify every researches/* folder is reproducible and consistent with the database
+mkdir -p researches/res_NNN_<slug>/{code,figures,results}
+# copy researches/res_003_us_megacap_ml_return_ranking/code/run_pipeline.py as a starting point,
+# change the data, the test and the decision rule, then:
+python researches/res_NNN_<slug>/code/run_pipeline.py
 python run.py --audit
-
-# Dense semantic search over past hypotheses to prevent duplicate research
-python run.py --search="order flow imbalance"
-
-# Start the JSON API + dashboard (api.py)
-python run.py --web --port 8080
-
-# List all recorded hypotheses and empirical decisions
-python run.py --list
-python run.py --list --status=ACCEPTED
 ```
+
+`finalize(...)` writes `results/empirical_results.json`, `main.tex`, `references.bib`, compiles `main.pdf` with Tectonic and registers the hypothesis and experiment idempotently.
 
 ---
 
-## 🛠️ Makefile Command Reference
+## Command reference
 
 ```bash
-make install          # Install host Python research stack (.venv) & start default SQLite stack
-make download         # Ingest regulatory filings, WiData macro, and build Parquet datasets
-make verify           # Audit schema integrity and row counts across all 65 Parquet files
-make install-pg       # Launch PostgreSQL via Docker Compose & initialize semantic DB
-make install-sqlite   # Launch SQLite & Next.js web container via Docker Compose
-make start            # Launch Next.js web display container on Docker (port 3030)
-make stop             # Terminate Next.js web display container
-make parse-doc        # Parse document/PDF to Markdown (FILE=<path> [PAGES=1-5])
-make clean            # Remove temporary download caches and artifacts
+make install   make download   make verify   make audit   make seed   make test   make api
+make install-pg   make install-sqlite   make start   make stop   make parse-doc FILE=<path>   make clean
+python run.py --agents=<a,b> --topic="…" [--execute]   python run.py --audit   python run.py --search "…"   python run.py --list [--status=ACCEPTED]
 ```
 
----
+## Limitations
 
-## ⚖️ License & Attribution
+- The studies are small reference implementations, not investment advice: universes are survivorship-biased, test windows are short, transaction costs are crude.
+- Agent CLIs other than `claude` and `hermes` were not verified end to end on the author's machine (expired logins).
+- Vietnamese macro and index-structure tables are dated snapshots (see `DATA.md` §1.2), not live downloads.
+- The harness cannot stop an agent from writing a dishonest *pipeline*; the audit checks structure and consistency, so review the code of studies you rely on.
 
-Developed by the **AI Quantitative Research Network**. Released under the MIT License.
+## License
+
+MIT, see [`LICENSE`](LICENSE).

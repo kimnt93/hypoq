@@ -36,11 +36,14 @@ from scripts.build_datasets import (
 from scripts.ingest_corporate_and_microstructure import run_all as run_corporate_micro
 from scripts.ingest_fundamentals import run_all as run_fundamentals
 from scripts.split_widata_macro_series import split_macro
+from scripts.ingest_fred_us_macro import run_all as run_fred_us_macro
+from scripts.ingest_vn_cpi_inflation_annual import fetch_and_build as run_vn_cpi
 from scripts.build_corporate_network import build_network as build_corporate_network
 from scripts.ingest_etf_data import run_all as run_etf
 from scripts.ingest_global_data import run_all as run_global_ingestion
 from scripts.ingest_country_markets import run_all as run_country_markets
 from scripts.ingest_community_and_social import run_all as run_community_social
+from scripts.build_fomc_decisions import build_fomc_decisions
 from scripts.ingest_world_data import run_all as run_world_data
 from scripts.migrate_time_datatypes import run_migration
 from scripts.anymd_parser import parse_to_markdown
@@ -54,6 +57,8 @@ def run_download_all():
 
     # 1. Macro, Monetary & Vietnam Commodities
     print("\n[Step 1/8] Ingesting Macroeconomic Series...")
+    run_fred_us_macro()
+    run_vn_cpi()
     build_widata_macro()
     split_macro()
     # 2. Corporate Financial Statements & Ratios (Fundamentals)
@@ -78,6 +83,7 @@ def run_download_all():
     # 3.4 Raw Financial Community & Social Posts (Reddit, X, VIP Statements)
     print("\n[Step 3.4] Ingesting Raw Financial Community & Social Discussions (Reddit, X, VIP)...")
     run_community_social()
+    build_fomc_decisions()
 
     # 3.5 World Comprehensive Financial & Macroeconomic Taxonomy (FRED, GICS, Credit, Freight)
     print("\n[Step 3.5] Ingesting World Data Taxonomy (FRED Macro, GICS Sectors, Credit, Fundamentals)...")

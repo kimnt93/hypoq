@@ -16,7 +16,7 @@ import sys
 import re
 import json
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional, Any, Tuple
 import numpy as np
 
@@ -263,7 +263,7 @@ def sync_all_embeddings(db_uri: Optional[str] = None) -> int:
     backend, _ = parse_db_uri(db_uri)
     conn = get_connection(db_uri)
     synced_count = 0
-    now = datetime.utcnow().isoformat() + "Z"
+    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
 
     try:
         if backend == "postgres":
@@ -325,7 +325,7 @@ def create_session(
     init_db(db_path)
     backend, _ = parse_db_uri(db_path)
     conn = get_connection(db_path)
-    now = datetime.utcnow().isoformat() + "Z"
+    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
     agents_str = json.dumps(agents) if isinstance(agents, list) else str(agents)
 
     try:
@@ -372,7 +372,7 @@ def record_hypothesis(
     init_db(db_path)
     backend, _ = parse_db_uri(db_path)
     conn = get_connection(db_path)
-    now = datetime.utcnow().isoformat() + "Z"
+    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
     datasets_str = json.dumps(dataset_dependencies) if dataset_dependencies else "[]"
 
     try:
@@ -476,7 +476,7 @@ def update_hypothesis_status(
     init_db(db_path)
     backend, _ = parse_db_uri(db_path)
     conn = get_connection(db_path)
-    now = datetime.utcnow().isoformat() + "Z"
+    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
 
     fields = ["status = ?", "updated_at = ?"] if backend == "sqlite" else ["status = %s", "updated_at = NOW()"]
     params: List[Any] = [status.upper()]
@@ -713,7 +713,7 @@ def record_experiment(
     init_db(db_path)
     backend, _ = parse_db_uri(db_path)
     conn = get_connection(db_path)
-    now = datetime.utcnow().isoformat() + "Z"
+    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
 
     try:
         if backend == "postgres":

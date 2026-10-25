@@ -2,7 +2,7 @@
 name: arxiv-paper-search
 description: Search academic literature via the arXiv API, fetch abstracts, authors, and BibTeX citations to position research hypotheses against existing literature.
 version: 1.0.0
-author: kim / vnresearch
+author: hypoq
 tags: [arxiv, literature, academic, papers, citations, bibtex]
 ---
 

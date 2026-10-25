@@ -1,0 +1,44 @@
+{
+  "title": "Proximal Policy Optimisation for Multi-Asset ETF Allocation under Transaction Costs",
+  "decision": "REJECTED",
+  "performance": {
+    "PPO ensemble": {
+      "ann_return": 0.013401973033285275,
+      "ann_vol": 0.11156486117767203,
+      "sharpe": 0.17506907135454572,
+      "max_drawdown": -0.1505374676198169
+    },
+    "Equal weight": {
+      "ann_return": 0.12054327217631289,
+      "ann_vol": 0.10192798579705087,
+      "sharpe": 1.167746986511986,
+      "max_drawdown": -0.08679039853986348
+    },
+    "SPY buy-and-hold": {
+      "ann_return": 0.2005806896642277,
+      "ann_vol": 0.1482164336807501,
+      "sharpe": 1.3074808632989774,
+      "max_drawdown": -0.1875522908467665
+    },
+    "60/40 SPY/TLT": {
+      "ann_return": 0.10598591237759436,
+      "ann_vol": 0.11081995162510361,
+      "sharpe": 0.9644330607701089,
+      "max_drawdown": -0.12719087810315166
+    }
+  },
+  "sharpe_difference_vs_equal_weight": -0.9926779151574405,
+  "bootstrap_p_one_sided": 1.0,
+  "avg_daily_turnover": 0.6439583520105014,
+  "n_test_days": 935,
+  "timesteps_per_seed": 120000,
+  "seeds": 3,
+  "cost_per_unit_turnover": 0.0005,
+  "assets": [
+    "SPY",
+    "TLT",
+    "GLD",
+    "EEM",
+    "HYG"
+  ]
+}

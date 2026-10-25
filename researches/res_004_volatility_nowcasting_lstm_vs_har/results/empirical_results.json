@@ -1,0 +1,46 @@
+{
+  "title": "Recurrent Neural Networks versus HAR for Five-Day-Ahead Volatility Forecasts of Equities and Bitcoin",
+  "decision": "INCONCLUSIVE",
+  "assets": {
+    "S&P 500": {
+      "n_test": 951,
+      "test_start": "2023-01-03",
+      "test_end": "2026-10-16",
+      "qlike_har": 0.22631044091262084,
+      "qlike_lstm": 0.23478891269963065,
+      "mse_log_har": 0.383625814168448,
+      "mse_log_lstm": 0.3901650537502744,
+      "dm_mean_diff_har_minus_lstm": -0.00847847178700978,
+      "dm_t": -0.648735550118107,
+      "dm_p_one_sided": 0.7417453390718166,
+      "seeds": 5,
+      "har_betas": [
+        -1.5544080137395857,
+        0.24679963929222348,
+        0.37075309229955805,
+        0.21137933088804142
+      ]
+    },
+    "Bitcoin": {
+      "n_test": 1389,
+      "test_start": "2023-01-01",
+      "test_end": "2026-10-20",
+      "qlike_har": 0.27265587183636153,
+      "qlike_lstm": 0.23607213853889936,
+      "mse_log_har": 0.45249270462406943,
+      "mse_log_lstm": 0.4145509780542008,
+      "dm_mean_diff_har_minus_lstm": 0.03658373329746214,
+      "dm_t": 3.764085689250818,
+      "dm_p_one_sided": 8.357978048412207e-05,
+      "seeds": 5,
+      "har_betas": [
+        -1.7151239867845256,
+        0.14642577695905584,
+        0.41205452609996723,
+        0.16971442796236857
+      ]
+    }
+  },
+  "bonferroni_alpha": 0.025,
+  "split": "2023-01-01"
+}

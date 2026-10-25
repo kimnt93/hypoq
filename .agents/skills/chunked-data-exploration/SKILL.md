@@ -2,7 +2,7 @@
 name: chunked-data-exploration
 description: Explore, scan, filter, and analyze partitioned and chunked Parquet datasets (>100MB or multi-part splits) using Polars LazyFrames, predicate pushdown, partition pruning, and out-of-core streaming without memory bloat.
 version: 1.0.0
-author: AI Quantitative Research Network
+author: hypoq
 tags: [parquet, chunking, out-of-core, streaming, polars, lazyframe, predicate-pushdown, big-data]
 ---
 

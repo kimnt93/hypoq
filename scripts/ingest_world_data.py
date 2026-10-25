@@ -21,6 +21,8 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import yfinance as yf
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.yf_common import fetch_ticker_dataframe
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -79,7 +81,7 @@ def build_global_macro_indicators():
         # Forward fill low-frequency macro series (quarterly/monthly) across trading calendar
         merged = merged.ffill()
         df_pl = (
-            pl.DataFrame(merged)
+            pl.DataFrame(merged, infer_schema_length=None)
             .with_columns(pl.col("date").str.to_date("%Y-%m-%d"))
             .sort("date")
             .unique(subset=["date"], keep="last")
@@ -89,58 +91,7 @@ def build_global_macro_indicators():
         print(f"    - Saved {out_path} ({len(df_pl):,} rows, {len(df_pl.columns)-1} macro indicators)")
 
 
-def fetch_yf_batch(tickers_meta: dict, period: str = "10y") -> pl.DataFrame:
-    records = []
-    for tick, meta in tickers_meta.items():
-        try:
-            t = yf.Ticker(tick)
-            df_tick = t.history(period=period, auto_adjust=False)
-            if df_tick is not None and len(df_tick) > 0:
-                df_tick = df_tick.reset_index()
-                date_col = "Date" if "Date" in df_tick.columns else df_tick.columns[0]
-                clean_dates = pd.to_datetime(df_tick[date_col]).dt.strftime("%Y-%m-%d").tolist()
-
-                closes = df_tick["Close"].astype(float).values
-                returns = np.zeros(len(closes))
-                if len(closes) > 1:
-                    returns[1:] = (closes[1:] - closes[:-1]) / np.where(closes[:-1] == 0, np.nan, closes[:-1])
-
-                opens = df_tick["Open"].astype(float).values if "Open" in df_tick.columns else closes
-                highs = df_tick["High"].astype(float).values if "High" in df_tick.columns else closes
-                lows = df_tick["Low"].astype(float).values if "Low" in df_tick.columns else closes
-                adj_closes = df_tick["Adj Close"].astype(float).values if "Adj Close" in df_tick.columns else closes
-                volumes = df_tick["Volume"].astype(float).values if "Volume" in df_tick.columns else np.zeros(len(closes))
-
-                for i in range(len(df_tick)):
-                    rec = {
-                        "date": clean_dates[i],
-                        "symbol": tick,
-                        "open": float(opens[i]) if pd.notnull(opens[i]) else None,
-                        "high": float(highs[i]) if pd.notnull(highs[i]) else None,
-                        "low": float(lows[i]) if pd.notnull(lows[i]) else None,
-                        "close": float(closes[i]) if pd.notnull(closes[i]) else None,
-                        "adj_close": float(adj_closes[i]) if pd.notnull(adj_closes[i]) else None,
-                        "volume": float(volumes[i]) if pd.notnull(volumes[i]) else 0.0,
-                        "returns": float(returns[i]) if pd.notnull(returns[i]) else 0.0,
-                    }
-                    rec.update(meta)
-                    records.append(rec)
-
-                label = meta.get("sector_name", meta.get("factor_name", meta.get("asset_name", "")))
-                print(f"      + {tick} ({label}): {len(df_tick):,} bars")
-        except Exception as e:
-            print(f"      ! Error fetching {tick}: {e}")
-
-    if not records:
-        return pl.DataFrame()
-
-    df_out = (
-        pl.DataFrame(records)
-        .with_columns(pl.col("date").str.to_date("%Y-%m-%d"))
-        .sort(["symbol", "date"])
-        .unique(subset=["symbol", "date"], keep="last")
-    )
-    return df_out
+fetch_yf_batch = fetch_ticker_dataframe
 
 
 def build_global_sectors():
@@ -226,7 +177,7 @@ def build_cross_asset_volatility():
         })
 
     df_vol = (
-        pl.DataFrame(records)
+        pl.DataFrame(records, infer_schema_length=None)
         .with_columns(pl.col("date").str.to_date("%Y-%m-%d"))
         .sort("date")
         .unique(subset=["date"], keep="last")
@@ -284,7 +235,7 @@ def build_global_corporate_fundamentals():
             print(f"      ! Error fetching {sym}: {e}")
 
     if fundamentals:
-        df_fund = pl.DataFrame(fundamentals).sort("market_cap", descending=True)
+        df_fund = pl.DataFrame(fundamentals, infer_schema_length=None).sort("market_cap", descending=True)
         out_fund = os.path.join(FINANCIALS_DIR, "global_corporate_fundamentals.parquet")
         df_fund.write_parquet(out_fund, compression="zstd")
         print(f"    - Saved {out_fund} ({len(df_fund)} global corporate profiles with 20 fundamental features)")

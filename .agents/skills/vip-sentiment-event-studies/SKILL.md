@@ -1,18 +1,19 @@
 ---
 name: vip-sentiment-event-studies
-description: Quantify financial market reactions, price jump dynamics, Cumulative Abnormal Returns (CAR), volatility spikes, and liquidity shifts triggered by high-impact executive, political, and central bank social media announcements (Trump, Powell, Saylor).
+description: Quantify financial market reactions, price jump dynamics, Cumulative Abnormal Returns (CAR), volatility spikes, and liquidity shifts triggered by high-impact executive, political, and central bank social media announcements (Donald Trump on Truth Social; FOMC communications).
 version: 1.0.0
-author: AI Quantitative Research Network
-tags: [sentiment, event-studies, car, jump-diffusion, social-media, trump, musk, market-shocks]
+author: hypoq
+tags: [event-studies, car, social-media, trump, fomc, sec-8k, placebo]
 ---
 
-# VIP Social Sentiment & Executive Market Shocks Skill
+# Executive Posts, Central-Bank Communications & Filing Event Studies Skill
 
 ## Overview
-This skill specifies the quantitative protocol for measuring financial market reactions to unscheduled, high-impact social media posts, political executive announcements, and central bank statements from market-moving figures (**Donald Trump**, **Elon Musk**, **Jerome Powell**, **Michael Saylor**).
+This skill specifies the quantitative protocol for measuring financial market reactions to unscheduled, high-impact social media posts, political executive announcements, and central bank statements. Free real sources in the data lake: Truth Social posts by Donald Trump (`global_vip_social_posts_raw`), FOMC statements and Fed speeches (`us_fed_communications`), FOMC rate decisions (`us_fed_fomc_rate_decisions_pit`) and SEC 8-K filings (`us_sec_8k_filings`). Other public figures (e.g. Elon Musk) are not available from a free key-less source and must not be simulated.
 
 Empirical datasets leveraged:
 * `data/community/global_vip_social_posts_raw.parquet` (37k raw Truth Social posts by Donald Trump since 2022-02: exact UTC timestamp, text, replies, reposts, likes). It contains NO sentiment or reaction columns: derive keyword flags, counts or your own text features, and join returns yourself.
+* `data/community/us_fed_communications.parquet` (FOMC statements and speeches, full text, UTC timestamps), `data/community/us_sec_8k_filings.parquet` (8-K filing times and item codes) and `data/macro/us_fed_fomc_rate_decisions_pit.parquet`.
 * `data/community/global_hackernews_finance_posts.parquet` and `global_stackexchange_finance_questions.parquet` (raw discussion text for topic-attention proxies).
 * `data/market/us_equities_daily.parquet` (`TSLA`, `SPY`, `AAPL`, `NVDA`, `AMZN`)
 * `data/crypto/crypto_top_assets_daily.parquet` (`BTC-USD`, `DOGE-USD`, `ETH-USD`)

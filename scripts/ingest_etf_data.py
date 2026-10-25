@@ -25,11 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 MARKET_DIR = os.path.join(DATA_DIR, "market")
 STRUCT_DIR = os.path.join(DATA_DIR, "market_structure")
-OUT_DIR = os.path.join(BASE_DIR, "figures_overview")
 
 os.makedirs(MARKET_DIR, exist_ok=True)
 os.makedirs(STRUCT_DIR, exist_ok=True)
-os.makedirs(OUT_DIR, exist_ok=True)
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"

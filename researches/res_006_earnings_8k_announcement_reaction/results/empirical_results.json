@@ -1,0 +1,64 @@
+{
+  "title": "Earnings Filings and Price Reactions: An Event Study of SEC 8-K Item 2.02 Announcements for US Mega-Caps",
+  "decision": "ACCEPTED",
+  "n_events": 1318,
+  "n_stocks": 35,
+  "mean_abs_car01": 0.04586727911674392,
+  "placebo_mean_abs_car01": 0.01699835868727311,
+  "placebo_p_one_sided": 0.0001999600079984003,
+  "signed_mean_car01": 0.0005887873017576733,
+  "signed_t": 0.33661889546951135,
+  "sample": "2017-10-24 to 2026-10-22",
+  "by_year": [
+    {
+      "year": 2017,
+      "n": 24,
+      "abs_car": 0.046651967976254594
+    },
+    {
+      "year": 2018,
+      "n": 145,
+      "abs_car": 0.047081049407451676
+    },
+    {
+      "year": 2019,
+      "n": 146,
+      "abs_car": 0.0398157572377122
+    },
+    {
+      "year": 2020,
+      "n": 145,
+      "abs_car": 0.04536906024600316
+    },
+    {
+      "year": 2021,
+      "n": 142,
+      "abs_car": 0.037435344242061644
+    },
+    {
+      "year": 2022,
+      "n": 148,
+      "abs_car": 0.04982824873515699
+    },
+    {
+      "year": 2023,
+      "n": 150,
+      "abs_car": 0.04407736470543822
+    },
+    {
+      "year": 2024,
+      "n": 149,
+      "abs_car": 0.050097703858216
+    },
+    {
+      "year": 2025,
+      "n": 145,
+      "abs_car": 0.04534257624577566
+    },
+    {
+      "year": 2026,
+      "n": 124,
+      "abs_car": 0.05462761577804892
+    }
+  ]
+}

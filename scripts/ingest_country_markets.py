@@ -18,6 +18,8 @@ import numpy as np
 import pandas as pd
 import polars as pl
 import yfinance as yf
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.yf_common import fetch_ticker_dataframe
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -27,63 +29,7 @@ MACRO_DIR = os.path.join(DATA_DIR, "macro")
 for d in [MARKET_DIR, MACRO_DIR]:
     os.makedirs(d, exist_ok=True)
 
-def fetch_country_dataframe(tickers_meta: dict, period: str = "10y") -> pl.DataFrame:
-    """Fetches and standardizes financial series into a clean Polars DataFrame."""
-    records = []
-
-    for tick, meta in tickers_meta.items():
-        try:
-            t = yf.Ticker(tick)
-            df_tick = t.history(period=period, auto_adjust=False)
-
-            if df_tick is not None and len(df_tick) > 0:
-                df_tick = df_tick.reset_index()
-                date_col = "Date" if "Date" in df_tick.columns else df_tick.columns[0]
-                clean_dates = pd.to_datetime(df_tick[date_col]).dt.strftime("%Y-%m-%d").tolist()
-                
-                closes = df_tick["Close"].astype(float).values
-                returns = np.zeros(len(closes))
-                if len(closes) > 1:
-                    returns[1:] = (closes[1:] - closes[:-1]) / np.where(closes[:-1] == 0, np.nan, closes[:-1])
-
-                opens = df_tick["Open"].astype(float).values if "Open" in df_tick.columns else closes
-                highs = df_tick["High"].astype(float).values if "High" in df_tick.columns else closes
-                lows = df_tick["Low"].astype(float).values if "Low" in df_tick.columns else closes
-                adj_closes = df_tick["Adj Close"].astype(float).values if "Adj Close" in df_tick.columns else closes
-                volumes = df_tick["Volume"].astype(float).values if "Volume" in df_tick.columns else np.zeros(len(closes))
-
-                for i in range(len(df_tick)):
-                    rec = {
-                        "date": clean_dates[i],
-                        "symbol": tick,
-                        "open": float(opens[i]) if pd.notnull(opens[i]) else None,
-                        "high": float(highs[i]) if pd.notnull(highs[i]) else None,
-                        "low": float(lows[i]) if pd.notnull(lows[i]) else None,
-                        "close": float(closes[i]) if pd.notnull(closes[i]) else None,
-                        "adj_close": float(adj_closes[i]) if pd.notnull(adj_closes[i]) else None,
-                        "volume": float(volumes[i]) if pd.notnull(volumes[i]) else 0.0,
-                        "returns": float(returns[i]) if pd.notnull(returns[i]) else 0.0,
-                    }
-                    rec.update(meta)
-                    records.append(rec)
-
-                label = meta.get("company_name", meta.get("index_name", meta.get("currency_pair", "")))
-                print(f"      + {tick} ({label}): {len(df_tick):,} bars")
-            else:
-                print(f"      ! Warning: No data for {tick}")
-        except Exception as err:
-            print(f"      ! Error parsing {tick}: {err}")
-
-    if not records:
-        return pl.DataFrame()
-
-    df_out = (
-        pl.DataFrame(records)
-        .with_columns(pl.col("date").str.to_date("%Y-%m-%d"))
-        .sort(["symbol", "date"])
-        .unique(subset=["symbol", "date"], keep="last")
-    )
-    return df_out
+fetch_country_dataframe = fetch_ticker_dataframe
 
 
 def build_japan_datasets():

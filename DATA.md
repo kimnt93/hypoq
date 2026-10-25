@@ -1,27 +1,29 @@
 # Global Macroeconomic, Financial, Crypto & Multi-Asset Dataset Documentation (DATA.md)
 
-This document provides a comprehensive, standardized specification of all 65 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
+This document provides a comprehensive, standardized specification of all 70 empirical datasets serialized into Apache Parquet format. All datasets are stored under `data/` and optimized for zero-copy vectorized analytics using **Polars** or **PyArrow/Pandas**.
 
 ---
 
-## 1. Directory Structure & Inventory (65 Parquet Files, 1,736,010 Rows)
+## 1. Directory Structure & Inventory (70 Parquet Files, 3,106,907 Rows)
 
 ```text
 data/
 ├── macro/
 │   ├── asia_macro_daily.parquet                     # 20,822 rows x 11 cols | Asian FX Rates (USD/JPY, USD/CNY, USD/KRW, USD/INR)
 │   ├── cn_macro_daily.parquet                       # 2,602 rows x 11 cols | China FX & Currency Series (USD/CNY)
-│   ├── eu_macro_daily.parquet                       # 13,016 rows x 11 cols | European FX Rates (EUR/USD, GBP/USD, EUR Crosses)
-│   ├── global_commodities_daily.parquet             # 35,209 rows x 11 cols | Energy, Precious & Industrial Metals, Agriculture
+│   ├── eu_macro_daily.parquet                       # 13,017 rows x 11 cols | European FX Rates (EUR/USD, GBP/USD, EUR Crosses)
+│   ├── global_commodities_daily.parquet             # 35,195 rows x 11 cols | Energy, Precious & Industrial Metals, Agriculture
 │   ├── global_credit_spreads_daily.parquet          # 19,758 rows x 11 cols | IG (LQD), HY (HYG), EMB, TIPS, Munis & Freight (BDRY)
 │   ├── global_cross_asset_volatility_daily.parquet  # 2,516 rows x 5 cols | VIX Equity, VVIX Vol of Vol, OVX Oil, GVZ Gold
 │   ├── global_macro_indicators_monthly.parquet      # 13,540 rows x 9 cols | FRED Inflation, Unemployment, NFCI, Breakeven, M2
 │   ├── hk_macro_daily.parquet                       # 2,602 rows x 11 cols | Hong Kong FX & Peg Series (USD/HKD)
 │   ├── jp_macro_daily.parquet                       # 5,206 rows x 11 cols | Japan FX & Cross Series (USD/JPY, EUR/JPY)
 │   ├── kr_macro_daily.parquet                       # 2,603 rows x 11 cols | South Korea FX Series (USD/KRW)
-│   ├── us_fed_balance_sheet_weekly.parquet          # 2,128 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
-│   ├── us_macro_daily.parquet                       # 13,821 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
+│   ├── us_fed_balance_sheet_weekly.parquet          # 1,245 rows x 7 cols | Federal Reserve Assets, Loans, MBS & RRP
+│   ├── us_fed_fomc_rate_decisions_pit.parquet       # 88 rows x 10 cols | Point-in-time FOMC decisions: announcement time, target range before/after, change in bp
+│   ├── us_macro_daily.parquet                       # 26,414 rows x 10 cols | Fed Funds DFF, 3M/2Y/10Y Yields, M2, WALCL
 │   ├── us_yield_curve_daily.parquet                 # 2,516 rows x 8 cols | US Treasury Curve (3M, 5Y, 10Y, 30Y), Slopes & VIX
+│   ├── vn_cpi_inflation_annual.parquet              # 30 rows x 3 cols | World Bank annual CPI inflation for Vietnam (reference-period dated)
 │   ├── vn_fdi_sectors_monthly.parquet               # 173 rows x 5 cols | Realized FDI by Sector (Manufacturing, RE)
 │   ├── vn_macro_monthly.parquet                     # 298 rows x 13 cols | PMI, CPI components, IIP, Retail sales, FDI
 │   ├── vn_market_pe_daily.parquet                   # 2,877 rows x 3 cols | Daily VN-Index P/E valuation (2015–2026)
@@ -30,9 +32,9 @@ data/
 │   └── vn_trade_exports_monthly.parquet             # 213 rows x 8 cols | Merchandise Exports (Steel, Coffee, Total)
 ├── market/
 │   ├── asia_equities_daily.parquet                  # 22,457 rows x 12 cols | Asian Titans (TSMC, Samsung, Alibaba, Tencent, Toyota)
-│   ├── asia_indices_daily.parquet                   # 22,183 rows x 11 cols | Nikkei 225, Hang Seng, SSE Comp, CSI 300, KOSPI, Nifty
+│   ├── asia_indices_daily.parquet                   # 22,182 rows x 11 cols | Nikkei 225, Hang Seng, SSE Comp, CSI 300, KOSPI, Nifty
 │   ├── cn_equities_daily.parquet                    # 41,241 rows x 12 cols | 18 Chinese Leaders (Moutai, ICBC, CATL, Alibaba, PetroChina)
-│   ├── cn_indices_daily.parquet                     # 2,428 rows x 11 cols | China Domestic Benchmark Indices (SSE Comp, CSI 300)
+│   ├── cn_indices_daily.parquet                     # 2,427 rows x 11 cols | China Domestic Benchmark Indices (SSE Comp, CSI 300)
 │   ├── eu_equities_daily.parquet                    # 50,599 rows x 12 cols | 21 European Blue-Chips (ASML, SAP, Shell, LVMH, Allianz)
 │   ├── eu_indices_daily.parquet                     # 20,296 rows x 11 cols | Euro Stoxx 50, DAX 40, FTSE 100, CAC 40, IBEX 35
 │   ├── global_etfs_daily.parquet                    # 42,738 rows x 11 cols | Asset Class, Regional & Factor ETFs (SPY, QQQ, TLT)
@@ -46,22 +48,25 @@ data/
 │   ├── kr_indices_daily.parquet                     # 4,896 rows x 11 cols | South Korea Benchmark Indices (KOSPI, KOSDAQ)
 │   ├── us_equities_daily.parquet                    # 87,990 rows x 12 cols | 35 US Mega-Caps across Tech, Financials, Health, Energy
 │   ├── us_indices_daily.parquet                     # 15,086 rows x 11 cols | S&P 500, Nasdaq 100, Dow Jones, Russell 2000, MidCap
-│   ├── vn_etf_market_daily.parquet                  # 22,377 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
-│   ├── vn_foreign_trading_daily.parquet             # 130,837 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Room)
-│   ├── vn_indices_daily.parquet                     # 4,570 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
+│   ├── vn_etf_market_daily.parquet                  # 22,391 rows x 12 cols | 15 Listed Vietnamese ETFs Daily OHLCV (2014–2026)
+│   ├── vn_foreign_trading_daily.parquet             # 130,902 rows x 12 cols | Daily Foreign Trading (GD NĐTNN: Buy, Sell, Room)
+│   ├── vn_indices_daily.parquet                     # 4,574 rows x 8 cols | VNINDEX & VN30 daily OHLCV (2015–2026)
 │   ├── vn_industry_sectors_icb.parquet              # 185 rows x 7 cols | 185 ICB sector definitions & ticker lists
-│   ├── vn_order_supply_demand_daily.parquet         # 83,731 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Orders, Vol)
-│   ├── vn_sector_indices_daily.parquet              # 26,113 rows x 8 cols | 12 official sector indices daily OHLCV
+│   ├── vn_order_supply_demand_daily.parquet         # 85,173 rows x 11 cols | Daily Order Book Supply/Demand (Cung cầu: Orders, Vol)
+│   ├── vn_sector_indices_daily.parquet              # 26,124 rows x 8 cols | 12 official sector indices daily OHLCV
 │   ├── vn_stock_industry_classification.parquet     # 1,971 rows x 22 cols | All listed stocks mapped to 4-tier ICB
-│   ├── vn_top_equities_daily.parquet                # 136,302 rows x 8 cols | 55 constituent stocks daily OHLCV
-│   └── vn_vn30f1m_derivatives_daily.parquet         # 2,296 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
+│   ├── vn_top_equities_daily.parquet                # 177,752 rows x 8 cols | 71 liquid stocks daily OHLCV
+│   └── vn_vn30f1m_derivatives_daily.parquet         # 2,298 rows x 8 cols | VN30F1M Futures daily OHLCV (2017–2026)
 ├── community/
-│   ├── global_hackernews_finance_posts.parquet      # 5,717 rows x 10 cols | Hacker News stories on macro, central banks, tariffs, crypto, markets (points, comments)
+│   ├── global_hackernews_finance_posts.parquet      # 5,780 rows x 10 cols | Hacker News stories on macro, central banks, tariffs, crypto, markets (points, comments)
+│   ├── global_mastodon_finance_posts.parquet        # 9,653 rows x 12 cols | Public Mastodon posts on markets, macro and crypto hashtags (raw text, engagement)
 │   ├── global_stackexchange_finance_questions.parquet # 4,500 rows x 11 cols | Top-voted Stack Exchange money / quant / economics questions (raw text, tags, score)
-│   └── global_vip_social_posts_raw.parquet          # 37,251 rows x 11 cols | Raw Truth Social posts by Donald Trump: text, UTC timestamp, replies/reposts/likes
+│   ├── global_vip_social_posts_raw.parquet          # 37,251 rows x 11 cols | Raw Truth Social posts by Donald Trump: text, UTC timestamp, replies/reposts/likes
+│   ├── us_fed_communications.parquet                # 1,214 rows x 8 cols | FOMC statements, minutes and Fed speeches/testimony, full text, UTC release times
+│   └── us_sec_8k_filings.parquet                    # 5,664 rows x 10 cols | SEC EDGAR 8-K filings of the US mega-caps: acceptance time, item codes, document link
 ├── crypto/
-│   ├── crypto_market_daily.parquet                  # 3,272 rows x 9 cols | Macro Crypto Indicators, ETH/BTC, Volatility & Corrs
-│   └── crypto_top_assets_daily.parquet              # 32,359 rows x 12 cols | Top Cryptos (BTC, ETH, SOL, BNB, XRP, ADA, DOGE)
+│   ├── crypto_market_daily.parquet                  # 3,273 rows x 9 cols | Macro Crypto Indicators, ETH/BTC, Volatility & Corrs
+│   └── crypto_top_assets_daily.parquet              # 32,369 rows x 12 cols | Top Cryptos (BTC, ETH, SOL, BNB, XRP, ADA, DOGE)
 ├── market_structure/
 │   ├── vn_basket_history.parquet                    # 261 rows x 10 cols | Basket rebalancing events and effective dates
 │   ├── vn_charter_capital_history.parquet           # 4,391 rows x 13 cols | Historical Capital Changes & Issuances (Vốn điều lệ)
@@ -75,9 +80,9 @@ data/
 ├── financials/
 │   ├── global_corporate_fundamentals.parquet        # 50 rows x 20 cols | 50 Global Mega-Caps Valuation, Margins, Debt & Cash Flow
 │   ├── vn_financial_models_taxonomy.parquet         # 3,370 rows x 12 cols | Full accounting line item definitions (TT202, TT49)
-│   ├── vn_financial_ratios_quarterly_yearly.parquet # 189,000 rows x 8 cols | 
-│   ├── vn_financial_statements_quarterly_yearly.parquet # 325,000 rows x 12 cols | Balance Sheet, Income, Cash Flow line items
-│   └── vn_listed_q3_2026_financials.parquet         # 192 rows x 21 cols | Q3-2026 corporate results (Revenue, Profit, P/E)
+│   ├── vn_financial_ratios_quarterly_yearly.parquet # 805,352 rows x 8 cols | 
+│   ├── vn_financial_statements_quarterly_yearly.parquet # 1,008,139 rows x 12 cols | Balance Sheet, Income, Cash Flow line items
+│   └── vn_listed_q3_2026_financials.parquet         # 192 rows x 20 cols | Q3-2026 corporate results (Revenue, Profit, P/E)
 └── cross_asset/
     └── global_macro_daily.parquet                   # 26,358 rows x 8 cols | S&P500, US10Y, DXY, Gold, WTI, VIX, BTC, USDVND
 ```
@@ -96,8 +101,32 @@ Every empirical dataset archived in `data/` must strictly use an ISO country or 
 * **`eu_`**: European Central Bank, sovereign yields, European benchmark indices, and foreign exchange rates.
 * **`global_`**: International multi-asset cross-border benchmarks, 11 GICS sectors, factors, commodities, credit, and fundamentals.
 * **`crypto_`**: Decentralized digital assets, Layer 1 benchmarks, and crypto-macro aggregate indicators.
-* **`community/`** (folder): raw public discussion text (`global_*` files): Truth Social, Hacker News, Stack Exchange.
+* **`community/`** (folder): raw public text and announcements: Truth Social, Hacker News, Stack Exchange, Mastodon (`global_*`), Fed statements and speeches, SEC 8-K filings (`us_*`).
 * **`vn_`**: Vietnam domestic financial, corporate, and macroeconomic series.
+
+## 1.2 Provenance, Refresh & Known Caveats
+
+**Policy**: every row in `data/` is real and comes from a free, key-less public source (or a documented vendor snapshot that was cross-checked). Nothing is simulated,
+hand-typed, interpolated or zero-filled: missing values are `null`. Paid or login-only sources (Bloomberg-style feeds, Reddit, X) are not used. The pipeline
+(`make download`, `scripts/download_all.py`) refreshes the LIVE groups; `make verify` audits the result (duplicate keys, all-null columns, OHLC sanity, staleness, short series).
+
+| Group | Files | Source | Refresh | Caveats |
+| :--- | :--- | :--- | :---: | :--- |
+| Global equities, indices, ETFs, sectors, factors, commodities, credit, FX, crypto | `us_/eu_/asia_/cn_/hk_/jp_/kr_*`, `global_etfs`, `global_sectors`, `global_factors`, `global_commodities`, `global_credit_spreads`, `global_cross_asset_volatility`, `*_macro_daily`, `us_yield_curve_daily`, `crypto_*`, `global_macro_daily` | Yahoo Finance (`scripts/yf_common.py`) | LIVE | `close` is split-adjusted, `adj_close` also dividend-adjusted; `returns` is the simple *price* return of consecutive bars, first bar `null`. FX/commodity bars can have `close` outside `[low, high]` (Yahoo quirk). WTI `CL=F` is genuinely negative on 2020-04-20/21. Equity universes are today's large caps: **survivorship-biased**. `global_corporate_fundamentals` (Yahoo `info`) is a snapshot as of the download date, not point-in-time. |
+| US macro and Fed balance sheet | `us_macro_daily`, `us_fed_balance_sheet_weekly`, `global_macro_indicators_monthly` | FRED | LIVE | Balance-sheet items in USD billions. `us_m2_money_supply_yoy` is dated at the end of its reference month but published weeks later (lag it). FRED serves revised vintages, not first releases. |
+| Annual CPI (World Bank) | `vn_cpi_inflation_annual` | World Bank API | LIVE | Annual, reference-period dated. |
+| FOMC decisions (derived) | `us_fed_fomc_rate_decisions_pit` | Fed statements + FRED target range | LIVE | Announcement time is the official release time in UTC. |
+| Vietnam prices, flows, fundamentals | `vn_indices_daily`, `vn_vn30f1m_derivatives_daily`, `vn_top_equities_daily`, `vn_sector_indices_daily`, `vn_foreign_trading_daily`, `vn_order_supply_demand_daily`, `vn_etf_market_daily`, `vn_shareholders_history`, `vn_subsidiaries_affiliates`, `vn_charter_capital_history`, `vn_financial_*`, `vn_stock_industry_classification`, `vn_industry_sectors_icb` | VNDirect open API | LIVE | `vn_financial_statements` mixes `QUARTER`, `QUARTER2`, `ANNUAL`, `ANNUAL2` and analyst `ESTIMATION` rows and has **no publication date**: keep one `report_type`, drop `ESTIMATION`, and lag quarterly data by at least 45 days (annual 90). Sessions without a bar are absent, not zero. |
+| Vietnam network (derived) | `vn_corporate_network_edges`, `vn_corporate_network_nodes` | built from the shareholder/subsidiary tables | LIVE | Snapshot of current ownership, not point-in-time. |
+| Vietnam index structure | `vn_free_float`, `vn_vn30_free_float_history`, `vn_free_float_changes_observed`, `vn_basket_history` | Public HOSE/HNX index notices, collected by the owner's `lazy-researcher` project (`HYPOQ_VN_STRUCTURE_DIR`) | SNAPSHOT 2026-10-12 | **Partial history, not certified for index replication**: see that project's `coverage.json`. Factors are published and rounded; unobserved intervals are not filled. `announced_at` is empty when the notice time was unknown. |
+| Vietnam macro | `vn_monetary_daily`, `vn_macro_monthly`, `vn_sbv_policy_rates_daily`, `vn_trade_exports_monthly`, `vn_fdi_sectors_monthly`, `vn_market_pe_daily` | WiData (public `widata.vn` pages that aggregate SBV, GSO and exchange releases) | SNAPSHOT 2026-10-21 | Verified: CPI y/y matches World Bank annual averages within 0.01 pp for 2019-2025, annual exports and disbursed FDI match official totals, SBV rates match every policy decision checked, USD/VND tracks Yahoo. Monthly series are dated at period end (published later: lag them). `gold_world_usd_adjusted` is the world gold price converted to thousand VND per lượng, not USD/oz; `gold_sjc_domestic_vnd` is thousand VND per lượng. |
+| Vietnam Q3-2026 results | `vn_listed_q3_2026_financials` | WiData snapshot | SNAPSHOT 2026-10-21 | One quarter only (192 companies). |
+| Raw discussion and announcements | `global_vip_social_posts_raw`, `global_hackernews_finance_posts`, `global_stackexchange_finance_questions`, `global_mastodon_finance_posts`, `us_fed_communications`, `us_sec_8k_filings` | Truth Social archive, Algolia, Stack Exchange, Mastodon, federalreserve.gov, SEC EDGAR | LIVE | Raw text and counts only; no sentiment labels. Hashtag and keyword selection is non-random. Mastodon exposes only the most recent ~2.5 years and the sample is small. Set `HYPOQ_CONTACT` to your own email for SEC fair access. |
+
+**Excluded on purpose**: Reddit and X (an account is required; `www.reddit.com` is unreachable anonymously), paid fundamentals, consensus estimates, ETF NAV/AUM and creation baskets (no free real source),
+Vietnamese commodity prices (the earlier series was model-constructed, not observed).
+
+---
 
 ## 2. Standardized Dataset Specifications (Single-Table Format)
 
@@ -107,14 +136,14 @@ Every dataset is documented in an identical, single-table format with standardiz
 ### 2.1 Macroeconomic & Commodity Data (`data/macro/`)
 
 #### A. `vn_monetary_daily.parquet`
-* **Coverage**: 2011-01-03 to 2026-10-21 (5,471 daily observations, 16 columns).
+* **Coverage**: 2007-07-03 to 2026-10-21 (5,471 daily observations, 16 columns).
 * **Source**: WiData (WiGroup), State Bank of Vietnam (SBV), Commercial Banks. [https://widata.vn/vi-mo/vn/pmi-san-xuat](https://widata.vn/vi-mo/vn/pmi-san-xuat) | [https://www.sbv.gov.vn](https://www.sbv.gov.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
   | :--- | :--- | :--- | :--- |
   | `date` | `Date` | YYYY-MM-DD | Trading calendar date (ISO 8601) |
-  | `gold_world_usd_adjusted` | `Float64` | USD/oz | International spot gold price adjusted to domestic basis |
-  | `gold_sjc_domestic_vnd` | `Float64` | Million VND/tael | Domestic SJC physical gold buying price per tael |
+  | `gold_world_usd_adjusted` | `Float64` | '000 VND/lượng | World gold price converted to the domestic unit and USD/VND (name kept for compatibility) |
+  | `gold_sjc_domestic_vnd` | `Float64` | '000 VND/lượng | Domestic SJC gold buying price per lượng (tael) |
   | `interbank_rate_on` | `Float64` | % / year | Overnight (ON) interbank offer rate |
   | `sbv_net_liquidity_injection` | `Float64` | Billion VND | Net daily liquidity injected (+) or absorbed (-) via OMO & T-Bills |
   | `sbv_refinancing_rate` | `Float64` | % / year | State Bank of Vietnam policy refinancing interest rate (Lãi suất tái cấp vốn) |
@@ -190,7 +219,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `required_reserve_rate_vnd` | `Float64` | % / year | SBV interest rate on required reserve deposits in VND |
 
 #### G. `us_macro_daily.parquet`
-* **Coverage**: 1986-01-02 to 2026-10-21 (13,821 observations, 10 columns).
+* **Coverage**: 1954-07-01 to 2026-10-24 (26,414 observations, 10 columns).
 * **Source**: Federal Reserve Bank of St. Louis (FRED), US Department of the Treasury. [https://fred.stlouisfed.org](https://fred.stlouisfed.org).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -207,7 +236,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `us_m2_money_supply_yoy` | `Float64` | % YoY | US M2 Money Stock YoY Growth Rate |
 
 #### H. `us_fed_balance_sheet_weekly.parquet`
-* **Coverage**: 1986-01-08 to 2026-10-14 (2,128 weekly observations of Federal Reserve assets, loans, and repo, 7 columns).
+* **Coverage**: 2002-12-18 to 2026-10-21 (1,245 weekly observations of Federal Reserve assets, loans, and repo, 7 columns).
 * **Source**: Federal Reserve Board H.4.1 Factors Affecting Reserve Balances via FRED. [https://fred.stlouisfed.org](https://fred.stlouisfed.org).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -232,10 +261,20 @@ Every dataset is documented in an identical, single-table format with standardiz
 
 ---
 
+#### J. `us_fed_fomc_rate_decisions_pit.parquet`
+* **Coverage**: 2016-01-27 to 2026-09-16 (88 FOMC statements, 10 columns).
+* **Source**: derived by `scripts/build_fomc_decisions.py` from `us_fed_communications` (release time) and FRED `DFEDTARU` / `DFEDTARL` (target range).
+* **Fields**: `meeting_date` (`Date`, statement release date), `announced_at` (`Datetime[ms]`, UTC, point in time), `effective_date` (next calendar day), `action` (`HIKE`, `CUT`, `HOLD`), `rate_change_bps` (change of the upper bound), `target_range_high_before`, `target_range_low`, `target_range_high` (percent, after the decision), `title`, `url`.
+
+#### K. `vn_cpi_inflation_annual.parquet`
+* **Coverage**: 1996-12-31 to 2025-12-31 (30 annual observations, 3 columns).
+* **Source**: World Bank API, indicator `FP.CPI.TOTL.ZG`, refreshed by `scripts/ingest_vn_cpi_inflation_annual.py`.
+* **Fields**: `year` (`Int32`), `cpi_inflation_pct` (`Float64`, % annual CPI inflation), `date` (`Date`, reference-period end: published months later, lag it).
+
 ### 2.2 Market & Derivatives Data (`data/market/`)
 
 #### A. `vn_indices_daily.parquet`
-* **Coverage**: 2015-01-05 to 2026-10-22 (4,570 daily OHLCV bars across VNINDEX and VN30, 8 columns).
+* **Coverage**: 2017-08-24 to 2026-10-23 (4,574 daily OHLCV bars across VNINDEX and VN30, 8 columns).
 * **Source**: VNDirect Open Market DChart API / HOSE. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -250,7 +289,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
 
 #### B. `vn_vn30f1m_derivatives_daily.parquet`
-* **Coverage**: 2017-08-10 to 2026-10-22 (2,296 daily OHLCV bars of VN30F1M Front-Month Futures, 8 columns).
+* **Coverage**: 2017-08-10 to 2026-10-23 (2,298 daily OHLCV bars of VN30F1M Front-Month Futures, 8 columns).
 * **Source**: Hanoi Stock Exchange (HNX) Derivatives Market via VNDirect. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -265,7 +304,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
 
 #### C. `vn_top_equities_daily.parquet`
-* **Coverage**: 2015-01-05 to 2026-10-22 (136,302 daily OHLCV bars across 55 constituent equities, 8 columns).
+* **Coverage**: 2015-10-28 to 2026-10-23 (177,752 daily OHLCV bars across 71 liquid VN equities, 8 columns).
 * **Source**: VNDirect Open Market DChart API. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -323,7 +362,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `code_list` | `String` | - | Comma-separated list of constituent stock tickers |
 
 #### G. `vn_sector_indices_daily.parquet`
-* **Coverage**: 2017-08-24 to 2026-10-22 (26,113 daily OHLCV rows across 12 sector indices, 8 columns).
+* **Coverage**: 2017-08-24 to 2026-10-23 (26,124 daily OHLCV rows across 12 sector indices, 8 columns).
 * **Source**: Ho Chi Minh Stock Exchange (HOSE) Official Sector Indices via VNDirect. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -338,7 +377,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `volume` | `Float64` | Shares / Contracts | Total traded volume during the session |
 
 #### H. `vn_foreign_trading_daily.parquet`
-* **Coverage**: 2018-08-30 to 2026-10-22 (130,837 daily rows across 65 leading equities, 12 columns).
+* **Coverage**: 2018-08-30 to 2026-10-23 (130,902 daily rows across 65 leading equities, 12 columns).
 * **Source**: VNDirect Financial Information (Finfo Open API) / Official Exchange Trades. [https://api-finfo.vndirect.com.vn](https://api-finfo.vndirect.com.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -357,7 +396,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `room_pct` | `Float64` | % | Percentage of foreign room remaining available (current_room / total_room * 100) |
 
 #### I. `vn_order_supply_demand_daily.parquet`
-* **Coverage**: 2021-07-09 to 2026-10-22 (83,731 daily rows across 64 leading equities, 11 columns).
+* **Coverage**: 2021-07-09 to 2026-10-23 (85,173 daily rows across 64 leading equities, 11 columns).
 * **Source**: VNDirect Financial Information (Finfo Open API) / Trading Order Statistics. [https://api-finfo.vndirect.com.vn](https://api-finfo.vndirect.com.vn).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -375,7 +414,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `order_imbalance` | `Float64` | [-1, +1] | Standardized order book imbalance: (bid_vol - offer_vol) / (bid_vol + offer_vol) |
 
 #### J. `vn_etf_market_daily.parquet`
-* **Coverage**: 2014-10-06 to 2026-10-22 (22,377 daily OHLCV bars across 15 domestic and global Vietnamese ETFs, 12 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (22,391 daily OHLCV bars across 15 domestic and global Vietnamese ETFs, 12 columns).
 * **Source**: VNDirect Open Market DChart API, NYSE Arca & Taiwan Stock Exchange via Yahoo Finance. [https://dchart.vndirect.com.vn](https://dchart.vndirect.com.vn) | [https://finance.yahoo.com](https://finance.yahoo.com).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -613,7 +652,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `fiscal_date` | `Date` | YYYY-MM-DD | Accounting period closing balance sheet date |
   | `year` | `Int32` | Year | Fiscal reporting year |
   | `quarter` | `Int32` | Quarter (1-4, 0) | Fiscal quarter (1, 2, 3, 4; 0 = Full Year Audited Annual Report) |
-  | `report_type` | `String` | - | Regulatory period term (QUARTER1, QUARTER2, QUARTER3, QUARTER4, YEAR, ANNUAL) |
+  | `report_type` | `String` | - | Regulatory period term (`QUARTER`, `QUARTER2` alternate/restated quarter, `ANNUAL`, `ANNUAL2`, `ESTIMATION` analyst forecast: never mix them) |
   | `statement_type` | `String` | - | Parent statement type (BALANCESHEET, INCOME, CASHFLOW, EXPLAINATION) |
   | `item_code` | `Int64` | - | Official accounting line item code (e.g. 11000, 21000, 23800) |
   | `item_name_vn` | `String` | - | Reported field `item_name_vn` |
@@ -638,7 +677,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `value` | `Float64` | Numeric | Reported observation value in original units |
 
 #### D. `vn_listed_q3_2026_financials.parquet`
-* **Coverage**: 192 listed companies on HOSE, HNX, and UPCOM for Q3-2026, 21 columns.
+* **Coverage**: 192 listed companies on HOSE, HNX, and UPCOM for Q3-2026, 20 columns.
 * **Source**: Listed Company Financial Disclosures Registry for Q3-2026 via WiData. [https://widata.vn/ket-qua-kinh-doanh](https://widata.vn/ket-qua-kinh-doanh).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -661,7 +700,6 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `smg_score` | `Float64` | Score [0-100] | Quantitative Smart Money Grade composite score |
   | `close_price` | `Int64` | VND | Closing equity price at filing snapshot date |
   | `avg_vol_15d_kshares` | `Float64` | Thousand shares | 15-day average daily trading volume |
-  | `kiemtoan` | `Null` | - | Audited status flag |
   | `report_date` | `Date` | YYYY-MM-DD | Official report filing date or ratio calculation timestamp |
   | `full_count` | `String` | - | Record counter string |
 
@@ -670,7 +708,7 @@ Every dataset is documented in an identical, single-table format with standardiz
 ### 2.5 Global Macro & Cross-Asset Benchmarks (`data/cross_asset/`)
 
 #### A. `global_macro_daily.parquet`
-* **Coverage**: 2016-10-24 to 2026-10-22 (26,358 daily records across 10 global assets, 8 columns).
+* **Coverage**: 2016-10-20 to 2026-10-21 (26,358 daily records across 10 global assets, 8 columns).
 * **Source**: Yahoo Finance Multi-Asset Pricing Engine. [https://finance.yahoo.com](https://finance.yahoo.com).
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -706,7 +744,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `country` | `String` | - | Geographic jurisdiction (`US`) |
 
 #### B. `us_equities_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (37,710 daily records across 15 US mega-cap sector leaders, 12 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (87,990 daily records across 15 US mega-cap sector leaders, 12 columns).
 * **Source**: Yahoo Finance Listed Equity Data.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -743,7 +781,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `country` | `String` | - | Country or region of origin |
 
 #### D. `eu_equities_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (27,775 daily records across 11 European blue-chips, 12 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (50,599 daily records across 11 European blue-chips, 12 columns).
 * **Source**: Yahoo Finance European Exchange Listings.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -762,7 +800,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `country` | `String` | - | Domicile country |
 
 #### E. `asia_indices_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (22,183 daily records across 10 major Asian benchmarks, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (22,182 daily records across 10 major Asian benchmarks, 11 columns).
 * **Source**: Tokyo Stock Exchange, HKEX, Shanghai, Shenzhen, KRX, TWSE, NSE, SGX, ASX via Yahoo Finance.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -817,7 +855,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `asset_class` | `String` | - | Target asset class / exposure |
 
 #### H. `global_commodities_daily.parquet` (`data/macro/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (35,209 daily records across 14 global energy, metals, and agricultural futures, 11 columns).
+* **Coverage**: 2016-10-25 to 2026-10-23 (35,195 daily records across 14 global energy, metals, and agricultural futures, 11 columns).
 * **Source**: NYMEX, COMEX, CBOT, ICE via Yahoo Finance.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -850,7 +888,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `cboe_vix` | `Float64` | Index | CBOE S&P 500 Volatility Index level (`^VIX`) |
 
 #### J. `eu_macro_daily.parquet` (`data/macro/`)
-* **Coverage**: 2016-10-24 to 2026-10-24 (13,016 daily records across 5 European foreign exchange pairs, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-25 (13,017 daily records across 5 European foreign exchange pairs, 11 columns).
 * **Source**: European Central Bank / Interbank FX via Yahoo Finance.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -868,7 +906,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `region` | `String` | - | Regional classification |
 
 #### K. `asia_macro_daily.parquet` (`data/macro/`)
-* **Coverage**: 2016-10-24 to 2026-10-24 (20,822 daily records across 8 Asian currencies vs USD, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-25 (20,822 daily records across 8 Asian currencies vs USD, 11 columns).
 * **Source**: Asian Central Banks & Interbank Foreign Exchange.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -886,7 +924,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `country` | `String` | - | Sovereign jurisdiction |
 
 #### L. `crypto_top_assets_daily.parquet` (`data/crypto/`)
-* **Coverage**: 2016-10-24 to 2026-10-24 (32,359 daily records across 11 major cryptocurrencies, 12 columns).
+* **Coverage**: 2016-10-25 to 2026-10-25 (32,369 daily records across 11 major cryptocurrencies, 12 columns).
 * **Source**: CoinMarketCap / Binance / Coinbase aggregate via Yahoo Finance.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -905,7 +943,7 @@ Every dataset is documented in an identical, single-table format with standardiz
   | `volatility_30d` | `Float64` | % / year | 30-day annualized realized volatility |
 
 #### M. `crypto_market_daily.parquet` (`data/crypto/`)
-* **Coverage**: 2017-11-09 to 2026-10-24 (3,272 daily records, 9 columns).
+* **Coverage**: 2017-11-09 to 2026-10-25 (3,273 daily records, 9 columns).
 * **Source**: Cross-Asset Derived Market Metrics.
 * **Fields**:
   | Column Name | Type | Unit | Description |
@@ -928,12 +966,12 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
 
 #### B. `jp_equities_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (24,630 daily records across 10 Japanese corporate titans, 12 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (44,334 daily records across 10 Japanese corporate titans, 12 columns).
 * **Source**: Tokyo Stock Exchange.
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
 
 #### C. `jp_macro_daily.parquet` (`data/macro/`)
-* **Coverage**: 2016-10-24 to 2026-10-24 (5,206 daily records across USD/JPY and EUR/JPY, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-25 (5,206 daily records across USD/JPY and EUR/JPY, 11 columns).
 * **Source**: Bank of Japan & Interbank FX.
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
 
@@ -943,12 +981,12 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
 
 #### E. `kr_equities_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (20,716 daily records across 9 South Korean chaebol leaders, 12 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (37,845 daily records across 9 South Korean chaebol leaders, 12 columns).
 * **Source**: Korea Exchange (KRX).
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
 
 #### F. `kr_macro_daily.parquet` (`data/macro/`)
-* **Coverage**: 2016-10-24 to 2026-10-24 (2,603 daily records, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-25 (2,603 daily records, 11 columns).
 * **Source**: Bank of Korea & Interbank FX.
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
 
@@ -958,27 +996,27 @@ Every dataset is documented in an identical, single-table format with standardiz
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
 
 #### H. `hk_equities_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (20,502 daily records across 9 Hong Kong blue-chips, 12 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (34,436 daily records across 9 Hong Kong blue-chips, 12 columns).
 * **Source**: Hong Kong Exchanges and Clearing (HKEX).
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
 
 #### I. `hk_macro_daily.parquet` (`data/macro/`)
-* **Coverage**: 2016-10-24 to 2026-10-24 (2,602 daily records, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (2,602 daily records, 11 columns).
 * **Source**: Hong Kong Monetary Authority (HKMA) Linked Exchange Rate System.
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
 
 #### J. `cn_indices_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (2,428 daily records across SSE Composite and CSI 300, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (2,427 daily records across SSE Composite and CSI 300, 11 columns).
 * **Source**: Shanghai and Shenzhen Stock Exchanges.
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `index_name` (`String`), `country` (`String`).
 
 #### K. `cn_equities_daily.parquet` (`data/market/`)
-* **Coverage**: 2016-10-24 to 2026-10-23 (22,618 daily records across 10 Chinese corporate leaders, 12 columns).
+* **Coverage**: 2016-10-24 to 2026-10-23 (41,241 daily records across 10 Chinese corporate leaders, 12 columns).
 * **Source**: SSE, SZSE, and US ADR listings.
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `company_name` (`String`), `sector` (`String`), `country` (`String`).
 
 #### L. `cn_macro_daily.parquet` (`data/macro/`)
-* **Coverage**: 2016-10-24 to 2026-10-24 (2,602 daily records, 11 columns).
+* **Coverage**: 2016-10-24 to 2026-10-25 (2,602 daily records, 11 columns).
 * **Source**: People's Bank of China (PBoC) CFETS Reference Rates.
 * **Fields**: `date` (`Date`), `symbol` (`String`), `open`, `high`, `low`, `close`, `adj_close`, `volume`, `returns` (`Float64`), `currency_pair` (`String`), `country` (`String`).
 
@@ -994,7 +1032,7 @@ All files are downloaded from free, key-less public sources by `scripts/ingest_c
 * **Fields**: `datetime_utc` (`Datetime[ms]`, UTC), `author`, `platform`, `post_id`, `text`, `url`, `has_media` (`Boolean`), `replies_count`, `reposts_count`, `likes_count` (`Int64`), `date` (`Date`).
 
 #### B. `global_hackernews_finance_posts.parquet`
-* **Coverage**: 2015-01-01 onwards (5,717 stories with at least 10 points, 10 columns).
+* **Coverage**: 2015-01-01 onwards (5,780 stories with at least 10 points, 10 columns).
 * **Source**: Hacker News via the Algolia search API; queries: federal reserve, inflation, interest rates, recession, tariffs, bitcoin, stock market, treasury yields, oil price, bank run.
 * **Fields**: `datetime_utc`, `post_id`, `author`, `title`, `body_text`, `url`, `points`, `num_comments`, `matched_queries` (comma-separated), `date`.
 
@@ -1003,10 +1041,25 @@ All files are downloaded from free, key-less public sources by `scripts/ingest_c
 * **Source**: Stack Exchange public API v2.3.
 * **Fields**: `datetime_utc`, `site`, `post_id`, `title`, `body_text` (HTML stripped), `tags` (comma-separated), `score`, `view_count`, `answer_count`, `url`, `date`.
 
+#### D. `global_mastodon_finance_posts.parquet`
+* **Coverage**: 2024-05-01 to 2026-10-25 (9,653 posts from the hashtags `stocks, economy, inflation, bitcoin, crypto, markets, fed, trading, investing` on mastodon.social, 12 columns).
+* **Source**: Mastodon public hashtag timeline API (no key).
+* **Fields**: `datetime_utc`, `post_id`, `author`, `language`, `text` (HTML stripped), `url`, `replies_count`, `reposts_count`, `likes_count`, `tags_matched` (comma-separated queried tags), `hashtags` (all tags on the post), `date`.
+
+#### E. `us_fed_communications.parquet`
+* **Coverage**: 2016-01-03 to 2026-10-15 (1,214 documents, 8 columns).
+* **Source**: federalreserve.gov JSON feeds (`ne-press.json` filtered to Monetary Policy, `ne-speeches.json`) and the document pages (full text).
+* **Fields**: `datetime_utc` (`Datetime[ms]`, official release time converted from US/Eastern to UTC), `doc_type` (`press_release` for FOMC statements, minutes and implementation notes; `speech` for speeches and testimony), `title`, `speaker`, `venue` (speeches only), `url`, `text`, `date`.
+
+#### F. `us_sec_8k_filings.parquet`
+* **Coverage**: 2016-01-04 to 2026-10-23 (5,664 filings by 35 US mega-caps, 10 columns).
+* **Source**: SEC EDGAR submissions API (`data.sec.gov`).
+* **Fields**: `symbol`, `cik`, `form` (`8-K` or `8-K/A`), `accession_number`, `report_date` (event date stated in the filing, may be null), `items` (comma-separated 8-K item codes, e.g. `2.02,9.01` = results of operations), `document_description`, `url`, `datetime_utc` (EDGAR acceptance time in UTC: the moment the filing became public), `date`.
+
 ### 2.9 World Financial Data Taxonomy: Macro, GICS Sectors, Factors, Credit & Fundamentals
 
 #### A. `global_macro_indicators_monthly.parquet` (`data/macro/`)
-* **Coverage**: 1959-01-01 to 2026-10-23 (13,540 continuous daily/monthly aligned records, 9 columns).
+* **Coverage**: 1948-01-01 to 2026-10-23 (13,540 continuous daily/monthly aligned records, 9 columns).
 * **Source**: Federal Reserve Bank of St. Louis (FRED Public Open Data).
 * **Fields**:
   | Column Name | Type | Unit | Description |

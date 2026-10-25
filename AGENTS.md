@@ -1,6 +1,6 @@
 # AGENTS.md — Autonomous Agent Operating Protocol for hypoq (Hypothesis × Quant)
 
-Welcome to **hypoq** (**Hypothesis $\times$ Quant**), the autonomous AI quantitative research lab and empirical modeling platform developed by the **AI Quantitative Research Network**.
+Welcome to **hypoq** (**Hypothesis $\times$ Quant**), a harness for autonomous AI quantitative research on a free, real data lake.
 
 ---
 
@@ -9,7 +9,7 @@ Welcome to **hypoq** (**Hypothesis $\times$ Quant**), the autonomous AI quantita
 Whenever an AI agent (Claude, Codex, Hermes, Pi, OMP) is awakened in this repository, it must strictly orient itself by reading the following foundational files:
 
 1. **[`RESEARCH.md`](RESEARCH.md)**: Defines the research taxonomy across active quantitative domains, required modeling paradigms (Machine Learning with `scikit-learn`, Deep Learning with `pytorch`, Reinforcement Learning with `stable-baselines3`, and Econometrics with `statsmodels`), and strict causality invariants.
-2. **[`DATA.md`](DATA.md)**: Details the quantitative data lake (65 Parquet files under `data/`, 1.7M+ rows, strictly < 100MB per file for GitHub safety), schema dictionaries, and the standardized jurisdiction prefix standard (`cn_`, `hk_`, `jp_`, `kr_`, `asia_`, `us_`, `eu_`, `global_`, `crypto_`, `sentiment/`, `vn_`).
+2. **[`DATA.md`](DATA.md)**: Details the quantitative data lake (70 Parquet files under `data/`, 3.1M rows, strictly < 100MB per file for GitHub safety), schema dictionaries, and the standardized jurisdiction prefix standard (`cn_`, `hk_`, `jp_`, `kr_`, `asia_`, `us_`, `eu_`, `global_`, `crypto_`, `vn_`).
 3. **[`.agents/skills/`](.agents/skills/)**: Contains 18 self-contained skills adhering to the [AgentSkills.io](https://agentskills.io) standard:
    * `chunked-data-exploration`: Exploring, scanning, filtering, and streaming partitioned / chunked Parquet files with zero RAM bloat.
    * `world-data-taxonomy-modeling`: Multi-domain modeling across FRED macro, 11 GICS sectors, factors, credit spreads, and global valuation ratios.
@@ -28,7 +28,7 @@ Whenever an AI agent (Claude, Codex, Hermes, Pi, OMP) is awakened in this reposi
    * `arxiv-paper-search`: Literature exploration and BibTeX extraction.
    * `paper-pdf-to-md`: PDF-to-Markdown document parsing using `anymd`.
    * `hypoq-loop`: Execution protocol for the 8-stage research cycle.
-   * `dedup-hypothesis-search`: FTS5 BM25 deduplication ranking in `hypoq.db`.
+   * `dedup-hypothesis-search`: Dense semantic vector deduplication in `hypoq.db`.
 ---
 
 ## 2. Autonomous Research Execution Protocol
@@ -37,37 +37,35 @@ All empirical research investigations must execute the **hypoq Cycle**:
 $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longrightarrow \text{Experiment} \longrightarrow \text{Analyse} \longrightarrow \text{Results} \longrightarrow \text{Conclusion} \longrightarrow \text{DB Sync}$$
 
 ### Non-Negotiables:
-1. **English-Only by Default**: All hypothesis statements, titles, null/alt formulations, and findings must be written exclusively in academic English.
-2. **Hypothesis-First**: Formulate explicit Null ($H_0$) and Alternative ($H_1$) hypotheses.
-3. **Deduplication Check**: Always query the semantic vector search engine (`python run.py --search="..."`) to confirm research novelty via cosine similarity before writing code.
-4. **Python-Only Research Pipelines**: All data transformations, ML/DL/RL training, and econometric regressions must be coded in Python using Polars, Scikit-Learn, PyTorch, Stable-Baselines3, and Statsmodels (`code/run_pipeline.py`).
-5. **Strict Point-in-Time Integrity**: Zero look-ahead bias. Low-frequency macro and accounting disclosures must be backward-matched (`join_asof(..., strategy="backward")`).
-6. **Manuscript Compilation**: Every study must be serialized into `main.tex` using the standard template in `templates/` and compiled into `main.pdf` using Tectonic:
-   ```bash
-   cd researches/<research_folder> && /home/kim/.local/bin/tectonic main.tex
-   ```
-7. **Dual-Backend Persistence**: Register empirical metrics, $p$-values, effect sizes, and dense vector embeddings in SQLite (`hypoq.db`) or PostgreSQL (via `DATABASE_URL`).
+1. **Computed, never typed (enforced by `python run.py --audit`)**: every number in a table, figure, manuscript, `results/empirical_results.json` or database row must be produced by `researches/<folder>/code/run_pipeline.py`. Never hand-type results, simulate or interpolate data, zero-fill missing values, or choose the decision by hand. The decision (`ACCEPTED` = $H_1$ supported, `REJECTED` = not supported, `INCONCLUSIVE`) is derived from the pre-specified test. Null results are valid results.
+2. **Real, free data only**: use datasets in `data/` or add a new source through a script in `scripts/` that downloads it from a free public endpoint (no synthetic rows, no paid feeds). Read `DATA.md` §1.2 for provenance and point-in-time caveats before using a dataset.
+3. **English-Only by Default**: all hypothesis statements, titles, null/alt formulations and findings are written in academic English.
+4. **Hypothesis-First**: formulate explicit Null ($H_0$) and Alternative ($H_1$) hypotheses, the test and the multiple-testing correction *before* looking at results.
+5. **Deduplication Check**: run `python run.py --search="..."` before writing code; do not repeat a `REJECTED` idea without a new angle.
+6. **Python-Only Pipelines**: Polars, Scikit-Learn, PyTorch, Stable-Baselines3 and Statsmodels in `code/run_pipeline.py`.
+7. **Strict Point-in-Time Integrity**: zero look-ahead. Features at day $t$ use information published by $t$; low-frequency macro and accounting data are matched with `join_asof(..., strategy="backward")` after lagging by their publication delay; train/test splits are chronological with an embargo.
+8. **One finishing call**: end every pipeline with `hypoq.pipeline.finalize(...)`: it writes the results JSON and the paper (`templates/main.tex` style, `hypoq.report.write_paper`), compiles `main.pdf` with Tectonic and registers the hypothesis and experiment idempotently (`hypoq.db.upsert_hypothesis`) in SQLite (`hypoq.db`) or PostgreSQL (`DATABASE_URL`).
+9. **Definition of done**: `python run.py --audit` passes for your folder and `python run.py --list` shows your hypothesis with the computed status. Run `make test` if you touched shared code.
 
 ---
 
 ## 3. Operational CLI & System Commands
 
 ```bash
-# Environment Setup (Host Machine via uv)
-make install   # Configures .venv via uv and automatically starts default SQLite stack with Docker Compose
+make install     # uv sync + verification of the research stack, starts the default SQLite/Docker stack
+make download    # refresh every free data source (about 10 minutes); then: python scripts/update_data_docs.py
+make verify      # data-quality audit: duplicates, all-null columns, OHLC sanity, staleness, short series
+make audit       # research integrity audit (code, JSON, PDF and database must agree)
+make seed        # re-run every researches/*/code/run_pipeline.py and refresh the database
+make test        # pytest suite
+make api         # JSON API + dashboard on http://127.0.0.1:8080
+make install-pg / install-sqlite / start / stop   # Docker Compose stack (Next.js dashboard, optional PostgreSQL)
 
-# Data Ingestion & Integrity Verification
-make download  # Triggers master WiData, regulatory filing, and macro ingestion
-make verify    # Audits row counts, schemas, and nullness across all 65 Parquet datasets
-
-# Database & Web UI Stack (Docker Compose)
-make install-pg       # Launches PostgreSQL via Docker Compose & initializes semantic database
-make install-sqlite   # Launches SQLite & Next.js web container via Docker Compose
-make start            # Launches Next.js TypeScript container with live volume mounts
-make stop             # Terminates container stack
-
-# Multi-Agent Harness CLI
-python run.py --agents=codex,claude,hermes --topic="VN30 futures basis discount"
-python run.py --search="interest rate shock transmission to ETFs"  # Dense semantic vector search
-DATABASE_URL="postgresql://user:pass@localhost:5432/hypoq" python run.py --list
+python run.py --agents=claude,hermes --topic="..."              # write one protocol prompt per agent (dry run)
+python run.py --agents=claude,hermes --topic="..." --execute    # launch the agent CLIs, then audit new research folders
+python run.py --search="interest rate shock transmission to ETFs"   # dense semantic search of past hypotheses
+python run.py --list [--status=ACCEPTED]
+python run.py --audit
 ```
+
+Reference implementations to copy: `researches/res_003_us_megacap_ml_return_ranking` (ML), `res_004_volatility_nowcasting_lstm_vs_har` (DL), `res_005_ppo_multi_asset_allocation` (RL), `res_001`, `res_002`, `res_006` (econometrics and event studies).

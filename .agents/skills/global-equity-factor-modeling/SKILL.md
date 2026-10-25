@@ -2,7 +2,7 @@
 name: global-equity-factor-modeling
 description: Construct, evaluate, and backtest cross-sectional and time-series factor models (Fama-French, momentum, quality, low-volatility, size, and value) across US, European, and Asian equity markets.
 version: 1.0.0
-author: AI Quantitative Research Network
+author: hypoq
 tags: [equities, factors, fama-french, momentum, multi-region, asia, europe, us, portfolio-construction]
 ---
 

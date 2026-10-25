@@ -2,7 +2,7 @@
 name: paper-pdf-to-md
 description: Extract, convert, and summarize research paper PDFs into structured Markdown using anymd and Python, extracting hypotheses, mathematical models, and empirical results.
 version: 1.0.0
-author: kim / vnresearch
+author: hypoq
 tags: [pdf, markdown, anymd, parsing, literature, extraction]
 ---
 
@@ -12,7 +12,7 @@ tags: [pdf, markdown, anymd, parsing, literature, extraction]
 This skill provides automated conversion of academic research papers from PDF format into structured Markdown (`paper.md`), extracting equations, tables, experimental setups, and empirical findings for agent reasoning.
 
 ## When to Use
-- Reading previous research papers in `paper-hub` (Papers 001 through 015) to understand prior methodology.
+- Reading previous research papers (any PDF, including the compiled `researches/*/main.pdf`) to understand prior methodology.
 - Ingesting newly downloaded arXiv or journal PDFs.
 - Creating readable text summaries for the web dashboard or autonomous cross-study comparisons.
 

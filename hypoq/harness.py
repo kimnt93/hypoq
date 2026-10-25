@@ -10,7 +10,7 @@ import json
 import uuid
 import shlex
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional, Any
 
 from hypoq.db import (
@@ -28,14 +28,16 @@ SUPPORTED_AGENTS = ["claude", "codex", "pi", "omp", "hermes"]
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 RUNS_DIR = os.path.join(REPO_ROOT, "runs")
 
-# Non-interactive command per agent CLI. {prompt_file} is replaced with the path of the generated brief.
+# Non-interactive command per agent CLI. {prompt_file} and {root} are replaced with the brief path and repo root.
+# claude and hermes were verified end to end; codex, omp and pi flags match their --help but need a valid login.
+# Agents run unsandboxed on the host with shell access: run the harness only in a trusted checkout.
 # Override any of them with HYPOQ_AGENT_CMD_<NAME>, e.g. HYPOQ_AGENT_CMD_CLAUDE='claude -p --model opus "$(cat {prompt_file})"'.
 DEFAULT_AGENT_COMMANDS = {
-    "claude": 'claude -p "$(cat {prompt_file})" --permission-mode acceptEdits',
-    "codex": 'codex exec --full-auto "$(cat {prompt_file})"',
+    "claude": 'claude -p "$(cat {prompt_file})" --permission-mode acceptEdits --allowedTools "Bash Edit Write Read Glob Grep"',
+    "codex": 'codex exec -s workspace-write -C {root} "$(cat {prompt_file})"',
     "pi": 'pi -p "$(cat {prompt_file})"',
-    "omp": 'omp -p "$(cat {prompt_file})"',
-    "hermes": 'hermes chat -q "$(cat {prompt_file})"',
+    "omp": 'omp -p "$(cat {prompt_file})" --approval-mode=yolo',
+    "hermes": 'hermes -z "$(cat {prompt_file})" --yolo',
 }
 
 PROTOCOL = """\
@@ -86,14 +88,14 @@ class ResearchSession:
         domain: Optional[str] = None,
         db_path: str = DEFAULT_DB_PATH,
     ):
-        self.session_id = f"sess_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
+        self.session_id = f"sess_{datetime.now(timezone.utc).replace(tzinfo=None).strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:6]}"
         self.agents = [a.lower().strip() for a in agents if a.lower().strip() in SUPPORTED_AGENTS]
         if not self.agents:
             raise ValueError(f"No valid agents provided. Supported: {SUPPORTED_AGENTS}")
         self.topic = topic
         self.domain = domain or "general_quantitative_finance"
         self.db_path = db_path
-        self.created_at = datetime.utcnow().isoformat() + "Z"
+        self.created_at = datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
         self.run_dir = os.path.join(RUNS_DIR, self.session_id)
 
         create_session(
@@ -181,7 +183,7 @@ class ResearchSession:
 
     def agent_command(self, agent: str, prompt_file: str) -> str:
         template = os.environ.get(f"HYPOQ_AGENT_CMD_{agent.upper()}") or DEFAULT_AGENT_COMMANDS[agent]
-        return template.replace("{prompt_file}", shlex.quote(prompt_file))
+        return template.replace("{prompt_file}", shlex.quote(prompt_file)).replace("{root}", shlex.quote(REPO_ROOT))
 
     def run(self, verbose: bool = True, execute: bool = False, timeout: int = 3600) -> Dict[str, Any]:
         """
@@ -273,9 +275,10 @@ def audit_research(research_dir: str, db_path: str = DEFAULT_DB_PATH) -> Dict[st
         problems.append("missing code/run_pipeline.py (results cannot be reproduced)")
     else:
         src = open(pipeline, encoding="utf-8").read()
-        if "empirical_results.json" not in src:
+        uses_finalize = "finalize(" in src and "hypoq.pipeline" in src  # finalize writes the JSON and registers the hypothesis
+        if "empirical_results.json" not in src and not uses_finalize:
             problems.append("pipeline does not write results/empirical_results.json")
-        if "upsert_hypothesis" not in src and "record_hypothesis" not in src:
+        if "upsert_hypothesis" not in src and "record_hypothesis" not in src and not uses_finalize:
             problems.append("pipeline does not register the hypothesis in the database")
     decision = None
     if not os.path.isfile(results_path):

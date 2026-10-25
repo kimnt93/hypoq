@@ -44,7 +44,7 @@ def write_paper(
     tex = (
         _PREAMBLE
         + f"\n\\title{{\\textbf{{{title}}}}}\n"
-        + "\\author[1*]{hypoq autonomous research harness}\n"
+        + "\\author[1]{hypoq autonomous research harness}\n"
         + "\\affil[1]{Hypothesis $\\times$ Quant}\n\\date{\\today}\n\\onehalfspacing\n\n"
         + "\\begin{document}\n\\maketitle\n\n"
         + f"\\begin{{abstract}}\n\\noindent {abs_tex}\n\\end{{abstract}}\n\n"

@@ -13,6 +13,9 @@ import concurrent.futures
 from datetime import datetime
 import requests
 import polars as pl
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from scripts.vnd_common import vnd_get_data
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data/financials")
@@ -68,9 +71,9 @@ def fetch_financial_models_taxonomy():
     print("\n>>> [1/3] Fetching Financial Accounting Taxonomy & Line Items Dictionary...")
     url = "https://api-finfo.vndirect.com.vn/v4/financial_models?size=10000"
     try:
-        r = requests.get(url, headers=HEADERS, timeout=20)
-        if r.status_code == 200:
-            data = r.json().get("data", [])
+        data_all = vnd_get_data(url, HEADERS, 20)
+        if data_all is not None:
+            data = data_all
             records = []
             seen_items = set()
             for m in data:
@@ -130,9 +133,9 @@ def fetch_financial_ratios(symbols=None):
     def _fetch_sym(sym):
         url = f"https://api-finfo.vndirect.com.vn/v4/ratios?q=code:{sym}~ratioCode:{ratio_query}&size=3000"
         try:
-            r = requests.get(url, headers=HEADERS, timeout=15)
-            if r.status_code == 200:
-                data = r.json().get("data", [])
+            data_all = vnd_get_data(url, HEADERS, 15)
+            if data_all is not None:
+                data = data_all
                 out = []
                 for item in data:
                     rdate = item.get("reportDate")
@@ -229,9 +232,9 @@ def fetch_financial_statements(symbols=None):
         # Fetch quarterly and annual statements since 2018
         url = f"https://api-finfo.vndirect.com.vn/v4/financial_statements?q=code:{sym}~fiscalDate:gte:2018-01-01&size=5000"
         try:
-            r = requests.get(url, headers=HEADERS, timeout=20)
-            if r.status_code == 200:
-                data = r.json().get("data", [])
+            data_all = vnd_get_data(url, HEADERS, 20)
+            if data_all is not None:
+                data = data_all
                 out = []
                 for item in data:
                     fdate = item.get("fiscalDate")

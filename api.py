@@ -2,7 +2,7 @@
 hypoq API Server & Dashboard Explorer.
 Serves interactive HTML UI for:
 1. Hypotheses tracker (Accepted / Rejected / Inconclusive with metrics & test stats)
-2. Dataset Explorer (All 65 Parquet files with live Polars preview)
+2. Dataset Explorer (Every Parquet file with live Polars preview)
 3. Research Paper & PDF Reports Viewer
 4. Real-time FTS5 Search & Deduplication Engine
 """
@@ -43,7 +43,7 @@ def get_dataset_inventory() -> List[Dict[str, Any]]:
     results = []
     parquet_files = sorted(glob.glob(os.path.join(BASE_DIR, "data", "**", "*.parquet"), recursive=True))
     if not parquet_files:
-        # Fallback to vnresearch/data
+        # Fallback: relative path when run from the repo root
         parquet_files = sorted(glob.glob("data/**/*.parquet", recursive=True))
 
     for p in parquet_files:
@@ -418,7 +418,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     </div>
     <nav>
         <button class="active" onclick="showTab('hypotheses')">Hypotheses & Results</button>
-        <button onclick="showTab('datasets')">Data Lake (65 Parquets)</button>
+        <button onclick="showTab('datasets')">Data Lake</button>
         <button onclick="showTab('reports')">Research Manuscripts & PDFs</button>
     </nav>
 </header>
@@ -465,7 +465,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 
 <!-- TAB 2: DATASETS -->
 <div id="tab-datasets" class="tab-content">
-    <h2 style="color: var(--text-heading); margin-bottom: 16px;">Quantitative Data Lake Architecture (65 Parquet Datasets)</h2>
+    <h2 style="color: var(--text-heading); margin-bottom: 16px;">Quantitative Data Lake (live Parquet inventory)</h2>
     <table class="data-table">
         <thead>
             <tr>

@@ -2,7 +2,7 @@
 name: crypto-quantitative-modeling
 description: Quantitative modeling of cryptocurrency market microstructure, high-volatility regime switching, cross-asset spillover (crypto vs equities and gold), momentum and mean-reversion anomalies, and tail risk estimation.
 version: 1.0.0
-author: AI Quantitative Research Network
+author: hypoq
 tags: [crypto, bitcoin, ethereum, volatility, cross-asset, tail-risk, momentum, var-cvar, econometrics]
 ---
 

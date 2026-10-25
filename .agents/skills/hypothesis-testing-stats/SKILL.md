@@ -2,7 +2,7 @@
 name: hypothesis-testing-stats
 description: Statistical and econometric hypothesis testing methods, including Newey-West HAC standard errors, ADF unit root tests, event studies, and calendar placebo tests.
 version: 1.0.0
-author: kim / vnresearch
+author: hypoq
 tags: [statistics, econometrics, hypothesis-testing, newey-west, stationarity]
 ---
 

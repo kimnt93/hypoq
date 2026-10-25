@@ -4,8 +4,7 @@
 
 ## About & Metadata
 
-* **Author**: AI Quantitative Research Network
-* **Cooperation**: Autonomous Financial Machine Learning & Empirical Econometrics Lab
+* **Project**: hypoq (Hypothesis × Quant)
 * **Focus**: Global Multi-Asset Financial Markets (Asia, United States, Europe, International Macro, Sovereign Yield Curves, Commodities & Cryptocurrencies)
 * **Execution Standard**: Strict hypothesis-driven econometrics, zero look-ahead bias, and Python-only pipeline implementation.
 

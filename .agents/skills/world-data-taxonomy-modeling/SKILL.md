@@ -2,7 +2,7 @@
 name: world-data-taxonomy-modeling
 description: Multi-domain quantitative financial and macroeconomic modeling across institutional data taxonomies: integrating real economic activity (FRED), GICS sector rotations, Fama-French style factors, corporate bond credit spreads, commodity term volatility surfaces, and cross-sectional valuation multiples.
 version: 1.0.0
-author: AI Quantitative Research Network
+author: hypoq
 tags: [macro, gics-sectors, factors, credit-spreads, fundamentals, valuation, cross-asset, fred, volatility-surface]
 ---
 

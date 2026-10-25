@@ -5,9 +5,8 @@ Constructs directed network graph of Vietnamese listed companies, conglomerates,
 subsidiaries, associates, major shareholders, state institutions, and auditors.
 
 Generates:
-1. vnresearch/data/market_structure/vn_corporate_network_edges.parquet
-2. vnresearch/data/market_structure/vn_corporate_network_nodes.parquet
-3. vnresearch/figures_overview/fig6_corporate_network_graph.png (PNG only, no PDF)
+1. data/market_structure/vn_corporate_network_edges.parquet
+2. data/market_structure/vn_corporate_network_nodes.parquet
 """
 
 import os
@@ -22,10 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 STRUCT_DIR = os.path.join(DATA_DIR, "market_structure")
 MARKET_DIR = os.path.join(DATA_DIR, "market")
-OUT_DIR = os.path.join(BASE_DIR, "figures_overview")
 
 os.makedirs(STRUCT_DIR, exist_ok=True)
-os.makedirs(OUT_DIR, exist_ok=True)
 
 STATE_KEYWORDS = [
     "bộ ", "ủy ban", "scic", "ngân hàng nhà nước", "tổng công ty đầu tư và kinh doanh vốn",
@@ -196,8 +193,8 @@ def build_network():
         })
 
     # 4. Serialize to Parquet
-    df_edges = pl.DataFrame(edges).sort(["source_id", "target_id"])
-    df_nodes = pl.DataFrame(nodes).sort("pagerank", descending=True)
+    df_edges = pl.DataFrame(edges, infer_schema_length=None).sort(["source_id", "target_id"])
+    df_nodes = pl.DataFrame(nodes, infer_schema_length=None).sort("pagerank", descending=True)
 
     edges_path = os.path.join(STRUCT_DIR, "vn_corporate_network_edges.parquet")
     nodes_path = os.path.join(STRUCT_DIR, "vn_corporate_network_nodes.parquet")

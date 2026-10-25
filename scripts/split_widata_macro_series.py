@@ -5,14 +5,14 @@ Replaces the unpivoted long format with explicit English-named column datasets:
 1. vn_trade_exports_monthly.parquet
 2. vn_fdi_sectors_monthly.parquet
 3. vn_sbv_policy_rates_daily.parquet
-4. us_fed_balance_sheet_weekly.parquet
+
 """
 
 import os
 import polars as pl
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MACRO_DIR = os.path.join(BASE_DIR, "vnresearch/data/macro")
+MACRO_DIR = os.path.join(BASE_DIR, "data/macro")
 
 def split_macro():
     raw_path = os.path.join(MACRO_DIR, "widata_macro_all_series.parquet")
@@ -84,28 +84,7 @@ def split_macro():
     piv_sbv.write_parquet(sbv_path)
     print(f"    - Saved vn_sbv_policy_rates_daily.parquet ({len(piv_sbv):,} rows x {len(piv_sbv.columns)} cols)")
 
-    # 4. Federal Reserve Balance Sheet (Tables 99 & 89)
-    print(">>> [4/4] Pivoting Federal Reserve Weekly Balance Sheet...")
-    sub_fed = df.filter(pl.col("table_name").is_in(["99", "89"])).sort(["date", "column_name"])
-    piv_fed = sub_fed.pivot(on="column_name", index="date", values="value").sort("date")
-    
-    fed_rename = {
-        "walcl": "fed_total_assets_walcl",
-        "wshotsl": "fed_treasury_securities_wshotsl",
-        "wshomcb": "fed_mbs_securities_wshomcb",
-        "wdtgal": "fed_loans_total_wdtgal",
-        "wlrral": "fed_reverse_repo_wlrral",
-        "wcblsa": "fed_commercial_bank_assets_wcblsa"
-    }
-    core_cols = ["date"] + [c for c in fed_rename.keys() if c in piv_fed.columns]
-    piv_fed_clean = piv_fed.select(core_cols)
-    for old_col, new_col in fed_rename.items():
-        if old_col in piv_fed_clean.columns:
-            piv_fed_clean = piv_fed_clean.rename({old_col: new_col})
-
-    fed_path = os.path.join(MACRO_DIR, "us_fed_balance_sheet_weekly.parquet")
-    piv_fed_clean.write_parquet(fed_path)
-    print(f"    - Saved us_fed_balance_sheet_weekly.parquet ({len(piv_fed_clean):,} rows x {len(piv_fed_clean.columns)} cols)")
+    # (US Federal Reserve balance sheet comes straight from FRED: scripts/ingest_fred_us_macro.py)
 
     # 5. Remove raw unpivoted file
     print(">>> Removing raw monolithic widata_macro_all_series.parquet...")
