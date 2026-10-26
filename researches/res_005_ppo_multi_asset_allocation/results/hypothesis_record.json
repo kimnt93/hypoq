@@ -1,0 +1,72 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Proximal Policy Optimisation for Multi-Asset ETF Allocation under Transaction Costs",
+    "statement": "A PPO allocation agent trained on 2016-2022 ETF returns beats daily-rebalanced equal weight out of sample after costs.",
+    "null_hypothesis": "Sharpe(PPO) <= Sharpe(equal weight).",
+    "alt_hypothesis": "Sharpe(PPO) > Sharpe(equal weight) (one-sided stationary bootstrap p < 0.05).",
+    "domain": "fundamental_factors",
+    "dataset_dependencies": [
+      "data/market/global_etfs_daily.parquet"
+    ],
+    "methodology": "Stable-Baselines3 PPO on a custom gymnasium allocation environment; stationary bootstrap Sharpe test",
+    "metric_name": "Sharpe difference vs equal weight",
+    "metric_value": -0.9926779151574405,
+    "p_value": 1.0,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "PPO ensemble: Sharpe 0.18, return 1.3%; Equal weight: Sharpe 1.17, return 12.1%; SPY buy-and-hold: Sharpe 1.31, return 20.1%; 60/40 SPY/TLT: Sharpe 0.96, return 10.6%",
+    "report_dir": "researches/res_005_ppo_multi_asset_allocation",
+    "pdf_path": "researches/res_005_ppo_multi_asset_allocation/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_005_ppo_multi_asset_allocation/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Proximal Policy Optimisation for Multi-Asset ETF Allocation under Transaction Costs",
+      "decision": "REJECTED",
+      "performance": {
+        "PPO ensemble": {
+          "ann_return": 0.013401973033285275,
+          "ann_vol": 0.11156486117767203,
+          "sharpe": 0.17506907135454572,
+          "max_drawdown": -0.1505374676198169
+        },
+        "Equal weight": {
+          "ann_return": 0.12054327217631289,
+          "ann_vol": 0.10192798579705087,
+          "sharpe": 1.167746986511986,
+          "max_drawdown": -0.08679039853986348
+        },
+        "SPY buy-and-hold": {
+          "ann_return": 0.2005806896642277,
+          "ann_vol": 0.1482164336807501,
+          "sharpe": 1.3074808632989774,
+          "max_drawdown": -0.1875522908467665
+        },
+        "60/40 SPY/TLT": {
+          "ann_return": 0.10598591237759436,
+          "ann_vol": 0.11081995162510361,
+          "sharpe": 0.9644330607701089,
+          "max_drawdown": -0.12719087810315166
+        }
+      },
+      "sharpe_difference_vs_equal_weight": -0.9926779151574405,
+      "bootstrap_p_one_sided": 1.0,
+      "avg_daily_turnover": 0.6439583520105014,
+      "n_test_days": 935,
+      "timesteps_per_seed": 120000,
+      "seeds": 3,
+      "cost_per_unit_turnover": 0.0005,
+      "assets": [
+        "SPY",
+        "TLT",
+        "GLD",
+        "EEM",
+        "HYG"
+      ]
+    }
+  }
+}

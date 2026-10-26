@@ -1,0 +1,15 @@
+{
+  "title": "Does the Slope of the US Yield Curve Predict Six-Month-Ahead US Equity Returns? A Predictive Regression with Overlap-Robust Inference",
+  "decision": "REJECTED",
+  "n_obs": 2387,
+  "sample": "2016-10-24 to 2026-04-24",
+  "horizon_days": 126,
+  "beta": -0.026209053650828134,
+  "hac_t": -1.8242537928352371,
+  "hac_p_one_sided": 0.9659431437320579,
+  "placebo_p_one_sided": 0.9250374812593704,
+  "r2": 0.07418336591031172,
+  "n_inverted_sessions": 614,
+  "mean_fwd_return_inverted": 0.08332342501023837,
+  "mean_fwd_return_not_inverted": 0.05628404213841835
+}

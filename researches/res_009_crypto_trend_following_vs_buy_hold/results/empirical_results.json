@@ -1,0 +1,26 @@
+{
+  "title": "Trend Filtering in Crypto Markets: A Thirty-Day Time-Series Momentum Rule versus Equal-Weight Buy-and-Hold",
+  "decision": "ACCEPTED",
+  "n_obs": 3622,
+  "n_assets": 11,
+  "sample": "2016-11-25 to 2026-10-25",
+  "lookback_days": 30,
+  "cost_per_unit_turnover": 0.001,
+  "trend": {
+    "ann_return": 1.1950772711593927,
+    "ann_vol": 0.5421240728540627,
+    "sharpe": 1.7197693414861412,
+    "max_drawdown": -0.6202221943018223
+  },
+  "buy_hold": {
+    "ann_return": 1.0938692990123515,
+    "ann_vol": 0.829253294186846,
+    "sharpe": 1.3095022743987867,
+    "max_drawdown": -0.8647356808499682
+  },
+  "sharpe_difference": 0.41026706708735444,
+  "bootstrap_p_one_sided": 0.020595880823835233,
+  "exposure_share": 0.4904726552833457,
+  "avg_daily_turnover_trend": 0.07409830337770702,
+  "avg_daily_turnover_buy_hold": 0.0008317975049062844
+}

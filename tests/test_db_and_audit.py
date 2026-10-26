@@ -27,6 +27,7 @@ def _make_study(tmp_path, with_code=True, decision="REJECTED"):
     if with_code:
         (d / "code" / "run_pipeline.py").write_text("# writes empirical_results.json\nupsert_hypothesis()\n")
     (d / "results" / "empirical_results.json").write_text(json.dumps({"decision": decision}))
+    (d / "results" / "hypothesis_record.json").write_text(json.dumps({"schema": "hypoq.record/1", "hypothesis": {"status": decision}}))
     for f in ("main.tex", "main.pdf", "references.bib", "figures/f.png"):
         (d / f).write_text("x")
     return str(d)
@@ -64,3 +65,11 @@ def test_audit_accepts_pipelines_that_use_finalize(tmp_path, db_path):
     open(os.path.join(d, "code", "run_pipeline.py"), "w").write("from hypoq.pipeline import finalize\nfinalize()\n")
     _register(db_path, report_dir=os.path.relpath(d, REPO_ROOT))
     assert audit_research(d, db_path)["ok"]
+
+
+def test_audit_flags_missing_record(tmp_path, db_path):
+    d = _make_study(tmp_path)
+    os.remove(os.path.join(d, "results", "hypothesis_record.json"))
+    _register(db_path=db_path, report_dir=os.path.relpath(d, REPO_ROOT))
+    report = audit_research(d, db_path)
+    assert not report["ok"] and any("hypothesis_record.json" in p for p in report["problems"])

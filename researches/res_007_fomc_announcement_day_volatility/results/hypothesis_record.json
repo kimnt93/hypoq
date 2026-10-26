@@ -1,0 +1,67 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Federal Reserve Announcement Days and US Equity Volatility: An Event Study of FOMC Statements, 2016--2026",
+    "statement": "The S&P 500 moves more on FOMC announcement days than on ordinary sessions.",
+    "null_hypothesis": "Mean |S&P 500 return| on FOMC announcement days equals the mean on ordinary sessions.",
+    "alt_hypothesis": "Mean |S&P 500 return| on FOMC days is larger (one-sided placebo p < 0.025 after Bonferroni for two outcomes).",
+    "domain": "macro_transmission",
+    "dataset_dependencies": [
+      "data/macro/us_fed_fomc_rate_decisions_pit.parquet",
+      "data/market/us_indices_daily.parquet",
+      "data/macro/us_yield_curve_daily.parquet"
+    ],
+    "methodology": "Event study with ordinary-session placebo resampling (10,000 draws) and Bonferroni correction",
+    "metric_name": "mean |S&P 500 return| on FOMC days",
+    "metric_value": 0.008458897711678272,
+    "p_value": 0.10208979102089791,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "FOMC-day mean |return| 0.846% vs placebo 0.724% over 81 meetings (p=0.1021).",
+    "report_dir": "researches/res_007_fomc_announcement_day_volatility",
+    "pdf_path": "researches/res_007_fomc_announcement_day_volatility/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_007_fomc_announcement_day_volatility/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Federal Reserve Announcement Days and US Equity Volatility: An Event Study of FOMC Statements, 2016--2026",
+      "decision": "REJECTED",
+      "n_events": 81,
+      "sample": "2016-11-02 to 2026-09-16",
+      "mean_abs_return_event": 0.008458897711678272,
+      "mean_abs_return_placebo": 0.007239617872512045,
+      "p_abs_return_one_sided": 0.10208979102089791,
+      "mean_dvix_event": 0.006355121666244677,
+      "mean_dvix_placebo": 0.003630937937517571,
+      "p_dvix_larger_fall_one_sided": 0.6275372462753724,
+      "signed_mean_return": -0.0004807707267032518,
+      "signed_t": -0.3618290062254323,
+      "by_action": [
+        {
+          "action": "HOLD",
+          "n": 51,
+          "abs": 0.007309305737863505,
+          "ret": 0.0002795286249294367,
+          "dvix": 0.0013863052487318324
+        },
+        {
+          "action": "HIKE",
+          "n": 20,
+          "abs": 0.01111114011678766,
+          "ret": 7.106166568005557e-05,
+          "dvix": -0.017343019655839852
+        },
+        {
+          "action": "CUT",
+          "n": 10,
+          "abs": 0.00901733196791481,
+          "ret": -0.005461962204796578,
+          "dvix": 0.07909236803972922
+        }
+      ]
+    }
+  }
+}

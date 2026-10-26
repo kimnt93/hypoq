@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
+\graphicspath{ {./figures/} }
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{\textbf{Futures Basis and Next-Day Spot Returns on the Vietnamese VN30 Index}}
+\author[1]{SIQuant Research}
+\affil[1]{Hypothesis $\times$ Quant}
+\date{\today}
+\onehalfspacing
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent \textbf{Hypothesis:} $H_0$: the VN30 futures basis at day $t$ has no relation to the VN30 return on $t+1$; $H_1$: the relation is positive \\
+\textbf{Data:} 2,285 sessions, 2017-08-24 to 2026-10-22 (0 sessions with $|$basis$|>10\%$ dropped) \\
+\textbf{Method:} OLS with Newey--West HAC errors (5 lags) and a 2,000-draw circular-shift placebo; ACCEPTED only if both one-sided $p<0.05$ \\
+\textbf{Results:} $\beta=0.0319$ (HAC $t=0.55$, $p=0.2921$; placebo $p=0.2779$), $R^2=0.0003$; top-minus-bottom basis quintile next-day return 0.168\%. \\
+\textbf{Research decision:} \colorbox[rgb]{0.75,0.15,0.15}{\textcolor{white}{\textbf{\,REJECTED\,}}}
+\end{abstract}
+
+\section{Design}
+The VN30 futures are the only liquid index derivative in Vietnam and retail-heavy, so the basis may capture sentiment before it reaches the cash market \citep{hasbrouck2003intraday}. Both prices are daily closes of the same session; the return of the next session is the outcome, hence there is no overlap with the predictor.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{fig1_basis_quintile_next_day_return.png}
+\caption{Mean next-day VN30 return by basis quintile.}
+\end{figure}
+
+\section{Limitations}
+The series is a continuous front-month series, so the basis is mechanically linked to time to expiry and to dividends, which are not modelled. Daily closes cannot reveal intraday lead--lag effects.
+
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

@@ -106,7 +106,7 @@ def run():
         f"{lbl} & {out[k]['event_mean']*100:.3f} & {out[k]['baseline_mean']*100:.3f} & {out[k]['placebo_p']:.4f} \\\\"
         for k, lbl in [("abs_return", "$|$AR$|$ S\\&P 500 (\\%)"), ("signed_return", "AR S\\&P 500 (\\%)"), ("vix_change", "$\\Delta$VIX (\\%)")]
     )
-    table = ("\\begin{table}[h!]\n\\centering\n\\caption{Reaction on the first trading day after a tariff post}\n\\label{tab:event}\n"
+    table = ("\\begin{table}[H]\n\\centering\n\\caption{Reaction on the first trading day after a tariff post}\n\\label{tab:event}\n"
              "\\begin{tabular}{lccc}\n\\toprule\nMeasure & Event days & Other days & Placebo $p$ \\\\\n\\midrule\n"
              + rows + "\n\\bottomrule\n\\end{tabular}\n\\end{table}\n")
     with open(os.path.join(RES_DIR, "table1_event_study.tex"), "w") as f:
@@ -126,13 +126,13 @@ def run():
         "Method": f"Reaction window is the first session strictly after the post; baseline is the trailing {BASELINE_WINDOW}-day mean; "
                   f"{N_PLACEBO}-draw placebo over non-event days; Bonferroni $\\alpha={bonf:.4f}$",
         "Results": "; ".join(f"{k.replace('_', ' ')}: event {v['event_mean']*100:.3f}\\% vs other {v['baseline_mean']*100:.3f}\\% "
-                              f"(placebo $p={v['placebo_p']:.3f}$)" for k, v in out.items()) + f". Decision: \\textbf{{{decision}}}",
+                              f"(placebo $p={v['placebo_p']:.3f}$)" for k, v in out.items()) + f".",
     }
     body = ("\\section{Design}\nPosts are selected by keyword only, so no text classifier can leak sentiment. Using the session after "
             "the post date guarantees that the measured reaction is not contaminated by the same-day move that may have prompted the post "
             "\\citep{mackinlay1997event}. Event days are not independent when posts cluster; the placebo draws random days "
             "from the same sample rather than assuming normal errors.\n\n\\section{Results}\n\\input{results/table1_event_study.tex}\n\n"
-            "\\begin{figure}[h!]\n\\centering\n\\includegraphics[width=\\textwidth]{fig1_tariff_event_placebo.png}\n"
+            "\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\textwidth]{fig1_tariff_event_placebo.png}\n"
             "\\caption{Observed event-day mean (red) against the placebo distribution.}\n\\end{figure}\n\n"
             "\\section{Limitations}\nNext-day windows discard the intraday reaction. Keyword matching ignores context. Truth Social "
             "coverage starts in 2022, so tariff episodes before that are missing.\n")

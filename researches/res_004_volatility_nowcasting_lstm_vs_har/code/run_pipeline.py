@@ -179,7 +179,7 @@ def run():
     rows = "\n".join(
         f"{ltx(n)} & {r['qlike_har']:.4f} & {r['qlike_lstm']:.4f} & {r['mse_log_har']:.4f} & {r['mse_log_lstm']:.4f} & {r['dm_t']:.2f} & {r['dm_p_one_sided']:.4f} \\\\"
         for n, r in res.items())
-    table = ("\\begin{table}[h!]\n\\centering\n\\caption{Out-of-sample forecast loss (lower is better) and one-sided Diebold--Mariano test, H$_1$: LSTM better}\n"
+    table = ("\\begin{table}[H]\n\\centering\n\\caption{Out-of-sample forecast loss (lower is better) and one-sided Diebold--Mariano test, H$_1$: LSTM better}\n"
              "\\begin{tabular}{lcccccc}\n\\toprule\nAsset & QLIKE HAR & QLIKE LSTM & MSE-log HAR & MSE-log LSTM & DM $t$ & $p$ \\\\\n\\midrule\n"
              + rows + "\n\\bottomrule\n\\end{tabular}\n\\end{table}\n")
     os.makedirs(os.path.join(RESEARCH_DIR, "results"), exist_ok=True)
@@ -193,13 +193,13 @@ def run():
         "Method": f"Garman--Klass variance, HAR on log variance, LSTM on {WIN}-day windows with early stopping and {SEEDS} seeds, chronological split at {SPLIT}, "
                   f"one-sided DM test with HAC errors, Bonferroni $\\alpha={alpha}$",
         "Results": "; ".join(f"{ltx(n)}: QLIKE HAR {r['qlike_har']:.4f} vs LSTM {r['qlike_lstm']:.4f} (DM $p={r['dm_p_one_sided']:.3f}$)" for n, r in res.items())
-                   + f". Decision: \\textbf{{{decision}}}",
+                   + f".",
     }
     body = ("\\section{Design}\nThe target is the log mean Garman--Klass variance of the next five sessions. HAR regresses it on the current, weekly and monthly "
             "log variance \\citep{corsi2009simple}; the LSTM sees the same information as 22-day windows. Both receive the same log-normal bias "
             "correction when converted to variance. Training labels that overlap the test period are purged.\n\n"
             "\\section{Results}\n\\input{results/table1_dl_volatility_performance.tex}\n\n"
-            "\\begin{figure}[h!]\n\\centering\n\\includegraphics[width=\\textwidth]{fig1_volatility_forecasts.png}\n\\caption{Test-period forecasts.}\n\\end{figure}\n\n"
+            "\\begin{figure}[H]\n\\centering\n\\includegraphics[width=\\textwidth]{fig1_volatility_forecasts.png}\n\\caption{Test-period forecasts.}\n\\end{figure}\n\n"
             "\\section{Limitations}\nGarman--Klass from daily bars is a noisy proxy for realised variance; one chronological split is used rather than rolling re-estimation; "
             "the network is small and its hyper-parameters were not tuned on the test period.\n")
     bib = ("@article{corsi2009simple,\n  title={A simple approximate long-memory model of realized volatility},\n  author={Corsi, Fulvio},\n"

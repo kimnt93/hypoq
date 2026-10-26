@@ -1,0 +1,19 @@
+{
+  "title": "Valuation and Subsequent Returns in Vietnam: Does a Low Market P/E Predict Higher One-Year VN-Index Returns?",
+  "decision": "ACCEPTED",
+  "n_obs": 2033,
+  "sample": "2017-08-24 to 2025-10-15",
+  "horizon_days": 252,
+  "beta": -0.05407319466029246,
+  "hac_t": -3.2250393971489504,
+  "hac_p_one_sided_negative": 0.0006297766717124778,
+  "placebo_p_one_sided": 0.0004997501249375312,
+  "r2": 0.2312393179629657,
+  "quintile_means": [
+    0.19863424005881344,
+    0.1458868492522087,
+    0.14464106352290595,
+    -0.03046605953339701,
+    -0.0843053987731447
+  ]
+}

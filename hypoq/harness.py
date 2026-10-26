@@ -294,6 +294,17 @@ def audit_research(research_dir: str, db_path: str = DEFAULT_DB_PATH) -> Dict[st
     if not glob.glob(os.path.join(research_dir, "figures", "*.png")):
         problems.append("no figures/*.png")
 
+    record_path = os.path.join(research_dir, "results", "hypothesis_record.json")
+    if not os.path.isfile(record_path):
+        problems.append("missing results/hypothesis_record.json (raw record that `make db-import` loads; written by finalize)")
+    else:
+        try:
+            rec_status = json.load(open(record_path)).get("hypothesis", {}).get("status")
+            if decision and rec_status != decision:
+                problems.append(f"hypothesis_record.json status {rec_status} != results JSON decision {decision}")
+        except ValueError:
+            problems.append("results/hypothesis_record.json is not valid JSON")
+
     status = None
     try:
         conn = get_connection(db_path)
@@ -308,7 +319,7 @@ def audit_research(research_dir: str, db_path: str = DEFAULT_DB_PATH) -> Dict[st
         problems.append(f"database check skipped: {exc}")
     else:
         if status is None:
-            problems.append("no hypothesis row with this report_dir in the database")
+            problems.append("no hypothesis row with this report_dir in the database (run `make db-import`)")
         elif decision and status != decision:
             problems.append(f"database status {status} != results JSON decision {decision}")
     return {"research": rel, "ok": not problems, "problems": problems, "decision": decision}

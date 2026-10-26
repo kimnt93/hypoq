@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage[margin=1.25in]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
+\graphicspath{ {./figures/} }
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
+
+\title{\textbf{Foreign Investor Order Flow and Next-Day Returns on the Vietnamese Equity Market}}
+\author[1]{SIQuant Research}
+\affil[1]{Hypothesis $\times$ Quant}
+\date{\today}
+\onehalfspacing
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent \textbf{Hypothesis:} $H_0$: foreign flow imbalance on day $t$ has no relation to the VN-Index return on $t+1$; $H_1$: the relation is positive \\
+\textbf{Data:} 2,027 sessions, 2018-08-30 to 2026-10-22; imbalance aggregated over up to 65 stocks \\
+\textbf{Method:} OLS with Newey--West HAC errors (5 lags) and a 2,000-draw circular-shift placebo; ACCEPTED only if both one-sided $p<0.05$ \\
+\textbf{Results:} $\beta=0.0010$ (HAC $t=0.64$, $p=0.2610$; placebo $p=0.3068$), $R^2=0.0002$; controlling for the same-day return $t=0.20$. \\
+\textbf{Research decision:} \colorbox[rgb]{0.75,0.15,0.15}{\textcolor{white}{\textbf{\,REJECTED\,}}}
+\end{abstract}
+
+\section{Design}
+Vietnamese exchanges publish foreign buy and sell values at the end of each session. The imbalance is therefore known at the close of day $t$ and is paired with the return of day $t+1$ only. Sessions with zero reported foreign turnover are vendor gaps and are dropped, never filled. Foreign ownership limits make flows informative or merely price-following, see \citet{griffin2004foreign}.
+
+\section{Results}
+The contemporaneous correlation between the imbalance and the same-day return is 0.134, so flows largely follow returns. With the same-day return as a control the coefficient on the imbalance is 0.0003 ($t=0.20$).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{fig1_flow_decile_next_day_return.png}
+\caption{Mean next-day VN-Index return by decile of the foreign flow imbalance.}
+\end{figure}
+
+\section{Limitations}
+The 65 stocks are those currently tracked, so delisted names are missing. Flows are aggregated in VND without adjustment for market capitalisation.
+
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,14 @@
+{
+  "title": "Futures Basis and Next-Day Spot Returns on the Vietnamese VN30 Index",
+  "decision": "REJECTED",
+  "n_obs": 2285,
+  "n_dropped_basis_gt_10pct": 0,
+  "sample": "2017-08-24 to 2026-10-22",
+  "beta": 0.03188552435310604,
+  "hac_t": 0.5474027697778008,
+  "hac_p_one_sided": 0.2920510264087107,
+  "placebo_p_one_sided": 0.27786106946526734,
+  "r2": 0.00034815701503543295,
+  "top_minus_bottom_quintile_next_day": 0.0016826280622581624,
+  "mean_basis": -0.0020033579151199276
+}

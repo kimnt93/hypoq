@@ -1,0 +1,56 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Gradient Boosting and Next-Day Equity Direction: A Walk-Forward Test with Cross-Asset Features",
+    "statement": "Gradient boosting on cross-asset features predicts the direction of the next-day S&P 500 return better than chance.",
+    "null_hypothesis": "The out-of-sample ROC AUC of the classifier equals 0.5.",
+    "alt_hypothesis": "The out-of-sample ROC AUC is above 0.5 (one-sided label-permutation p < 0.05).",
+    "domain": "fundamental_factors",
+    "dataset_dependencies": [
+      "data/market/us_indices_daily.parquet",
+      "data/macro/us_yield_curve_daily.parquet",
+      "data/market/global_etfs_daily.parquet"
+    ],
+    "methodology": "Walk-forward HistGradientBoostingClassifier with embargo, logistic baseline and label-permutation AUC test",
+    "metric_name": "out-of-sample ROC AUC",
+    "metric_value": 0.5067968110131486,
+    "p_value": 0.30813837232553487,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "GBM AUC 0.5068 (p=0.3081), logistic 0.4894, accuracy 53.1% vs majority 54.7%.",
+    "report_dir": "researches/res_022_gbm_next_day_direction_cross_asset_features",
+    "pdf_path": "researches/res_022_gbm_next_day_direction_cross_asset_features/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_022_gbm_next_day_direction_cross_asset_features/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Gradient Boosting and Next-Day Equity Direction: A Walk-Forward Test with Cross-Asset Features",
+      "decision": "REJECTED",
+      "n_oos": 1963,
+      "sample": "2019-01-02 to 2026-10-22",
+      "features": [
+        "spx",
+        "spx5",
+        "spx20",
+        "rv20",
+        "dvix",
+        "cboe_vix",
+        "dspr",
+        "TLT",
+        "GLD",
+        "HYG",
+        "IEF",
+        "credit5"
+      ],
+      "auc_gbm": 0.5067968110131486,
+      "auc_logistic": 0.48944475515979496,
+      "permutation_p_one_sided": 0.30813837232553487,
+      "accuracy_gbm": 0.5308201732042792,
+      "majority_baseline_accuracy": 0.5471217524197657,
+      "long_short_sharpe_before_costs": 0.46568175951957
+    }
+  }
+}

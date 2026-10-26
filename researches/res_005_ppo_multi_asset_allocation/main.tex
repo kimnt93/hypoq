@@ -4,6 +4,8 @@
 \usepackage{setspace}
 \usepackage[margin=1.25in]{geometry}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
 \graphicspath{ {./figures/} }
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{booktabs}
@@ -12,7 +14,7 @@
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
 \title{\textbf{Proximal Policy Optimisation for Multi-Asset ETF Allocation under Transaction Costs}}
-\author[1]{hypoq autonomous research harness}
+\author[1]{SIQuant Research}
 \affil[1]{Hypothesis $\times$ Quant}
 \date{\today}
 \onehalfspacing
@@ -24,7 +26,8 @@
 \noindent \textbf{Hypothesis:} $H_0$: the Sharpe ratio of a PPO allocation policy does not exceed that of daily-rebalanced equal weight; $H_1$: it does \\
 \textbf{Data:} Total returns of SPY, TLT, GLD, EEM, HYG; training before 2023, out-of-sample 2023-02-01 to 2026-10-22 (935 days) \\
 \textbf{Method:} PPO (3 seeds, 120,000 steps each, averaged), softmax weights, 5 bps cost per unit turnover, decision at close $t$ applied to day $t{+}1$, one-sided stationary-bootstrap test of the Sharpe difference \\
-\textbf{Results:} PPO Sharpe 0.18 vs equal weight 1.17 (difference -0.99, $p=1.000$). Decision: \textbf{REJECTED}
+\textbf{Results:} PPO Sharpe 0.18 vs equal weight 1.17 (difference -0.99, $p=1.000$).  \\
+\textbf{Research decision:} \colorbox[rgb]{0.75,0.15,0.15}{\textcolor{white}{\textbf{\,REJECTED\,}}}
 \end{abstract}
 
 \section{Design}
@@ -35,7 +38,7 @@ The environment exposes the last 20 daily returns of each asset (scaled by train
 
 The ensemble policy turns over 64.4\% of the portfolio per day on average.
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{fig1_rl_equity_curves.png}
 \caption{Out-of-sample growth of one unit.}

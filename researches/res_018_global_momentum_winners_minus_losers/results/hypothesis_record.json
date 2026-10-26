@@ -1,0 +1,65 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Twelve-Minus-One Month Momentum in a Pooled Universe of Large-Cap Equities from Seven Regions",
+    "statement": "Large-cap stocks with high 12-1 month returns earn a higher risk-adjusted return than stocks with low past returns.",
+    "null_hypothesis": "Sharpe(winner quintile) <= Sharpe(loser quintile).",
+    "alt_hypothesis": "Sharpe(winner quintile) > Sharpe(loser quintile) (one-sided stationary-bootstrap p < 0.05).",
+    "domain": "fundamental_factors",
+    "dataset_dependencies": [
+      "data/market/us_equities_daily.parquet",
+      "data/market/eu_equities_daily.parquet",
+      "data/market/jp_equities_daily.parquet",
+      "data/market/hk_equities_daily.parquet",
+      "data/market/kr_equities_daily.parquet",
+      "data/market/cn_equities_daily.parquet",
+      "data/market/asia_equities_daily.parquet"
+    ],
+    "methodology": "Monthly sort on 12-1 month return, equal-weight quintiles, stationary-bootstrap Sharpe difference test",
+    "metric_name": "annualised Sharpe difference (winners minus losers)",
+    "metric_value": 0.3288551822161346,
+    "p_value": 0.15056988602279545,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "Sharpe winners 0.87 vs losers 0.54; spread 0.52%/month (p=0.1506).",
+    "report_dir": "researches/res_018_global_momentum_winners_minus_losers",
+    "pdf_path": "researches/res_018_global_momentum_winners_minus_losers/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_018_global_momentum_winners_minus_losers/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Twelve-Minus-One Month Momentum in a Pooled Universe of Large-Cap Equities from Seven Regions",
+      "decision": "REJECTED",
+      "n_months": 109,
+      "median_stocks": 126,
+      "sample": "2017-09 to 2026-09 (formation months)",
+      "performance": {
+        "Winners (Q5)": {
+          "ann_return": 0.18633654227568885,
+          "ann_vol": 0.22568497503387172,
+          "sharpe": 0.8706011563177924,
+          "max_drawdown": -0.2459056911873666
+        },
+        "Losers (Q1)": {
+          "ann_return": 0.11026334250827752,
+          "ann_vol": 0.24695908424903695,
+          "sharpe": 0.5417459741016578,
+          "max_drawdown": -0.4017741550925016
+        },
+        "All stocks": {
+          "ann_return": 0.14731490255182234,
+          "ann_vol": 0.15507686426492429,
+          "sharpe": 0.9673606763781318,
+          "max_drawdown": -0.20288652666650475
+        }
+      },
+      "sharpe_difference": 0.3288551822161346,
+      "bootstrap_p_one_sided": 0.15056988602279545,
+      "mean_monthly_spread_winners_minus_losers": 0.005224375880691075,
+      "spread_t": 0.6995210424347458
+    }
+  }
+}

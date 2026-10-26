@@ -9,7 +9,16 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![LaTeX Compiler](https://img.shields.io/badge/LaTeX-Tectonic%20Engine-58a6ff.svg)](https://tectonic-typesetting.github.io/)
 
-![hypoq dashboard](assets/hypoq_ui.png)
+<p align="center"><img src="assets/hypoq_tour.gif" alt="hypoq dashboard tour" width="720"></p>
+
+<table>
+<tr>
+<td align="center" width="25%"><img src="assets/ui_hypotheses.png" alt="Hypotheses and results"><br><sub>Hypotheses and results</sub></td>
+<td align="center" width="25%"><img src="assets/ui_dataset_preview.png" alt="Data lake preview"><br><sub>Data lake preview</sub></td>
+<td align="center" width="25%"><img src="assets/ui_manuscripts.png" alt="Manuscript list"><br><sub>Compiled manuscripts</sub></td>
+<td align="center" width="25%"><img src="assets/paper_page.png" alt="Generated paper, first page"><br><sub>Generated paper (author, decision badge)</sub></td>
+</tr>
+</table>
 
 ---
 
@@ -22,18 +31,21 @@ hypoq makes that structurally hard:
 2. **Numbers are computed, never typed.** Each study is a script (`researches/<id>/code/run_pipeline.py`) that writes its tables, figures, paper and database row from the same results dictionary (`hypoq.pipeline.finalize`).
 3. **Decisions come from the test.** `ACCEPTED` means the pre-registered test supports $H_1$, `REJECTED` that it does not. Null results are published as such.
 4. **An audit gate.** `python run.py --audit` fails any study without code, without a PDF, or whose JSON, paper and database status disagree.
-5. **A deduplication memory.** Every hypothesis is stored with a dense embedding so agents see what was already tested before they start.
+5. **A deduplication memory.** Every hypothesis is stored with a dense embedding so agents see what was already tested before they start. The database itself is not versioned: it is rebuilt from the raw study records (see [Database](#database-records-embeddings-and-migration)).
 
 ```text
 Idea ─► Dedup ─► Plan ─► Code ─► Experiment ─► Analyse ─► Report (LaTeX/PDF) ─► DB sync ─► Audit
 ```
+
+**Division of labour.** The `hypoq/` package is frozen: it only discovers (`--search`, `--list`), saves (`finalize`, `upsert_hypothesis`) and loads hypotheses, and audits them. A research task never edits it. Everything a study needs lives in `researches/<id>/` (its own pipeline code, including any metric or test it needs) and in the **skills** under `.agents/skills/`, which tell an agent which data exist, which methods and metrics to use, and how to write a missing one correctly with Polars and NumPy.
 
 ---
 
 ## Quick start
 
 ```bash
-make install                       # uv sync + verifies the stack (PyTorch, SB3, statsmodels, polars)
+cp .env.example .env               # optional: database, embeddings, ports, SEC contact (make and docker compose read it)
+make install                       # uv sync, verify the stack, import the example studies into the local database (+ embeddings), start the dashboard container
 python run.py --list               # what has been tested so far
 python run.py --search "tariff announcements and equity volatility"   # semantic dedup
 make verify                        # data-quality audit of every Parquet file
@@ -71,16 +83,36 @@ Agent commands are defined in `hypoq/harness.py` (`DEFAULT_AGENT_COMMANDS`) and 
 
 Every number below is computed by the study's own `run_pipeline.py`; re-run them all with `make seed`.
 
-| ID | Domain | Paradigm | Status | Key result | Title |
+<!-- STUDIES:START -->
+| ID | Domain | Paradigm | Status | Test statistic (p-value) | Title |
 | :--- | :--- | :--- | :---: | :--- | :--- |
-| [`001`](researches/res_001_global_cross_asset_volatility_spillover) | Macro transmission | Econometrics | **REJECTED** | Nikkei $t=7.70$; Euro Stoxx $t=1.93$ | Cross-Border Return Transmission from the US Session to European and Japanese Equity Markets |
-| [`002`](researches/res_002_vip_tariff_posts_event_study) | Sentiment events | Econometrics / event study | **REJECTED** | placebo $p\ge$ 0.07 | Tariff-Related Executive Social Media Posts and Next-Day US Equity and Implied Volatility Reactions |
-| [`003`](researches/res_003_us_megacap_ml_return_ranking) | Factor / return ranking | Machine learning | **ACCEPTED** | GBM IC 0.0133, $p=0.036$ | Gradient-Boosted Ranking of Next-Week Returns in US Mega-Cap Equities: A Walk-Forward Test |
-| [`004`](researches/res_004_volatility_nowcasting_lstm_vs_har) | Volatility forecasting | Deep learning | **INCONCLUSIVE** | S&P 500: DM $p=0.742$; Bitcoin: DM $p<0.001$ | Recurrent Neural Networks versus HAR for Five-Day-Ahead Volatility Forecasts of Equities and Bitcoin |
-| [`005`](researches/res_005_ppo_multi_asset_allocation) | Asset allocation | Reinforcement learning | **REJECTED** | Sharpe PPO 0.18 vs EW 1.17 | Proximal Policy Optimisation for Multi-Asset ETF Allocation under Transaction Costs |
-| [`006`](researches/res_006_earnings_8k_announcement_reaction) | Earnings events | Event study | **ACCEPTED** | mean $|$CAR$|$ 4.59% vs placebo 1.70% | Earnings Filings and Price Reactions: An Event Study of SEC 8-K Item 2.02 Announcements for US Mega-Caps |
+| [`001`](researches/res_001_global_cross_asset_volatility_spillover) | Macro transmission | Econometrics | **REJECTED** | HAC t-stat (Nikkei) = 7.7 (p = 6.8e-15) | Cross-Border Return Transmission from the US Session to European and Japanese Equity Markets |
+| [`002`](researches/res_002_vip_tariff_posts_event_study) | Sentiment / events | Event study | **REJECTED** | min placebo p = 0.0696 (p = 0.0696) | Tariff-Related Executive Social Media Posts and Next-Day US Equity and Implied Volatility Reactions |
+| [`003`](researches/res_003_us_megacap_ml_return_ranking) | Factors / allocation | Machine learning | **ACCEPTED** | GBM mean rank IC = 0.0133 (p = 0.0363) | Gradient-Boosted Ranking of Next-Week Returns in US Mega-Cap Equities: A Walk-Forward Test |
+| [`004`](researches/res_004_volatility_nowcasting_lstm_vs_har) | Macro transmission | Deep learning | **INCONCLUSIVE** | DM t-stat (best asset) = 3.76 (p = 8.4e-05) | Recurrent Neural Networks versus HAR for Five-Day-Ahead Volatility Forecasts of Equities and Bitcoin |
+| [`005`](researches/res_005_ppo_multi_asset_allocation) | Factors / allocation | Reinforcement learning | **REJECTED** | Sharpe difference vs equal weight = -0.993 (p = 1) | Proximal Policy Optimisation for Multi-Asset ETF Allocation under Transaction Costs |
+| [`006`](researches/res_006_earnings_8k_announcement_reaction) | Sentiment / events | Event study | **ACCEPTED** | mean \|CAR[0,+1]\| = 0.0459 (p = 2.0e-04) | Earnings Filings and Price Reactions: An Event Study of SEC 8-K Item 2.02 Announcements for US Mega-Caps |
+| [`007`](researches/res_007_fomc_announcement_day_volatility) | Macro transmission | Event study | **REJECTED** | mean \|S&P 500 return\| on FOMC days = 0.00846 (p = 0.102) | Federal Reserve Announcement Days and US Equity Volatility: An Event Study of FOMC Statements, 2016--2026 |
+| [`008`](researches/res_008_yield_curve_slope_equity_forward_returns) | Macro transmission | Predictive regression | **REJECTED** | slope of 126d forward return on 10y-3m spread = -0.0262 (p = 0.966) | Does the Slope of the US Yield Curve Predict Six-Month-Ahead US Equity Returns? A Predictive Regression with Overlap-Robust Inference |
+| [`009`](researches/res_009_crypto_trend_following_vs_buy_hold) | Crypto | Rule-based strategy | **ACCEPTED** | annualised Sharpe difference (trend minus buy-and-hold) = 0.41 (p = 0.0206) | Trend Filtering in Crypto Markets: A Thirty-Day Time-Series Momentum Rule versus Equal-Weight Buy-and-Hold |
+| [`010`](researches/res_010_vn_foreign_flows_next_day_index_return) | Market microstructure | Predictive regression | **REJECTED** | beta of next-day VN-Index return on foreign flow imbalance = 9.6e-04 (p = 0.307) | Foreign Investor Order Flow and Next-Day Returns on the Vietnamese Equity Market |
+| [`011`](researches/res_011_global_low_volatility_anomaly) | Factors / allocation | Cross-sectional sort | **REJECTED** | annualised Sharpe difference (Q1 minus Q5) = 0.235 (p = 0.289) | The Low-Volatility Anomaly in a Pooled Universe of Large-Cap Equities from Seven Regions |
+| [`012`](researches/res_012_vn30_futures_basis_next_day_spot_return) | Market microstructure | Predictive regression | **REJECTED** | beta of next-day VN30 return on futures basis = 0.0319 (p = 0.292) | Futures Basis and Next-Day Spot Returns on the Vietnamese VN30 Index |
+| [`013`](researches/res_013_vix_zscore_next_week_equity_return) | Macro transmission | Predictive regression | **REJECTED** | slope of 5d forward return on VIX z-score = -2.3e-04 (p = 0.607) | Fear Spikes and Next-Week Returns: Does an Elevated VIX Predict Higher US Equity Returns? |
+| [`014`](researches/res_014_safe_haven_gold_treasuries_bitcoin) | Macro transmission | Safe-haven test | **ACCEPTED** | mean return of TLT on worst-decile S&P days = 0.00254 (p = 0.0108) | Safe Havens in Equity Crashes: Gold, Long Treasuries and Bitcoin on the Worst US Equity Days |
+| [`015`](researches/res_015_credit_risk_appetite_lead_equities) | Macro transmission | Predictive regression | **REJECTED** | slope of next-5d SPY return on 5d HYG-IEF return = -0.0761 (p = 0.703) | Does High-Yield Credit Lead Equities? Relative Bond Performance and Next-Week Stock Returns |
+| [`016`](researches/res_016_turn_of_month_effect_sp500) | Factors / allocation | Calendar effect | **REJECTED** | mean daily return on turn-of-month sessions = 6.9e-04 (p = 0.39) | The Turn-of-the-Month Effect in the US Stock Index, 2016--2026 |
+| [`017`](researches/res_017_overnight_vs_intraday_returns_us_equities) | Market microstructure | Return decomposition | **REJECTED** | mean overnight minus intraday daily return = 3.6e-04 (p = 0.0604) | Overnight versus Intraday Returns of US Mega-Cap Stocks |
+| [`018`](researches/res_018_global_momentum_winners_minus_losers) | Factors / allocation | Cross-sectional sort | **REJECTED** | annualised Sharpe difference (winners minus losers) = 0.329 (p = 0.151) | Twelve-Minus-One Month Momentum in a Pooled Universe of Large-Cap Equities from Seven Regions |
+| [`019`](researches/res_019_vn_market_pe_forward_return) | Factors / allocation | Predictive regression | **ACCEPTED** | slope of 252d forward return on P/E = -0.0541 (p = 6.3e-04) | Valuation and Subsequent Returns in Vietnam: Does a Low Market P/E Predict Higher One-Year VN-Index Returns? |
+| [`020`](researches/res_020_crypto_day_of_week_effect) | Crypto | Calendar effect | **REJECTED** | HAC Wald chi-square (6 df) for equal weekday means = 10.7 (p = 0.0983) | Day-of-the-Week Effects in Cryptocurrency Returns |
+| [`021`](researches/res_021_fed_balance_sheet_growth_equity_returns) | Macro transmission | Predictive regression | **ACCEPTED** | slope of 20d forward return on 4-week change in Fed assets = 0.256 (p = 0.0085) | Central Bank Balance Sheet Growth and Subsequent US Equity Returns |
+| [`022`](researches/res_022_gbm_next_day_direction_cross_asset_features) | Factors / allocation | Machine learning | **REJECTED** | out-of-sample ROC AUC = 0.507 (p = 0.308) | Gradient Boosting and Next-Day Equity Direction: A Walk-Forward Test with Cross-Asset Features |
+<!-- STUDIES:END -->
 
 `ACCEPTED` = the pre-registered test supports $H_1$; `REJECTED` = it does not; `INCONCLUSIVE` = the evidence is mixed across the pre-specified tests. Study 001 is rejected because its Europe leg fails the Bonferroni threshold, and study 004 is inconclusive because the LSTM beats HAR for Bitcoin but not for the S&P 500.
+
+Most studies are null results, which is the expected outcome for well-known ideas on a free data lake with a short sample: FOMC-day volatility, the yield-curve slope (opposite sign in 2016-2026), the VIX z-score, credit leading equities, the turn-of-month effect, momentum and low-volatility sorts, VN foreign flows and futures basis, crypto weekdays and gradient-boosted next-day direction (AUC 0.507) are all not supported. The accepted studies differ in strength: 006 (earnings filings move prices) is strong and mechanical; 014 finds that long Treasuries, but not gold or Bitcoin, earned a positive return on the worst S&P 500 days; 019 (low VN-Index P/E predicts higher one-year returns) rests on about eight independent years; 021 (Fed balance-sheet growth) loses significance when 2020 is excluded (the paper reports this); 003 and 009 are accepted at $p$ between 0.02 and 0.04 in survivorship-biased universes. Read them as leads, not tradable edges. The table is regenerated from the database by `python .agents/skills/hypoq-loop/scripts/update_study_table.py`, so no number in it is typed by hand.
 
 ---
 
@@ -115,7 +147,8 @@ Two environment variables matter: `HYPOQ_CONTACT` (your own email, required poli
 │ • scripts/download_all.py  -> data/*.parquet (free public sources)     │
 │ • run.py / hypoq/harness.py -> prompts, agent launch, audit            │
 │ • researches/*/code/run_pipeline.py -> results, figures, main.pdf      │
-│ • hypoq/db.py -> SQLite (hypoq.db) or PostgreSQL (DATABASE_URL)        │
+│ • hypoq/db.py -> SQLite (hypoq.db, git-ignored) or PostgreSQL          │
+│   rebuilt from researches/*/results/hypothesis_record.json (db-import) │
 │ • api.py -> JSON API + dashboard (read-only, localhost by default)     │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ volume mounts (./data, ./hypoq.db, ./researches)
@@ -126,13 +159,26 @@ Two environment variables matter: `HYPOQ_CONTACT` (your own email, required poli
 
 | Path | Purpose |
 | :--- | :--- |
-| `hypoq/` | `db.py` (dual backend, embeddings, `upsert_hypothesis`), `harness.py` (sessions, prompts, `audit_research`), `pipeline.py` (`finalize`), `report.py` (LaTeX), `embeddings.py` |
+| `hypoq/` | **Frozen** discover / save / load layer: `db.py` (dual backend, embeddings, `upsert_hypothesis`), `harness.py` (sessions, prompts, `audit_research`), `pipeline.py` (`finalize`), `report.py` (LaTeX), `embeddings.py` |
 | `scripts/` | Ingestion (`ingest_*.py`, `yf_common.py`, `vnd_common.py`), `verify_datasets.py`, `update_data_docs.py`, `seed_database.py` |
-| `researches/` | One folder per study: `code/`, `results/`, `figures/`, `main.tex`, `main.pdf`, `references.bib` |
-| `.agents/skills/` | 18 AgentSkills (data exploration, event studies, ML/DL/RL, PIT construction, LaTeX, dedup, the hypoq loop) |
+| `researches/` | One self-contained folder per study: `code/` (all study logic), `results/`, `figures/`, `main.tex`, `main.pdf`, `references.bib` |
+| `.agents/skills/` | 18 AgentSkills (data exploration, event studies, ML/DL/RL, PIT construction, LaTeX, dedup, the hypoq loop). `hypothesis-testing-stats/scripts/quant_metrics.py` is a tested reference library of metrics and tests to copy from |
+| `.env.example` | Every supported environment variable with its default |
 | `templates/` | LaTeX template |
 | `web/`, `Dockerfile`, `docker-compose.yml` | Next.js dashboard and PostgreSQL option |
 | `tests/` | pytest suite (database, audit, harness, API security, data quality) |
+
+### Database: records, embeddings and migration
+
+`hypoq.db` (SQLite) is a local, **git-ignored** file. What is versioned is the *raw record* of each study, `researches/<id>/results/hypothesis_record.json`: hypothesis metadata plus the computed results, with no vectors, ids or timestamps. `hypoq.pipeline.finalize` writes it every time a pipeline runs.
+
+```bash
+make db-import     # load every record into the database (insert or update by title) and create the embeddings; part of `make install`
+make db-migrate    # re-embed after changing EMBEDDING_PROVIDER / EMBEDDING_MODEL / GEMINI_API_KEY (FORCE=1 recomputes everything)
+make db-export     # back-fill records from an existing database
+```
+
+Vectors are created at import time with the active method and stored with its id (for example `huggingface:sentence-transformers/all-MiniLM-L6-v2` or `gemini:text-embedding-004`). If you change the method, `make db-migrate` recomputes every vector whose id differs, from the hypothesis text already stored, so no study has to be re-run; `python run.py --search` also migrates on demand. An embedding method that cannot load raises an error: hypoq never substitutes a vector from another model. For PostgreSQL set `DATABASE_URL` (or run `make install-pg`); the same import runs against it.
 
 ### Dashboard / API
 
@@ -150,8 +196,10 @@ Endpoints (`api.py`): `/api/hypotheses?q=&status=`, `/api/datasets`, `/api/datas
 
 ```bash
 mkdir -p researches/res_NNN_<slug>/{code,figures,results}
-# copy researches/res_003_us_megacap_ml_return_ranking/code/run_pipeline.py as a starting point,
-# change the data, the test and the decision rule, then:
+# copy a reference study as a starting point (res_003 ML, res_004 DL, res_005 RL, res_006/res_007 event study,
+# res_008/res_010/res_012 predictive regression, res_009/res_011 strategy and portfolio tests),
+# copy the metrics you need from .agents/skills/hypothesis-testing-stats/scripts/quant_metrics.py (or write your own),
+# change the data, the test and the decision rule. Do not edit hypoq/, scripts/ or api.py. Then:
 python researches/res_NNN_<slug>/code/run_pipeline.py
 python run.py --audit
 ```
@@ -164,6 +212,7 @@ python run.py --audit
 
 ```bash
 make install   make download   make verify   make audit   make seed   make test   make api
+make db-import   make db-migrate [FORCE=1]   make db-export
 make install-pg   make install-sqlite   make start   make stop   make parse-doc FILE=<path>   make clean
 python run.py --agents=<a,b> --topic="…" [--execute]   python run.py --audit   python run.py --search "…"   python run.py --list [--status=ACCEPTED]
 ```

@@ -4,6 +4,8 @@
 \usepackage{setspace}
 \usepackage[margin=1.25in]{geometry}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
 \graphicspath{ {./figures/} }
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{booktabs}
@@ -12,7 +14,7 @@
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
 \title{\textbf{Gradient-Boosted Ranking of Next-Week Returns in US Mega-Cap Equities: A Walk-Forward Test}}
-\author[1]{hypoq autonomous research harness}
+\author[1]{SIQuant Research}
 \affil[1]{Hypothesis $\times$ Quant}
 \date{\today}
 \onehalfspacing
@@ -24,7 +26,8 @@
 \noindent \textbf{Hypothesis:} $H_0$: the out-of-sample mean cross-sectional rank IC of a gradient-boosting forecast of the 5-day return is zero; $H_1$: it is positive \\
 \textbf{Data:} Daily prices and volume of 35 US mega-cap stocks, out-of-sample 2019-01-02 to 2026-10-16 (1,959 days) \\
 \textbf{Method:} Walk-forward from 2019 with annual retraining, a 10-day embargo, cross-sectionally rank-normalised features, ridge and 12-1 momentum benchmarks, HAC (5 lags) inference \\
-\textbf{Results:} GBM mean IC 0.0133 (HAC $t=1.80$, one-sided $p=0.036$); ridge -0.0048; momentum 0.0106. Decision: \textbf{ACCEPTED}
+\textbf{Results:} GBM mean IC 0.0133 (HAC $t=1.80$, one-sided $p=0.036$); ridge -0.0048; momentum 0.0106. \\
+\textbf{Research decision:} \colorbox[rgb]{0.10,0.50,0.20}{\textcolor{white}{\textbf{\,ACCEPTED\,}}}
 \end{abstract}
 
 \section{Design}
@@ -35,7 +38,7 @@ Features are 1/5/21/63-day returns, 12-1 momentum, 21/63-day volatility, their r
 
 Gross of costs, the top-third minus bottom-third GBM spread earns 0.120\% per 5 days (HAC $t=1.56$).
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{fig1_cumulative_ic.png}
 \caption{Cumulative daily rank IC.}

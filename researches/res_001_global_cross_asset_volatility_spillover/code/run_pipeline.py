@@ -121,7 +121,7 @@ def run():
                 f"& {r['r2']:.4f} & {r['n']:,} \\\\")
 
     table = (
-        "\\begin{table}[h!]\n\\centering\n"
+        "\\begin{table}[H]\n\\centering\n"
         "\\caption{Next-session response to the prior US session (HAC Newey--West, one-sided $H_1:\\beta>0$)}\n"
         "\\label{tab:spillover}\n\\begin{tabular}{lcccccc}\n\\toprule\n"
         "Target & $\\beta$ & HAC $t$ & $p$ & Placebo $p$ & $R^2$ & $N$ \\\\\n\\midrule\n"
@@ -148,7 +148,7 @@ def run():
                   f"and a Cholesky-FEVD spillover index from a BIC-selected VAR({lag_fwd})",
         "Results": f"Nikkei: $\\beta={res_jp['beta']:.3f}$, $t={res_jp['t']:.2f}$, placebo $p={res_jp['placebo_p']:.4f}$; "
                    f"Euro Stoxx: $\\beta={res_eu['beta']:.3f}$, $t={res_eu['t']:.2f}$, placebo $p={res_eu['placebo_p']:.4f}$. "
-                   f"Decision at Bonferroni $\\alpha={bonferroni}$: \\textbf{{{decision}}}",
+                   f"Decision threshold: Bonferroni $\\alpha={bonferroni}$.",
     }
     body = (
         "\\section{Hypothesis and Design}\n"
@@ -160,7 +160,7 @@ def run():
         "ordering; Cholesky FEVD is order dependent, so the gap between the two is reported as sensitivity "
         "\\citep{diebold2012better}.\n\n"
         "\\input{results/table1_volatility_spillover.tex}\n\n"
-        "\\begin{figure}[h!]\n\\centering\n\\includegraphics[width=0.95\\textwidth]{fig1_volatility_spillover.png}\n"
+        "\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.95\\textwidth]{fig1_volatility_spillover.png}\n"
         "\\caption{Lead-lag fit and placebo distribution.}\n\\end{figure}\n\n"
         "\\section{Limitations}\n"
         "Only sessions present in all three calendars are used; no transaction costs or trading rule are evaluated; "

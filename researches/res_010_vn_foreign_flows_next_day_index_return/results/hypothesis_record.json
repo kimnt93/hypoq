@@ -1,0 +1,43 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Foreign Investor Order Flow and Next-Day Returns on the Vietnamese Equity Market",
+    "statement": "Net foreign buying on a Vietnamese trading day predicts a higher VN-Index return on the next trading day.",
+    "null_hypothesis": "The coefficient of the next-day VN-Index return on the foreign flow imbalance is zero.",
+    "alt_hypothesis": "The coefficient is positive (HAC one-sided p < 0.05 and circular-shift placebo p < 0.05).",
+    "domain": "market_microstructure",
+    "dataset_dependencies": [
+      "data/market/vn_foreign_trading_daily.parquet",
+      "data/market/vn_indices_daily.parquet"
+    ],
+    "methodology": "Predictive regression with Newey-West HAC errors and circular-shift placebo",
+    "metric_name": "beta of next-day VN-Index return on foreign flow imbalance",
+    "metric_value": 0.0009610821032961992,
+    "p_value": 0.30684657671164417,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "beta=0.0010, HAC t=0.64 (p=0.2610), placebo p=0.3068, contemporaneous corr 0.13.",
+    "report_dir": "researches/res_010_vn_foreign_flows_next_day_index_return",
+    "pdf_path": "researches/res_010_vn_foreign_flows_next_day_index_return/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_010_vn_foreign_flows_next_day_index_return/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Foreign Investor Order Flow and Next-Day Returns on the Vietnamese Equity Market",
+      "decision": "REJECTED",
+      "n_obs": 2027,
+      "sample": "2018-08-30 to 2026-10-22",
+      "beta": 0.0009610821032961992,
+      "hac_t": 0.6402825355551673,
+      "hac_p_one_sided": 0.2609944663498658,
+      "placebo_p_one_sided": 0.30684657671164417,
+      "r2": 0.0002303588255897493,
+      "beta_with_return_control": 0.0002955864167088064,
+      "t_with_return_control": 0.20449255736533486,
+      "contemporaneous_corr": 0.13445689877422612
+    }
+  }
+}

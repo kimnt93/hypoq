@@ -1,0 +1,63 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Gradient-Boosted Ranking of Next-Week Returns in US Mega-Cap Equities: A Walk-Forward Test",
+    "statement": "Gradient boosting on price and volume features ranks 5-day returns of US mega-caps better than chance out of sample.",
+    "null_hypothesis": "Mean out-of-sample cross-sectional rank IC of the GBM forecast equals zero.",
+    "alt_hypothesis": "Mean out-of-sample rank IC is positive (one-sided HAC p < 0.05).",
+    "domain": "fundamental_factors",
+    "dataset_dependencies": [
+      "data/market/us_equities_daily.parquet"
+    ],
+    "methodology": "Walk-forward HistGradientBoostingRegressor vs Ridge vs 12-1 momentum; HAC inference on daily rank IC",
+    "metric_name": "GBM mean rank IC",
+    "metric_value": 0.01332374591561741,
+    "p_value": 0.036284642243840294,
+    "confidence_level": 0.95,
+    "status": "ACCEPTED",
+    "summary_findings": "GBM IC 0.0133 (t=1.80); ridge -0.0048; momentum 0.0106.",
+    "report_dir": "researches/res_003_us_megacap_ml_return_ranking",
+    "pdf_path": "researches/res_003_us_megacap_ml_return_ranking/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_003_us_megacap_ml_return_ranking/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Gradient-Boosted Ranking of Next-Week Returns in US Mega-Cap Equities: A Walk-Forward Test",
+      "decision": "ACCEPTED",
+      "models": {
+        "gbm": {
+          "mean_ic": 0.01332374591561741,
+          "hac_t": 1.7955300811119743,
+          "p_one_sided": 0.036284642243840294,
+          "n_days": 1959,
+          "ic_positive_share": 0.5273098519652885
+        },
+        "ridge": {
+          "mean_ic": -0.004750023670620537,
+          "hac_t": -0.42604818937649186,
+          "p_one_sided": 0.6649636339787789,
+          "n_days": 1959,
+          "ic_positive_share": 0.5028075548749362
+        },
+        "momentum": {
+          "mean_ic": 0.010636408495059,
+          "hac_t": 0.8569923430972289,
+          "p_one_sided": 0.1957245581424638,
+          "n_days": 1959,
+          "ic_positive_share": 0.5181214905564063
+        },
+        "gbm_top_minus_bottom_third_5d": {
+          "mean": 0.0012047783188442916,
+          "hac_t": 1.557329315517549,
+          "note": "gross of costs, overlapping 5-day windows"
+        }
+      },
+      "sample": "2019-01-02 to 2026-10-16",
+      "n_stocks": 35,
+      "horizon_days": 5
+    }
+  }
+}

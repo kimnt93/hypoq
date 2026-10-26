@@ -1,0 +1,32 @@
+{
+  "title": "Safe Havens in Equity Crashes: Gold, Long Treasuries and Bitcoin on the Worst US Equity Days",
+  "decision": "ACCEPTED",
+  "crash_threshold": -0.011028155571448206,
+  "bonferroni_alpha": 0.016666666666666666,
+  "assets": [
+    {
+      "asset": "GLD",
+      "n_crash_days": 252,
+      "mean_crash": -0.0010413396646236494,
+      "mean_all_days": 0.000496536005398499,
+      "p_one_sided": 0.8444311137772446,
+      "haven_at_bonferroni": false
+    },
+    {
+      "asset": "TLT",
+      "n_crash_days": 252,
+      "mean_crash": 0.002541819464991556,
+      "mean_all_days": -0.000151101764386797,
+      "p_one_sided": 0.010797840431913617,
+      "haven_at_bonferroni": true
+    },
+    {
+      "asset": "BTC-USD",
+      "n_crash_days": 252,
+      "mean_crash": -0.01718109408148598,
+      "mean_all_days": 0.0019319149507874293,
+      "p_one_sided": 1.0,
+      "haven_at_bonferroni": false
+    }
+  ]
+}

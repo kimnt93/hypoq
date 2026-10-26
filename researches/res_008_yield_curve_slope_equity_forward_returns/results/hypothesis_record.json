@@ -1,0 +1,44 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Does the Slope of the US Yield Curve Predict Six-Month-Ahead US Equity Returns? A Predictive Regression with Overlap-Robust Inference",
+    "statement": "A flatter or inverted 10y-3m Treasury spread predicts lower S&P 500 returns over the next 126 sessions.",
+    "null_hypothesis": "The slope coefficient of the 126-session-ahead S&P 500 log return on the 10y-3m spread is zero.",
+    "alt_hypothesis": "The slope coefficient is positive (HAC one-sided p < 0.05 and circular-shift placebo p < 0.05).",
+    "domain": "macro_transmission",
+    "dataset_dependencies": [
+      "data/macro/us_yield_curve_daily.parquet",
+      "data/market/us_indices_daily.parquet"
+    ],
+    "methodology": "Overlapping-horizon predictive regression with Newey-West HAC errors and circular-shift placebo",
+    "metric_name": "slope of 126d forward return on 10y-3m spread",
+    "metric_value": -0.026209053650828134,
+    "p_value": 0.9659431437320579,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "beta=-0.0262, HAC t=-1.82 (p=0.9659), placebo p=0.9250, R2=0.074.",
+    "report_dir": "researches/res_008_yield_curve_slope_equity_forward_returns",
+    "pdf_path": "researches/res_008_yield_curve_slope_equity_forward_returns/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_008_yield_curve_slope_equity_forward_returns/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Does the Slope of the US Yield Curve Predict Six-Month-Ahead US Equity Returns? A Predictive Regression with Overlap-Robust Inference",
+      "decision": "REJECTED",
+      "n_obs": 2387,
+      "sample": "2016-10-24 to 2026-04-24",
+      "horizon_days": 126,
+      "beta": -0.026209053650828134,
+      "hac_t": -1.8242537928352371,
+      "hac_p_one_sided": 0.9659431437320579,
+      "placebo_p_one_sided": 0.9250374812593704,
+      "r2": 0.07418336591031172,
+      "n_inverted_sessions": 614,
+      "mean_fwd_return_inverted": 0.08332342501023837,
+      "mean_fwd_return_not_inverted": 0.05628404213841835
+    }
+  }
+}

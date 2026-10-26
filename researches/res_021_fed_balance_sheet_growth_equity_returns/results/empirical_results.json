@@ -1,0 +1,16 @@
+{
+  "title": "Central Bank Balance Sheet Growth and Subsequent US Equity Returns",
+  "decision": "ACCEPTED",
+  "n_obs": 519,
+  "sample": "2016-10-24 to 2026-09-25",
+  "horizon_sessions": 20,
+  "beta": 0.2562115700667142,
+  "hac_t": 4.528558796449357,
+  "hac_p_one_sided": 2.9693678411505974e-06,
+  "placebo_p_one_sided": 0.00849575212393803,
+  "r2": 0.028814991410160418,
+  "mean_fwd_after_expansion": 0.009397985722813808,
+  "mean_fwd_after_contraction": 0.010506131924473168,
+  "beta_excluding_2020": 0.2620998860000834,
+  "t_excluding_2020": 1.1898174950732463
+}

@@ -19,11 +19,13 @@ This skill provides the automated workflow for creating and compiling quantitati
 ## Required Report Layout
 A compliant research report is short (typically 3 to 8 pages), highly focused, and starts immediately with the hypothesis and testing results:
 1. **Title**: Concise, informative, $\le 20$ words.
-2. **Abstract**: Four mandatory labeled components:
+1b. **Author**: always `SIQuant Research` (already set in the template and in `hypoq.report.write_paper`).
+2. **Abstract**: Four mandatory labeled components plus a highlighted decision line:
    - `\noindent \textbf{Hypothesis Formulation:}` Null ($H_0$) and Alternative ($H_1$) hypotheses.
    - `\textbf{Data \& Empirical Setting:}` Point-in-time sample details.
    - `\textbf{Econometric Methodology:}` HAC errors, zero-lookahead alignment, event study or model structure.
-   - `\textbf{Empirical Results \& Summary:}` Key test statistics, $p$-values, effect size, and explicit research decision (**ACCEPTED**, **REJECTED**, or **INCONCLUSIVE**).
+   - `\textbf{Empirical Results \& Summary:}` Key test statistics, $p$-values and effect size. Do not repeat the decision here.
+   - `\textbf{Research decision:}` a coloured badge, green **ACCEPTED**, red **REJECTED** or amber **INCONCLUSIVE**; `finalize(...)` appends it automatically from the computed decision.
 3. **Keywords & JEL Codes**.
 4. **Section 1: Introduction & Hypothesis Formulation**.
 5. **Section 2: Data Architecture & Methodology**.

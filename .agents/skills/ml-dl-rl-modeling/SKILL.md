@@ -28,6 +28,7 @@ This skill establishes standardized architectures for empirical financial modeli
 * ML: `researches/res_003_us_megacap_ml_return_ranking/code/run_pipeline.py` (walk-forward gradient boosting, embargo, cross-sectional rank IC, HAC inference, ridge and momentum benchmarks).
 * DL: `researches/res_004_volatility_nowcasting_lstm_vs_har/code/run_pipeline.py` (LSTM vs HAR, chronological split with purge, multiple seeds, QLIKE, Diebold-Mariano with Bonferroni).
 * RL: `researches/res_005_ppo_multi_asset_allocation/code/run_pipeline.py` (custom gymnasium environment, PPO ensemble, costs, stationary-bootstrap Sharpe test against a pre-specified benchmark).
+Metrics and tests (Sharpe, DM, Clark-West, IC, bootstrap, walk-forward splits, ...): copy from the `hypothesis-testing-stats` skill (`scripts/quant_metrics.py`) or write your own following its rules.
 Rules that apply to all three: fix hyper-parameters before the test period, never tune on test data, compare against simple benchmarks, report null results.
 
 ## 1. Machine Learning Recipe (Scikit-Learn Purged TimeSeriesSplit)

@@ -1,0 +1,13 @@
+{
+  "title": "The Turn-of-the-Month Effect in the US Stock Index, 2016--2026",
+  "decision": "REJECTED",
+  "n_sessions": 2491,
+  "n_tom": 476,
+  "sample": "2016-11-01 to 2026-09-30",
+  "mean_tom": 0.0006941195200213801,
+  "mean_other": 0.0005526381663531883,
+  "placebo_mean": 0.000548979574908505,
+  "p_one_sided": 0.39036096390360964,
+  "share_of_days": 0.19108791649939783,
+  "share_of_return": 0.22881474302454707
+}

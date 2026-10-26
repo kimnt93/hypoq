@@ -1,0 +1,62 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Safe Havens in Equity Crashes: Gold, Long Treasuries and Bitcoin on the Worst US Equity Days",
+    "statement": "At least one of gold, long Treasuries and Bitcoin earns a positive average return on the worst S&P 500 days.",
+    "null_hypothesis": "For each asset the mean return on worst-decile S&P 500 days is not positive.",
+    "alt_hypothesis": "For at least one asset the mean is positive (one-sided stationary-bootstrap p < 0.05/3).",
+    "domain": "macro_transmission",
+    "dataset_dependencies": [
+      "data/market/us_indices_daily.parquet",
+      "data/market/global_etfs_daily.parquet",
+      "data/crypto/crypto_top_assets_daily.parquet"
+    ],
+    "methodology": "Baur-Lucey safe-haven definition, stationary-bootstrap mean test, Bonferroni correction over three assets",
+    "metric_name": "mean return of TLT on worst-decile S&P days",
+    "metric_value": 0.002541819464991556,
+    "p_value": 0.010797840431913617,
+    "confidence_level": 0.95,
+    "status": "ACCEPTED",
+    "summary_findings": "GLD -0.10% (p=0.8444); TLT 0.25% (p=0.0108); BTC-USD -1.72% (p=1.0000)",
+    "report_dir": "researches/res_014_safe_haven_gold_treasuries_bitcoin",
+    "pdf_path": "researches/res_014_safe_haven_gold_treasuries_bitcoin/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_014_safe_haven_gold_treasuries_bitcoin/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Safe Havens in Equity Crashes: Gold, Long Treasuries and Bitcoin on the Worst US Equity Days",
+      "decision": "ACCEPTED",
+      "crash_threshold": -0.011028155571448206,
+      "bonferroni_alpha": 0.016666666666666666,
+      "assets": [
+        {
+          "asset": "GLD",
+          "n_crash_days": 252,
+          "mean_crash": -0.0010413396646236494,
+          "mean_all_days": 0.000496536005398499,
+          "p_one_sided": 0.8444311137772446,
+          "haven_at_bonferroni": false
+        },
+        {
+          "asset": "TLT",
+          "n_crash_days": 252,
+          "mean_crash": 0.002541819464991556,
+          "mean_all_days": -0.000151101764386797,
+          "p_one_sided": 0.010797840431913617,
+          "haven_at_bonferroni": true
+        },
+        {
+          "asset": "BTC-USD",
+          "n_crash_days": 252,
+          "mean_crash": -0.01718109408148598,
+          "mean_all_days": 0.0019319149507874293,
+          "p_one_sided": 1.0,
+          "haven_at_bonferroni": false
+        }
+      ]
+    }
+  }
+}

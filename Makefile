@@ -3,11 +3,15 @@
 # Repository: https://github.com/kimnt93/hypoq.git
 # ==============================================================================
 
+# optional settings, see .env.example
+-include .env
+.EXPORT_ALL_VARIABLES:
+
 PYTHON ?= $(shell if [ -f .venv/bin/python3 ]; then echo $$(pwd)/.venv/bin/python3; elif [ -f ../.venv/bin/python3 ]; then echo $$(cd .. && pwd)/.venv/bin/python3; else which python3; fi)
 ANYMD ?= $(shell which anymd || echo "/home/kim/.bun/bin/anymd")
 UV ?= $(shell which uv || echo "/home/kim/.local/bin/uv")
 
-.PHONY: all install download verify audit seed test api parse-doc help clean start stop install-pg install-postgres install-sqlite setup-pg setup-sqlite
+.PHONY: all install download verify audit seed test api parse-doc help clean start stop install-pg install-postgres install-sqlite setup-pg setup-sqlite db-import db-migrate db-export
 
 # Default target downloads and builds all datasets
 all: download
@@ -21,6 +25,9 @@ help:
 	@echo " make verify           Data-quality audit of all Parquet files (duplicates, nulls, OHLC, staleness)"
 	@echo " make audit            Research integrity audit (code, results JSON, PDF and database must agree)"
 	@echo " make seed             Re-run every researches/*/code/run_pipeline.py and refresh the database"
+	@echo " make db-import        Load researches/*/results/hypothesis_record.json into the (git-ignored) database and embed them"
+	@echo " make db-migrate       Re-embed all hypotheses after changing EMBEDDING_PROVIDER / EMBEDDING_MODEL (add FORCE=1 to redo all)"
+	@echo " make db-export        Back-fill hypothesis_record.json files from the database
 	@echo " make test             Run the pytest suite"
 	@echo " make api              Start the JSON API + dashboard (api.py) on http://127.0.0.1:8080"
 	@echo " make start            Start Next.js web UI display container on Docker"
@@ -59,6 +66,15 @@ audit:
 seed:
 	$(PYTHON) scripts/seed_database.py
 
+db-import:
+	$(PYTHON) scripts/db_import.py
+
+db-migrate:
+	$(PYTHON) scripts/db_migrate_embeddings.py $(if $(FORCE),--force,)
+
+db-export:
+	$(PYTHON) scripts/db_export_records.py
+
 test:
 	$(PYTHON) -m pytest -q
 
@@ -88,18 +104,18 @@ stop:
 install-pg:
 	docker compose up -d postgres
 	@echo ">>> Waiting for PostgreSQL container to become ready..."
-	@until docker compose exec -T postgres pg_isready -U hypoq -d hypoq >/dev/null 2>&1; do sleep 1; done
+	@until docker compose exec -T postgres pg_isready -U $${POSTGRES_USER:-hypoq} -d $${POSTGRES_DB:-hypoq} >/dev/null 2>&1; do sleep 1; done
 	@echo ">>> PostgreSQL container running on port $${POSTGRES_PORT:-5432}!"
-	@echo ">>> Initializing PostgreSQL tables and semantic vector embeddings..."
-	@$(PYTHON) -c "from hypoq.db import init_db, sync_all_embeddings; url = 'postgresql://hypoq:hypoq_secret@localhost:5432/hypoq'; init_db(url); n = sync_all_embeddings(url); print(f'>>> Successfully initialized PostgreSQL database ({url}) with {n} semantic embeddings!')"
+	@echo ">>> Importing the example studies and creating their embeddings..."
+	DATABASE_URL=$${DATABASE_URL:-postgresql://$${POSTGRES_USER:-hypoq}:$${POSTGRES_PASSWORD:-hypoq_secret}@localhost:$${POSTGRES_PORT:-5432}/$${POSTGRES_DB:-hypoq}} $(PYTHON) scripts/db_import.py
 
 install-postgres: install-pg
 setup-pg: install-pg
 
 install-sqlite:
+	@echo ">>> Importing the example studies into the local SQLite database (hypoq.db) and creating their embeddings..."
+	$(PYTHON) scripts/db_import.py --db hypoq.db
 	docker compose up -d hypoq-web
-	@echo ">>> Initializing SQLite database schema and semantic vector embeddings..."
-	@$(PYTHON) -c "from hypoq.db import init_db, sync_all_embeddings; init_db('hypoq.db'); n = sync_all_embeddings('hypoq.db'); print(f'>>> Successfully initialized SQLite database (hypoq.db) with {n} semantic embeddings!')"
 	@echo ">>> SQLite database and hypoq web display active at http://127.0.0.1:$${PORT:-3030}!"
 
 setup-sqlite: install-sqlite

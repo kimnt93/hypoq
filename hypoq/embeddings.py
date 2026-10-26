@@ -41,6 +41,20 @@ def get_active_provider() -> str:
     return "huggingface"
 
 
+GEMINI_MODEL_ID = "text-embedding-004"
+
+
+def get_model_id() -> str:
+    """
+    Identifier of the active embedding method, stored next to every vector ("huggingface:<model>" or "gemini:<model>").
+    Vectors created by a different method live in a different vector space, so `hypoq.db.reembed_all` / `make db-migrate`
+    recompute any row whose stored id differs from this one.
+    """
+    if get_active_provider() == "gemini":
+        return f"gemini:{GEMINI_MODEL_ID}"
+    return f"huggingface:{DEFAULT_HF_MODEL}"
+
+
 def get_gemini_api_key() -> Optional[str]:
     return os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 
@@ -82,23 +96,20 @@ def embed_via_gemini(text: str, api_key: str) -> np.ndarray:
 
 
 def embed_via_hf(text: str) -> np.ndarray:
-    """Embeds text using open-source Hugging Face model under 8GB RAM."""
+    """Embeds text using the open-source Hugging Face model (default all-MiniLM-L6-v2, under 8GB RAM)."""
     model = _get_hf_model()
-    if model:
-        vec = model.encode(text, convert_to_numpy=True, normalize_embeddings=True)
-        return vec.astype(np.float32)
-
-    # Deterministic fallback vector if offline/no model (384 dimensions)
-    np.random.seed(abs(hash(text)) % (2**32))
-    vec = np.random.randn(384).astype(np.float32)
-    norm = np.linalg.norm(vec)
-    return vec / (norm if norm > 0 else 1.0)
+    if not model:
+        raise RuntimeError(f"Hugging Face embedding model {DEFAULT_HF_MODEL!r} could not be loaded (see the warning above); "
+                           "install sentence-transformers, check the network, or set EMBEDDING_PROVIDER=gemini with GEMINI_API_KEY")
+    vec = model.encode(text, convert_to_numpy=True, normalize_embeddings=True)
+    return vec.astype(np.float32)
 
 
 def get_embedding(text: str) -> np.ndarray:
     """
     Generates a unit-normalized Float32 vector embedding for text.
-    Uses Gemini text-embedding-004 if API key present, otherwise HuggingFace local model.
+    Uses Gemini text-embedding-004 if selected (or a key is present), otherwise the HuggingFace local model.
+    Raises on failure instead of returning a vector from a different model.
     """
     provider = get_active_provider()
     clean_text = text.strip() if text else ""
@@ -107,12 +118,9 @@ def get_embedding(text: str) -> np.ndarray:
 
     if provider == "gemini":
         api_key = get_gemini_api_key()
-        if api_key:
-            try:
-                return embed_via_gemini(clean_text, api_key)
-            except Exception as e:
-                print(f"[Warning] Gemini API call failed: {e}. Falling back to HuggingFace.")
-                return embed_via_hf(clean_text)
+        if not api_key:
+            raise RuntimeError("EMBEDDING_PROVIDER=gemini requires GEMINI_API_KEY (or GOOGLE_API_KEY)")
+        return embed_via_gemini(clean_text, api_key)   # errors propagate: never silently fall back to another vector space
 
     return embed_via_hf(clean_text)
 

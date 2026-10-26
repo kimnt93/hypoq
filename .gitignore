@@ -13,3 +13,12 @@ node_modules/
 web/node_modules/
 web/.next/
 runs/
+
+# Local database: rebuilt from researches/*/results/hypothesis_record.json by `make db-import`
+hypoq.db
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3

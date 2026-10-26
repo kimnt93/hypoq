@@ -22,7 +22,8 @@ $$\text{Idea} \longrightarrow \text{Plan} \longrightarrow \text{Code} \longright
 3. **Strict Point-in-Time (PIT) Causality**: Zero look-ahead bias ($\tau_{\text{info}} \le \tau_{\text{market}}$).
 4. **Econometric & Statistical Rigor**: Newey--West HAC robust covariance, stationarity verification (ADF), placebo bootstrap tests, and transaction friction hurdles.
 5. **Python-Only Empirical & ML/DL/RL Implementation**: All estimation pipelines, machine learning (Scikit-Learn), deep learning (PyTorch), and reinforcement learning (Stable-Baselines3) models must be executed in Python using Polars, Scikit-Learn, PyTorch, Stable-Baselines3, and Statsmodels (`code/run_pipeline.py`).
-6. **Autonomous Serialization & Semantic Storage**: Every study compiles to a concise, high-density LaTeX report (`main.pdf`) using the standard research template and registers metrics, findings, and dense vector embeddings in the database (`hypoq.db` via SQLite or PostgreSQL via `DATABASE_URL`).
+6. **Authorship & Abstract Format**: every manuscript is authored by **SIQuant Research** (set in `templates/main.tex` and `hypoq.report.write_paper`). The structured abstract ends with a highlighted **Research decision** line (green `ACCEPTED`, red `REJECTED`, amber `INCONCLUSIVE`) that `hypoq.pipeline.finalize` adds from the computed decision.
+7. **Autonomous Serialization & Semantic Storage**: Every study compiles to a concise, high-density LaTeX report (`main.pdf`) using the standard research template and registers metrics, findings, and dense vector embeddings in the database (`hypoq.db` via SQLite or PostgreSQL via `DATABASE_URL`).
 
 ---
 

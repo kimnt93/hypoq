@@ -1,0 +1,98 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Overnight versus Intraday Returns of US Mega-Cap Stocks",
+    "statement": "US mega-cap stocks earn a higher average return overnight than during the trading day.",
+    "null_hypothesis": "Mean overnight return minus mean intraday return of the equal-weight portfolio is not positive.",
+    "alt_hypothesis": "The mean difference is positive (one-sided stationary-bootstrap p < 0.05).",
+    "domain": "market_microstructure",
+    "dataset_dependencies": [
+      "data/market/us_equities_daily.parquet"
+    ],
+    "methodology": "Overnight/intraday decomposition with adjusted opens and a stationary-bootstrap mean test",
+    "metric_name": "mean overnight minus intraday daily return",
+    "metric_value": 0.0003600078498892825,
+    "p_value": 0.060387922415516895,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "Overnight 6.51 bp vs intraday 2.91 bp per day (p=0.0604).",
+    "report_dir": "researches/res_017_overnight_vs_intraday_returns_us_equities",
+    "pdf_path": "researches/res_017_overnight_vs_intraday_returns_us_equities/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_017_overnight_vs_intraday_returns_us_equities/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Overnight versus Intraday Returns of US Mega-Cap Stocks",
+      "decision": "REJECTED",
+      "n_sessions": 2513,
+      "n_stock_days_dropped": 0,
+      "sample": "2016-10-25 to 2026-10-23",
+      "mean_overnight": 0.0006510357933913439,
+      "mean_intraday": 0.0002910279435020614,
+      "mean_difference": 0.0003600078498892825,
+      "p_one_sided": 0.060387922415516895,
+      "ann_overnight": 0.16843455911034333,
+      "ann_intraday": 0.06472947993848144,
+      "by_year": [
+        {
+          "year": 2016,
+          "on": 0.0013153385703989044,
+          "intra": 0.0004491482411206462
+        },
+        {
+          "year": 2017,
+          "on": 0.0008911377369390169,
+          "intra": 0.00023918961928883043
+        },
+        {
+          "year": 2018,
+          "on": 0.0006025674803213279,
+          "intra": -0.0004571202056787617
+        },
+        {
+          "year": 2019,
+          "on": 0.0006034169906438204,
+          "intra": 0.0006771942003279083
+        },
+        {
+          "year": 2020,
+          "on": 0.0011999331262450962,
+          "intra": 0.00016381898751230653
+        },
+        {
+          "year": 2021,
+          "on": 0.0010140806635258385,
+          "intra": 0.0003144419652604239
+        },
+        {
+          "year": 2022,
+          "on": -0.0005791110522056627,
+          "intra": 7.860257636275291e-05
+        },
+        {
+          "year": 2023,
+          "on": 0.0003008116075936183,
+          "intra": 0.0011490241695549946
+        },
+        {
+          "year": 2024,
+          "on": 0.0010719558222573931,
+          "intra": 2.2295080613302613e-05
+        },
+        {
+          "year": 2025,
+          "on": 0.0005587243370112277,
+          "intra": 0.0005305001988125579
+        },
+        {
+          "year": 2026,
+          "on": 0.0007277429284516455,
+          "intra": 0.00013910105504665675
+        }
+      ]
+    }
+  }
+}

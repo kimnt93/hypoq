@@ -1,0 +1,14 @@
+{
+  "title": "Foreign Investor Order Flow and Next-Day Returns on the Vietnamese Equity Market",
+  "decision": "REJECTED",
+  "n_obs": 2027,
+  "sample": "2018-08-30 to 2026-10-22",
+  "beta": 0.0009610821032961992,
+  "hac_t": 0.6402825355551673,
+  "hac_p_one_sided": 0.2609944663498658,
+  "placebo_p_one_sided": 0.30684657671164417,
+  "r2": 0.0002303588255897493,
+  "beta_with_return_control": 0.0002955864167088064,
+  "t_with_return_control": 0.20449255736533486,
+  "contemporaneous_corr": 0.13445689877422612
+}

@@ -165,7 +165,7 @@ def run():
     plt.close()
 
     rows = "\n".join(f"{k} & {v['ann_return']*100:.2f}\\% & {v['ann_vol']*100:.2f}\\% & {v['sharpe']:.2f} & {v['max_drawdown']*100:.1f}\\% \\\\" for k, v in perf.items())
-    table = ("\\begin{table}[h!]\n\\centering\n\\caption{Out-of-sample performance net of 5 bps cost per unit turnover}\n\\begin{tabular}{lcccc}\n\\toprule\n"
+    table = ("\\begin{table}[H]\n\\centering\n\\caption{Out-of-sample performance net of 5 bps cost per unit turnover}\n\\begin{tabular}{lcccc}\n\\toprule\n"
              "Strategy & Ann. return & Ann. vol. & Sharpe & Max drawdown \\\\\n\\midrule\n" + rows + "\n\\bottomrule\n\\end{tabular}\n\\end{table}\n")
     os.makedirs(os.path.join(RESEARCH_DIR, "results"), exist_ok=True)
     with open(os.path.join(RESEARCH_DIR, "results", "table1_rl_performance.tex"), "w") as f:
@@ -179,14 +179,14 @@ def run():
         "Method": f"PPO ({SEEDS} seeds, {TIMESTEPS:,} steps each, averaged), softmax weights, 5 bps cost per unit turnover, decision at close $t$ applied to day $t{{+}}1$, "
                   "one-sided stationary-bootstrap test of the Sharpe difference",
         "Results": f"PPO Sharpe {perf['PPO ensemble']['sharpe']:.2f} vs equal weight {perf['Equal weight']['sharpe']:.2f} (difference {diff:.2f}, $p={p:.3f}$). "
-                   f"Decision: \\textbf{{{decision}}}",
+                   f"",
     }
     body = ("\\section{Design}\nThe environment exposes the last 20 daily returns of each asset (scaled by training volatility) and the current drifted weights. "
             "The agent outputs unconstrained scores mapped to long-only fully invested weights by a softmax; reward is the log net return. "
             "Training episodes are random one-year windows before 2023; the test period is simulated once and never used for tuning \\citep{moody2001learning}.\n\n"
             "\\section{Results}\n\\input{results/table1_rl_performance.tex}\n\n"
             f"The ensemble policy turns over {avg_turnover*100:.1f}\\% of the portfolio per day on average.\n\n"
-            "\\begin{figure}[h!]\n\\centering\n\\includegraphics[width=0.85\\textwidth]{fig1_rl_equity_curves.png}\n\\caption{Out-of-sample growth of one unit.}\n\\end{figure}\n\n"
+            "\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.85\\textwidth]{fig1_rl_equity_curves.png}\n\\caption{Out-of-sample growth of one unit.}\n\\end{figure}\n\n"
             "\\section{Limitations}\nFive ETFs and a single three-year test window give low statistical power; cash and financing are ignored; "
             "PPO hyper-parameters were fixed a priori, not searched, and results vary across seeds (averaged here).\n")
     bib = ("@article{moody2001learning,\n  title={Learning to trade via direct reinforcement},\n  author={Moody, John and Saffell, Matthew},\n"

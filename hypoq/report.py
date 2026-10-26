@@ -17,6 +17,8 @@ _PREAMBLE = r"""\documentclass{article}
 \usepackage{setspace}
 \usepackage[margin=1.25in]{geometry}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
 \graphicspath{ {./figures/} }
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{booktabs}
@@ -24,6 +26,15 @@ _PREAMBLE = r"""\documentclass{article}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 """
+
+
+DECISION_COLORS = {"ACCEPTED": "0.10,0.50,0.20", "REJECTED": "0.75,0.15,0.15", "INCONCLUSIVE": "0.80,0.50,0.05"}
+
+
+def decision_badge(decision: str) -> str:
+    """Highlighted ACCEPTED / REJECTED / INCONCLUSIVE label for the abstract."""
+    rgb = DECISION_COLORS.get(decision, "0.3,0.3,0.3")
+    return f"\\colorbox[rgb]{{{rgb}}}{{\\textcolor{{white}}{{\\textbf{{\\,{decision}\\,}}}}}}"
 
 
 def latex_escape(text: str) -> str:
@@ -44,7 +55,7 @@ def write_paper(
     tex = (
         _PREAMBLE
         + f"\n\\title{{\\textbf{{{title}}}}}\n"
-        + "\\author[1]{hypoq autonomous research harness}\n"
+        + "\\author[1]{SIQuant Research}\n"
         + "\\affil[1]{Hypothesis $\\times$ Quant}\n\\date{\\today}\n\\onehalfspacing\n\n"
         + "\\begin{document}\n\\maketitle\n\n"
         + f"\\begin{{abstract}}\n\\noindent {abs_tex}\n\\end{{abstract}}\n\n"

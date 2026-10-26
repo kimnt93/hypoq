@@ -6,6 +6,7 @@ A pipeline computes its numbers, then calls `finalize(...)` which, in this order
 2. writes main.tex / references.bib (every number must be formatted from `results` by the caller)
 3. compiles main.pdf with Tectonic
 4. registers the hypothesis idempotently and logs the experiment run in the database
+5. writes results/hypothesis_record.json, the raw (embedding-free) record that `make db-import` loads into a fresh database
 """
 
 import json
@@ -13,8 +14,8 @@ import os
 import time
 from typing import Any, Dict, List, Optional
 
-from hypoq.db import record_experiment, upsert_hypothesis
-from hypoq.report import compile_pdf, write_paper
+from hypoq.db import build_record, record_experiment, upsert_hypothesis
+from hypoq.report import compile_pdf, decision_badge, write_paper
 
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 VALID_DECISIONS = ("ACCEPTED", "REJECTED", "INCONCLUSIVE")
@@ -48,13 +49,13 @@ def finalize(
     os.makedirs(os.path.join(research_dir, "results"), exist_ok=True)
     with open(os.path.join(research_dir, "results", "empirical_results.json"), "w") as f:
         json.dump(results, f, indent=2, default=str)
+    abstract = {**abstract, "Research decision": decision_badge(decision)}
     write_paper(research_dir, title, abstract, body, bib)
     pdf = compile_pdf(research_dir)
     if pdf is None:
         raise RuntimeError(f"main.tex in {research_dir} failed to compile; fix the LaTeX (escape &, %, _ with hypoq.report.latex_escape)")
     rel = os.path.relpath(research_dir, PROJECT_ROOT)
-    hid = upsert_hypothesis(
-        title=title,
+    fields = dict(
         statement=statement,
         null_hypothesis=null_hypothesis,
         alt_hypothesis=alt_hypothesis,
@@ -71,6 +72,10 @@ def finalize(
         report_dir=rel,
         pdf_path=f"{rel}/main.pdf" if pdf else None,
     )
+    hid = upsert_hypothesis(title=title, **fields)
+    with open(os.path.join(research_dir, "results", "hypothesis_record.json"), "w") as f:
+        json.dump(build_record({"title": title, **fields}, results, f"{rel}/code/run_pipeline.py"), f, indent=2, default=str)
+        f.write("\n")
     record_experiment(
         hypothesis_id=hid,
         session_id=session_id,

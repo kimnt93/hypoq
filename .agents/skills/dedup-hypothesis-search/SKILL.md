@@ -14,6 +14,10 @@ To prevent wasted compute and redundant empirical exploration, this skill provid
 ### Embedding Providers Supported
 1. **Google Gemini (`text-embedding-004`)**: Activated when `GEMINI_API_KEY` is provided. Free tier, 768 dimensions.
 2. **Hugging Face (`sentence-transformers/all-MiniLM-L6-v2`)**: Default open-source model. 384 dimensions, < 200MB RAM, optimized for machines under 8GB RAM.
+### Database lifecycle and changing the embedding method
+`hypoq.db` is git-ignored. It is rebuilt from the committed raw records (`researches/*/results/hypothesis_record.json`) by `make db-import`, which creates the embeddings with the active method. Each vector is stored with the id of the method that produced it (`huggingface:<model>` or `gemini:<model>`).
+After changing `EMBEDDING_PROVIDER`, `EMBEDDING_MODEL` or the Gemini key, run `make db-migrate` (add `FORCE=1` to redo all): vectors whose id differs from the active method are recomputed from the stored text. `python run.py --search` also migrates on demand. If the method cannot produce vectors, the commands fail with an explanation; no substitute vectors are ever created. Never compare or mix vectors of different method ids.
+
 ## When to Use
 - Before launching a new experimental research run.
 - When an agent is prompted with a research question to see if previous experiments accepted, rejected, or found inconclusive evidence on the same topic.

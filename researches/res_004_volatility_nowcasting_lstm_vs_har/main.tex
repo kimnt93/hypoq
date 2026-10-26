@@ -4,6 +4,8 @@
 \usepackage{setspace}
 \usepackage[margin=1.25in]{geometry}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
 \graphicspath{ {./figures/} }
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{booktabs}
@@ -12,7 +14,7 @@
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
 \title{\textbf{Recurrent Neural Networks versus HAR for Five-Day-Ahead Volatility Forecasts of Equities and Bitcoin}}
-\author[1]{hypoq autonomous research harness}
+\author[1]{SIQuant Research}
 \affil[1]{Hypothesis $\times$ Quant}
 \date{\today}
 \onehalfspacing
@@ -24,7 +26,8 @@
 \noindent \textbf{Hypothesis:} $H_0$: an LSTM and the HAR benchmark have equal expected QLIKE loss for the 5-day-ahead variance; $H_1$: the LSTM has lower loss \\
 \textbf{Data:} Daily OHLC of the S\&P 500 and Bitcoin; S\&P 500 test 2023-01-03 to 2026-10-16 (951 days); Bitcoin test 2023-01-01 to 2026-10-20 (1,389 days) \\
 \textbf{Method:} Garman--Klass variance, HAR on log variance, LSTM on 22-day windows with early stopping and 5 seeds, chronological split at 2023-01-01, one-sided DM test with HAC errors, Bonferroni $\alpha=0.025$ \\
-\textbf{Results:} S\&P 500: QLIKE HAR 0.2263 vs LSTM 0.2348 (DM $p=0.742$); Bitcoin: QLIKE HAR 0.2727 vs LSTM 0.2361 (DM $p=0.000$). Decision: \textbf{INCONCLUSIVE}
+\textbf{Results:} S\&P 500: QLIKE HAR 0.2263 vs LSTM 0.2348 (DM $p=0.742$); Bitcoin: QLIKE HAR 0.2727 vs LSTM 0.2361 (DM $p=0.000$). \\
+\textbf{Research decision:} \colorbox[rgb]{0.80,0.50,0.05}{\textcolor{white}{\textbf{\,INCONCLUSIVE\,}}}
 \end{abstract}
 
 \section{Design}
@@ -33,7 +36,7 @@ The target is the log mean Garman--Klass variance of the next five sessions. HAR
 \section{Results}
 \input{results/table1_dl_volatility_performance.tex}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig1_volatility_forecasts.png}
 \caption{Test-period forecasts.}

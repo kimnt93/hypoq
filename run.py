@@ -139,6 +139,11 @@ def main():
 
     # Ensure database is initialized
     init_db(args.db)
+    if not list_hypotheses(limit=1, db_path=args.db):
+        import glob
+        n_records = len(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), "researches", "*", "results", "hypothesis_record.json")))
+        if n_records:
+            print(f"ℹ️  The database is empty but {n_records} study records exist: run `make db-import` to load them (and create the embeddings).")
 
     # Mode 1: Search Hypotheses
     if args.search:

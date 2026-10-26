@@ -128,7 +128,7 @@ def run():
 
     rows = "\n".join(f"{n} & {out[n]['mean_ic']:.4f} & {out[n]['hac_t']:.2f} & {out[n]['p_one_sided']:.4f} & {out[n]['ic_positive_share']*100:.1f}\\% \\\\"
                      for n in ("gbm", "ridge", "momentum"))
-    table = ("\\begin{table}[h!]\n\\centering\n\\caption{Out-of-sample daily rank IC against the 5-day forward return}\n\\begin{tabular}{lcccc}\n\\toprule\n"
+    table = ("\\begin{table}[H]\n\\centering\n\\caption{Out-of-sample daily rank IC against the 5-day forward return}\n\\begin{tabular}{lcccc}\n\\toprule\n"
              "Model & Mean IC & HAC $t$ & One-sided $p$ & Days IC $>0$ \\\\\n\\midrule\n" + rows + "\n\\bottomrule\n\\end{tabular}\n\\end{table}\n")
     os.makedirs(os.path.join(RESEARCH_DIR, "results"), exist_ok=True)
     with open(os.path.join(RESEARCH_DIR, "results", "table1_ml_performance.tex"), "w") as f:
@@ -141,14 +141,14 @@ def run():
         "Method": f"Walk-forward from {FIRST_TEST_YEAR} with annual retraining, a {HORIZON*2}-day embargo, cross-sectionally rank-normalised features, "
                   "ridge and 12-1 momentum benchmarks, HAC (5 lags) inference",
         "Results": f"GBM mean IC {g['mean_ic']:.4f} (HAC $t={g['hac_t']:.2f}$, one-sided $p={g['p_one_sided']:.3f}$); ridge {out['ridge']['mean_ic']:.4f}; "
-                   f"momentum {out['momentum']['mean_ic']:.4f}. Decision: \\textbf{{{decision}}}",
+                   f"momentum {out['momentum']['mean_ic']:.4f}.",
     }
     body = ("\\section{Design}\nFeatures are 1/5/21/63-day returns, 12-1 momentum, 21/63-day volatility, their ratio and a volume z-score, each "
             "rank-normalised across stocks on the same date. The label is the cross-sectional rank of the close-to-close return from $t$ to $t+5$. "
             "Models are refit each January on data that end ten calendar days earlier, so no label overlaps the test year \\citep{gu2020empirical}.\n\n"
             "\\section{Results}\n\\input{results/table1_ml_performance.tex}\n\n"
             f"Gross of costs, the top-third minus bottom-third GBM spread earns {sp_mean*100:.3f}\\% per 5 days (HAC $t={sp_t:.2f}$).\n\n"
-            "\\begin{figure}[h!]\n\\centering\n\\includegraphics[width=0.85\\textwidth]{fig1_cumulative_ic.png}\n\\caption{Cumulative daily rank IC.}\n\\end{figure}\n\n"
+            "\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.85\\textwidth]{fig1_cumulative_ic.png}\n\\caption{Cumulative daily rank IC.}\n\\end{figure}\n\n"
             "\\section{Limitations}\nThe universe consists of today's mega-caps, which is survivorship-biased and flatters every model; with only 35 names the daily IC "
             "is noisy; spreads ignore trading costs and borrow fees.\n")
     bib = ("@article{gu2020empirical,\n  title={Empirical asset pricing via machine learning},\n  author={Gu, Shihao and Kelly, Bryan and Xiu, Dacheng},\n"

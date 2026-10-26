@@ -1,0 +1,57 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Tariff-Related Executive Social Media Posts and Next-Day US Equity and Implied Volatility Reactions",
+    "statement": "Tariff-related executive posts are followed by abnormal next-session S&P 500 returns or VIX changes.",
+    "null_hypothesis": "Mean next-day |AR|, AR and dVIX on event days equal those on non-event days.",
+    "alt_hypothesis": "At least one of the three means differs from the non-event baseline (Bonferroni alpha 0.0167).",
+    "domain": "sentiment_events",
+    "dataset_dependencies": [
+      "data/community/global_vip_social_posts_raw.parquet",
+      "data/market/us_indices_daily.parquet",
+      "data/macro/global_cross_asset_volatility_daily.parquet"
+    ],
+    "methodology": "Keyword event study, trailing-mean abnormal returns, placebo resampling",
+    "metric_name": "min placebo p",
+    "metric_value": 0.06958608278344332,
+    "p_value": 0.06958608278344332,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "abs_return: event 0.736% vs 0.724% (p=0.772); signed_return: event -0.023% vs 0.026% (p=0.375); vix_change: event 0.810% vs 0.073% (p=0.070)",
+    "report_dir": "researches/res_002_vip_tariff_posts_event_study",
+    "pdf_path": "researches/res_002_vip_tariff_posts_event_study/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_002_vip_tariff_posts_event_study/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Tariff-Related Executive Social Media Posts and Next-Day US Equity and Implied Volatility Reactions",
+      "decision": "REJECTED",
+      "n_tariff_posts": 428,
+      "n_event_days": 237,
+      "n_sessions": 1117,
+      "bonferroni_alpha": 0.016666666666666666,
+      "measures": {
+        "abs_return": {
+          "event_mean": 0.007355340773040227,
+          "baseline_mean": 0.007244198964743176,
+          "placebo_p": 0.7720455908818237
+        },
+        "signed_return": {
+          "event_mean": -0.00022600545164452195,
+          "baseline_mean": 0.0002578512849340393,
+          "placebo_p": 0.3747250549890022
+        },
+        "vix_change": {
+          "event_mean": 0.008095959504143461,
+          "baseline_mean": 0.0007313409414391327,
+          "placebo_p": 0.06958608278344332
+        }
+      },
+      "sample_start": "2022-05-12",
+      "sample_end": "2026-10-23"
+    }
+  }
+}

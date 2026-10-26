@@ -23,6 +23,7 @@ import numpy as np
 from hypoq.embeddings import (
     get_embedding,
     get_active_provider,
+    get_model_id,
     vector_to_blob,
     blob_to_vector,
     cosine_similarity,
@@ -254,60 +255,75 @@ def build_hypothesis_text_for_embedding(hypo: Dict[str, Any]) -> str:
     ).strip()
 
 
-def sync_all_embeddings(db_uri: Optional[str] = None) -> int:
-    """
-    Backfills semantic vector embeddings for any hypothesis lacking a vector.
-    Returns count of newly generated embeddings.
-    """
-    init_db(db_uri)
+def _store_embedding(hypothesis_id: int, text: str, db_uri: Optional[str] = None) -> None:
+    """Embeds `text` with the active method and upserts the vector together with the model id that produced it."""
+    vec = get_embedding(text)
+    blob, model_id = vector_to_blob(vec), get_model_id()
     backend, _ = parse_db_uri(db_uri)
     conn = get_connection(db_uri)
-    synced_count = 0
-    now = datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"
-
     try:
         if backend == "postgres":
             with conn.cursor() as cur:
                 cur.execute("""
-                    SELECT h.* FROM hypotheses h
-                    LEFT JOIN hypothesis_embeddings e ON h.id = e.hypothesis_id
-                    WHERE e.hypothesis_id IS NULL
-                """)
-                missing = cur.fetchall()
-                for row in missing:
-                    text_to_embed = build_hypothesis_text_for_embedding(row)
-                    vec = get_embedding(text_to_embed)
-                    blob = vector_to_blob(vec)
-                    model_name = get_active_provider()
-                    cur.execute("""
-                        INSERT INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
-                        VALUES (%s, %s, %s, %s, NOW())
-                        ON CONFLICT (hypothesis_id) DO UPDATE SET vector = EXCLUDED.vector, updated_at = NOW()
-                    """, (row["id"], model_name, blob, len(vec)))
-                    synced_count += 1
+                    INSERT INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
+                    VALUES (%s, %s, %s, %s, NOW())
+                    ON CONFLICT (hypothesis_id) DO UPDATE SET model_name = EXCLUDED.model_name, vector = EXCLUDED.vector,
+                        dimensions = EXCLUDED.dimensions, updated_at = NOW()
+                """, (hypothesis_id, model_id, blob, len(vec)))
             conn.commit()
         else:
-            cursor = conn.execute("""
-                SELECT h.* FROM hypotheses h
-                LEFT JOIN hypothesis_embeddings e ON h.id = e.hypothesis_id
-                WHERE e.hypothesis_id IS NULL
-            """)
-            missing = [dict(r) for r in cursor.fetchall()]
             with conn:
-                for row in missing:
-                    text_to_embed = build_hypothesis_text_for_embedding(row)
-                    vec = get_embedding(text_to_embed)
-                    blob = vector_to_blob(vec)
-                    model_name = get_active_provider()
-                    conn.execute("""
-                        INSERT OR REPLACE INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
-                        VALUES (?, ?, ?, ?, ?)
-                    """, (row["id"], model_name, blob, len(vec), now))
-                    synced_count += 1
+                conn.execute("""
+                    INSERT OR REPLACE INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (hypothesis_id, model_id, blob, len(vec), datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z"))
     finally:
         conn.close()
 
-    return synced_count
+
+def reembed_all(db_uri: Optional[str] = None, force: bool = False) -> Dict[str, Any]:
+    """
+    Embedding migration. Recomputes the vector of every hypothesis that has no vector or whose stored model id differs from the
+    active embedding method (`hypoq.embeddings.get_model_id()`); `force=True` recomputes all. Run it after changing
+    EMBEDDING_PROVIDER / EMBEDDING_MODEL / GEMINI_API_KEY (`make db-migrate`).
+    Returns {"model", "total", "re_embedded", "previous_models"}. Raises if the active method cannot produce vectors.
+    """
+    init_db(db_uri)
+    backend, _ = parse_db_uri(db_uri)
+    model_id = get_model_id()
+    sql = ("SELECT h.*, e.model_name AS emb_model FROM hypotheses h "
+           "LEFT JOIN hypothesis_embeddings e ON h.id = e.hypothesis_id ORDER BY h.id")
+    conn = get_connection(db_uri)
+    try:
+        if backend == "postgres":
+            with conn.cursor() as cur:
+                cur.execute(sql)
+                rows = [dict(r) for r in cur.fetchall()]
+        else:
+            rows = [dict(r) for r in conn.execute(sql).fetchall()]
+    finally:
+        conn.close()
+    previous: Dict[str, int] = {}
+    todo = []
+    for r in rows:
+        previous[r["emb_model"] or "none"] = previous.get(r["emb_model"] or "none", 0) + 1
+        if force or r["emb_model"] != model_id:
+            todo.append(r)
+    for r in todo:
+        _store_embedding(r["id"], build_hypothesis_text_for_embedding(r), db_uri)
+    return {"model": model_id, "total": len(rows), "re_embedded": len(todo), "previous_models": previous}
+
+
+def sync_all_embeddings(db_uri: Optional[str] = None) -> int:
+    """Backfills missing vectors and re-embeds stale ones (see `reembed_all`). Returns the number of vectors written."""
+    return reembed_all(db_uri)["re_embedded"]
+
+
+def refresh_embedding(hypothesis_id: int, db_uri: Optional[str] = None) -> None:
+    """Recomputes the vector of one hypothesis after its text changed."""
+    hypo = get_hypothesis(hypothesis_id, db_uri)
+    if hypo:
+        _store_embedding(hypothesis_id, build_hypothesis_text_for_embedding(hypo), db_uri)
 
 
 # -----------------------------------------------------------------------------
@@ -428,35 +444,11 @@ def record_hypothesis(
     finally:
         conn.close()
 
-    # Automatically generate vector embedding for semantic search
+    # Automatically generate the vector embedding for semantic search
     try:
-        hypo_dict = {
-            "title": title, "statement": statement, "null_hypothesis": null_hypothesis,
-            "alt_hypothesis": alt_hypothesis, "domain": domain, "summary_findings": summary_findings
-        }
-        text_repr = build_hypothesis_text_for_embedding(hypo_dict)
-        vec = get_embedding(text_repr)
-        blob = vector_to_blob(vec)
-        conn = get_connection(db_path)
-        try:
-            if backend == "postgres":
-                with conn.cursor() as cur:
-                    cur.execute("""
-                        INSERT INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
-                        VALUES (%s, %s, %s, %s, NOW())
-                        ON CONFLICT (hypothesis_id) DO UPDATE SET vector = EXCLUDED.vector, updated_at = NOW()
-                    """, (hypo_id, get_active_provider(), blob, len(vec)))
-                conn.commit()
-            else:
-                with conn:
-                    conn.execute("""
-                        INSERT OR REPLACE INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
-                        VALUES (?, ?, ?, ?, ?)
-                    """, (hypo_id, get_active_provider(), blob, len(vec), now))
-        finally:
-            conn.close()
+        refresh_embedding(hypo_id, db_path)
     except Exception as err:
-        print(f"[Warning] Failed to generate semantic embedding for hypothesis {hypo_id}: {err}")
+        print(f"[Warning] Failed to generate semantic embedding for hypothesis {hypo_id}: {err} (run `make db-migrate` later)")
 
     return hypo_id
 
@@ -512,31 +504,12 @@ def update_hypothesis_status(
     finally:
         conn.close()
 
-    # If findings were updated, refresh semantic vector embedding
+    # If findings were updated, refresh the semantic vector embedding
     if updated and summary_findings:
-        hypo = get_hypothesis(hypothesis_id, db_path=db_path)
-        if hypo:
-            text_repr = build_hypothesis_text_for_embedding(hypo)
-            vec = get_embedding(text_repr)
-            blob = vector_to_blob(vec)
-            conn = get_connection(db_path)
-            try:
-                if backend == "postgres":
-                    with conn.cursor() as cur:
-                        cur.execute("""
-                            INSERT INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
-                            VALUES (%s, %s, %s, %s, NOW())
-                            ON CONFLICT (hypothesis_id) DO UPDATE SET vector = EXCLUDED.vector, updated_at = NOW()
-                        """, (hypothesis_id, get_active_provider(), blob, len(vec)))
-                    conn.commit()
-                else:
-                    with conn:
-                        conn.execute("""
-                            INSERT OR REPLACE INTO hypothesis_embeddings (hypothesis_id, model_name, vector, dimensions, updated_at)
-                            VALUES (?, ?, ?, ?, ?)
-                        """, (hypothesis_id, get_active_provider(), blob, len(vec), now))
-            finally:
-                conn.close()
+        try:
+            refresh_embedding(hypothesis_id, db_path)
+        except Exception as err:
+            print(f"[Warning] Failed to refresh embedding for hypothesis {hypothesis_id}: {err} (run `make db-migrate` later)")
 
     return updated
 
@@ -616,21 +589,14 @@ def search_hypotheses(
     init_db(db_path)
     backend, _ = parse_db_uri(db_path)
 
-    # 1. Ensure embeddings exist (backfill if needed)
-    conn = get_connection(db_path)
+    # 1. Make sure every vector was produced by the active embedding method (migrates on demand)
     try:
-        if backend == "postgres":
-            with conn.cursor() as cur:
-                cur.execute("SELECT COUNT(*) AS cnt FROM hypothesis_embeddings")
-                n_embeds = cur.fetchone()["cnt"]
-        else:
-            cur = conn.execute("SELECT COUNT(*) AS cnt FROM hypothesis_embeddings")
-            n_embeds = cur.fetchone()["cnt"]
-    finally:
-        conn.close()
-
-    if n_embeds == 0:
-        sync_all_embeddings(db_path)
+        stats = reembed_all(db_path)
+        if stats["re_embedded"]:
+            print(f"[hypoq] re-embedded {stats['re_embedded']} hypotheses with {stats['model']} (previous: {stats['previous_models']})")
+    except Exception as e:
+        print(f"[Semantic Search] Embedding method unavailable: {e}")
+        return []
 
     # 2. Generate embedding for user query
     clean_query = query.strip()
@@ -677,10 +643,7 @@ def search_hypotheses(
             valid_rows.append(r)
 
     if not doc_vectors:
-        # Dimensionality mismatch (e.g. switched from Gemini 768 to HF 384) -> re-sync
-        print("[Semantic Search] Vector dimension mismatch detected. Synchronizing embeddings...")
-        sync_all_embeddings(db_path)
-        return search_hypotheses(query, top_k=top_k, min_score=min_score, db_path=db_path)
+        return []
 
     matrix = np.vstack(doc_vectors)
     similarities = cosine_similarity(query_vec, matrix)
@@ -766,20 +729,107 @@ def find_hypothesis_id_by_title(title: str, db_path: Optional[str] = None) -> Op
         conn.close()
 
 
+_UPDATABLE = ("agent_name", "statement", "null_hypothesis", "alt_hypothesis", "domain", "dataset_dependencies", "methodology", "metric_name",
+              "metric_value", "p_value", "confidence_level", "status", "summary_findings", "report_dir", "pdf_path")
+
+
+def update_hypothesis_fields(hypothesis_id: int, db_path: Optional[str] = None, **fields: Any) -> bool:
+    """Updates any of the columns in `_UPDATABLE` (None values are skipped); the embedding is refreshed afterwards."""
+    cols = {k: v for k, v in fields.items() if k in _UPDATABLE and v is not None}
+    if "dataset_dependencies" in cols and not isinstance(cols["dataset_dependencies"], str):
+        cols["dataset_dependencies"] = json.dumps(cols["dataset_dependencies"])
+    if "status" in cols:
+        cols["status"] = cols["status"].upper()
+    if not cols:
+        return False
+    init_db(db_path)
+    backend, _ = parse_db_uri(db_path)
+    ph = "?" if backend == "sqlite" else "%s"
+    sets = [f"{k} = {ph}" for k in cols]
+    params: List[Any] = list(cols.values())
+    if backend == "sqlite":
+        sets.append("updated_at = ?")
+        params.append(datetime.now(timezone.utc).replace(tzinfo=None).isoformat() + "Z")
+    else:
+        sets.append("updated_at = NOW()")
+    params.append(hypothesis_id)
+    conn = get_connection(db_path)
+    try:
+        sql = f"UPDATE hypotheses SET {', '.join(sets)} WHERE id = {ph}"
+        if backend == "postgres":
+            with conn.cursor() as cur:
+                cur.execute(sql, params)
+                ok = cur.rowcount > 0
+            conn.commit()
+        else:
+            with conn:
+                ok = conn.execute(sql, params).rowcount > 0
+    finally:
+        conn.close()
+    if ok:
+        try:
+            refresh_embedding(hypothesis_id, db_path)
+        except Exception as err:
+            print(f"[Warning] Failed to refresh embedding for hypothesis {hypothesis_id}: {err} (run `make db-migrate` later)")
+    return ok
+
+
 def upsert_hypothesis(title: str, db_path: Optional[str] = None, **fields: Any) -> int:
-    """Idempotent registration: re-running a pipeline updates its row instead of duplicating it."""
+    """Idempotent registration: re-running a pipeline (or re-importing a record) updates its row instead of duplicating it."""
     existing = find_hypothesis_id_by_title(title, db_path)
     if existing is None:
         return record_hypothesis(title=title, db_path=db_path, **fields)
-    update_hypothesis_status(
-        existing,
-        status=fields.get("status", "PENDING"),
-        metric_name=fields.get("metric_name"),
-        metric_value=fields.get("metric_value"),
-        p_value=fields.get("p_value"),
-        summary_findings=fields.get("summary_findings"),
-        report_dir=fields.get("report_dir"),
-        pdf_path=fields.get("pdf_path"),
-        db_path=db_path,
-    )
+    update_hypothesis_fields(existing, db_path, **fields)
     return existing
+
+
+# -----------------------------------------------------------------------------
+# Raw records: the committed, embedding-free form of a hypothesis (researches/<id>/results/hypothesis_record.json)
+# -----------------------------------------------------------------------------
+
+RECORD_SCHEMA = "hypoq.record/1"
+RECORD_FIELDS = ("title", "statement", "null_hypothesis", "alt_hypothesis", "domain", "dataset_dependencies", "methodology", "metric_name",
+                 "metric_value", "p_value", "confidence_level", "status", "summary_findings", "report_dir", "pdf_path", "agent_name", "session_id")
+
+
+def build_record(hypothesis: Dict[str, Any], results: Dict[str, Any], code_path: str) -> Dict[str, Any]:
+    """
+    Raw record of one study: hypothesis metadata + the computed results. No vectors, ids or timestamps, so it is stable under
+    version control and independent of the embedding method; vectors are created when the record is imported.
+    """
+    h = {k: hypothesis.get(k) for k in RECORD_FIELDS}
+    if isinstance(h["dataset_dependencies"], str):
+        h["dataset_dependencies"] = json.loads(h["dataset_dependencies"] or "[]")
+    return {"schema": RECORD_SCHEMA, "hypothesis": h, "experiment": {"code_path": code_path, "status": "SUCCESS", "metrics": results}}
+
+
+def replace_experiments(hypothesis_id: int, session_id: Optional[str], agent_name: str, code_path: str, metrics: Dict[str, Any],
+                        status: str = "SUCCESS", duration_seconds: float = 0.0, db_path: Optional[str] = None) -> int:
+    """Makes `metrics` the single experiment of a hypothesis (idempotent import; `record_experiment` appends run history instead)."""
+    backend, _ = parse_db_uri(db_path)
+    conn = get_connection(db_path)
+    try:
+        if backend == "postgres":
+            with conn.cursor() as cur:
+                cur.execute("DELETE FROM experiments WHERE hypothesis_id = %s", (hypothesis_id,))
+            conn.commit()
+        else:
+            with conn:
+                conn.execute("DELETE FROM experiments WHERE hypothesis_id = ?", (hypothesis_id,))
+    finally:
+        conn.close()
+    return record_experiment(hypothesis_id, session_id, agent_name, code_path, duration_seconds, metrics, status=status, db_path=db_path)
+
+
+def import_record(record: Dict[str, Any], db_path: Optional[str] = None) -> int:
+    """Loads one raw record into the database (insert or update by title), creating its embedding. Returns the hypothesis id."""
+    if record.get("schema") != RECORD_SCHEMA:
+        raise ValueError(f"unsupported record schema {record.get('schema')!r}; expected {RECORD_SCHEMA!r}")
+    h = {k: v for k, v in record["hypothesis"].items() if k in RECORD_FIELDS}
+    title = h.pop("title")
+    hid = upsert_hypothesis(title, db_path=db_path, **h)
+    exp = record.get("experiment")
+    if exp:
+        replace_experiments(hid, h.get("session_id"), h.get("agent_name") or "hypoq-pipeline", exp.get("code_path", ""), exp.get("metrics", {}),
+                            status=exp.get("status", "SUCCESS"), db_path=db_path)
+    return hid

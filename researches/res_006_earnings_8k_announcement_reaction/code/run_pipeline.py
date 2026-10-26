@@ -85,7 +85,7 @@ def run():
         ev_idx = {i for i, d in enumerate(dates) if d in ev_by_sym.get(sym, set())}
         bad = {j for i in ev_idx for j in range(i - EXCLUDE_DAYS, i + EXCLUDE_DAYS + 1)}
         pools[sym] = np.abs(np.array([c for i, c in enumerate(g["car01"].to_list()) if i not in bad]))
-    counts = obs.group_by("symbol").len()
+    counts = obs.group_by("symbol").len().sort("symbol")  # fixed order so the placebo draws are reproducible
     rng = np.random.default_rng(3)
     sims = np.zeros(N_PLACEBO)
     for sym, k in counts.iter_rows():
@@ -108,7 +108,7 @@ def run():
     by_year = (obs.with_columns(pl.col("date").dt.year().alias("year")).group_by("year")
                .agg(pl.len().alias("n"), pl.col("car01").abs().mean().alias("abs_car")).sort("year"))
     rows = "\n".join(f"{y} & {n} & {a*100:.2f}\\% \\\\" for y, n, a in by_year.iter_rows())
-    table = ("\\begin{table}[h!]\n\\centering\n\\caption{Mean $|$CAR$[0,+1]|$ of Item 2.02 filings by year}\n\\begin{tabular}{lcc}\n\\toprule\n"
+    table = ("\\begin{table}[H]\n\\centering\n\\caption{Mean $|$CAR$[0,+1]|$ of Item 2.02 filings by year}\n\\begin{tabular}{lcc}\n\\toprule\n"
              "Year & Events & Mean $|$CAR$|$ \\\\\n\\midrule\n" + rows + "\n\\bottomrule\n\\end{tabular}\n\\end{table}\n")
     os.makedirs(os.path.join(RESEARCH_DIR, "results"), exist_ok=True)
     with open(os.path.join(RESEARCH_DIR, "results", "table1_event_study_car.tex"), "w") as f:
@@ -121,13 +121,13 @@ def run():
         "Method": f"Market-model abnormal returns (S\\&P 500, estimation window $[-{EST_START},-{EST_END}]$), reaction day set by the acceptance time in US/Eastern, "
                   f"{N_PLACEBO:,}-draw placebo over non-event sessions of the same stock",
         "Results": f"Mean $|$CAR$|$ {abs_obs*100:.2f}\\% versus placebo {placebo_mean*100:.2f}\\% (one-sided $p={p:.4f}$); signed mean CAR {signed_mean*100:.3f}\\% "
-                   f"($t={t_signed:.2f}$). Decision: \\textbf{{{decision}}}",
+                   f"($t={t_signed:.2f}$).",
     }
     body = ("\\section{Design}\nEvents come from the SEC submissions API: Form 8-K filings whose items include 2.02. A filing accepted at or after 16:00 "
             "US/Eastern (or on a non-trading day) is assigned to the next session so that the measured reaction cannot precede the disclosure "
             "\\citep{mackinlay1997event}. The two-day CAR starts on that session. The placebo preserves each stock's own volatility regime.\n\n"
             "\\section{Results}\n\\input{results/table1_event_study_car.tex}\n\n"
-            "\\begin{figure}[h!]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{fig1_earnings_car_placebo.png}\n\\caption{Observed mean absolute CAR against the placebo distribution.}\n\\end{figure}\n\n"
+            "\\begin{figure}[H]\n\\centering\n\\includegraphics[width=0.8\\textwidth]{fig1_earnings_car_placebo.png}\n\\caption{Observed mean absolute CAR against the placebo distribution.}\n\\end{figure}\n\n"
             "\\section{Limitations}\nFilings accepted during trading hours include a pre-announcement part of the day, which understates the reaction. "
             "Earnings dates are not exogenous to volatility. The universe is today's mega-caps, so the results do not generalise to small or delisted firms. "
             "The signed CAR needs a surprise measure (consensus data is not free) and is reported only descriptively.\n")

@@ -1,0 +1,43 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Futures Basis and Next-Day Spot Returns on the Vietnamese VN30 Index",
+    "statement": "A higher VN30 futures basis at the close predicts a higher VN30 index return on the next trading day.",
+    "null_hypothesis": "The coefficient of the next-day VN30 return on the closing futures basis is zero.",
+    "alt_hypothesis": "The coefficient is positive (HAC one-sided p < 0.05 and circular-shift placebo p < 0.05).",
+    "domain": "market_microstructure",
+    "dataset_dependencies": [
+      "data/market/vn_vn30f1m_derivatives_daily.parquet",
+      "data/market/vn_indices_daily.parquet"
+    ],
+    "methodology": "Predictive regression with Newey-West HAC errors and circular-shift placebo",
+    "metric_name": "beta of next-day VN30 return on futures basis",
+    "metric_value": 0.03188552435310604,
+    "p_value": 0.2920510264087107,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "beta=0.0319, HAC t=0.55 (p=0.2921), placebo p=0.2779.",
+    "report_dir": "researches/res_012_vn30_futures_basis_next_day_spot_return",
+    "pdf_path": "researches/res_012_vn30_futures_basis_next_day_spot_return/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_012_vn30_futures_basis_next_day_spot_return/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Futures Basis and Next-Day Spot Returns on the Vietnamese VN30 Index",
+      "decision": "REJECTED",
+      "n_obs": 2285,
+      "n_dropped_basis_gt_10pct": 0,
+      "sample": "2017-08-24 to 2026-10-22",
+      "beta": 0.03188552435310604,
+      "hac_t": 0.5474027697778008,
+      "hac_p_one_sided": 0.2920510264087107,
+      "placebo_p_one_sided": 0.27786106946526734,
+      "r2": 0.00034815701503543295,
+      "top_minus_bottom_quintile_next_day": 0.0016826280622581624,
+      "mean_basis": -0.0020033579151199276
+    }
+  }
+}

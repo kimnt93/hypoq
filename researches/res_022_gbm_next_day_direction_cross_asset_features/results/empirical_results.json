@@ -1,0 +1,26 @@
+{
+  "title": "Gradient Boosting and Next-Day Equity Direction: A Walk-Forward Test with Cross-Asset Features",
+  "decision": "REJECTED",
+  "n_oos": 1963,
+  "sample": "2019-01-02 to 2026-10-22",
+  "features": [
+    "spx",
+    "spx5",
+    "spx20",
+    "rv20",
+    "dvix",
+    "cboe_vix",
+    "dspr",
+    "TLT",
+    "GLD",
+    "HYG",
+    "IEF",
+    "credit5"
+  ],
+  "auc_gbm": 0.5067968110131486,
+  "auc_logistic": 0.48944475515979496,
+  "permutation_p_one_sided": 0.30813837232553487,
+  "accuracy_gbm": 0.5308201732042792,
+  "majority_baseline_accuracy": 0.5471217524197657,
+  "long_short_sharpe_before_costs": 0.46568175951957
+}

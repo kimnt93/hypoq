@@ -1,0 +1,47 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Day-of-the-Week Effects in Cryptocurrency Returns",
+    "statement": "The mean daily return of an equal-weight crypto basket differs across weekdays.",
+    "null_hypothesis": "All six weekday-dummy coefficients are zero (equal mean return on every weekday).",
+    "alt_hypothesis": "At least one coefficient differs from zero (HAC joint Wald p < 0.05).",
+    "domain": "crypto",
+    "dataset_dependencies": [
+      "data/crypto/crypto_top_assets_daily.parquet"
+    ],
+    "methodology": "Weekday-dummy regression with Newey-West HAC errors and a joint Wald test",
+    "metric_name": "HAC Wald chi-square (6 df) for equal weekday means",
+    "metric_value": 10.695230045203145,
+    "p_value": 0.09826491982591459,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "Wald chi2=10.70 (p=0.0983); best Sat 0.607%, worst Thu 0.010%.",
+    "report_dir": "researches/res_020_crypto_day_of_week_effect",
+    "pdf_path": "researches/res_020_crypto_day_of_week_effect/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_020_crypto_day_of_week_effect/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Day-of-the-Week Effects in Cryptocurrency Returns",
+      "decision": "REJECTED",
+      "n_obs": 3272,
+      "sample": "2017-11-10 to 2026-10-25",
+      "wald_chi2": 10.695230045203145,
+      "wald_p": 0.09826491982591459,
+      "weekday_means": {
+        "Mon": 0.0014222558002538563,
+        "Tue": 0.0010554076487237977,
+        "Wed": 0.0035186706080919893,
+        "Thu": 9.792993311409342e-05,
+        "Fri": 0.005061296879696438,
+        "Sat": 0.0060675044544114985,
+        "Sun": 0.0002833959191050364
+      },
+      "best_day": "Sat",
+      "worst_day": "Thu"
+    }
+  }
+}

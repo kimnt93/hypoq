@@ -1,0 +1,21 @@
+{
+  "title": "Does High-Yield Credit Lead Equities? Relative Bond Performance and Next-Week Stock Returns",
+  "decision": "REJECTED",
+  "n_obs": 2504,
+  "sample": "2016-10-31 to 2026-10-16",
+  "horizon_days": 5,
+  "beta": -0.07609308735068253,
+  "hac_t": -0.5330229759378601,
+  "hac_p_one_sided": 0.7029911621237352,
+  "placebo_p_one_sided": 0.6461769115442278,
+  "r2": 0.0017655514985738252,
+  "beta_with_spy_control": -0.06648692400330963,
+  "t_with_spy_control": -0.3874985472476623,
+  "quintile_means": [
+    0.004398504124079281,
+    0.002775683757016954,
+    0.0028634824145213475,
+    0.0001661999954725904,
+    0.0027175000907325103
+  ]
+}

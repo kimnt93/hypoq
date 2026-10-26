@@ -4,6 +4,8 @@
 \usepackage{setspace}
 \usepackage[margin=1.25in]{geometry}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
 \graphicspath{ {./figures/} }
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{booktabs}
@@ -12,7 +14,7 @@
 \hypersetup{colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue}
 
 \title{\textbf{Tariff-Related Executive Social Media Posts and Next-Day US Equity and Implied Volatility Reactions}}
-\author[1]{hypoq autonomous research harness}
+\author[1]{SIQuant Research}
 \affil[1]{Hypothesis $\times$ Quant}
 \date{\today}
 \onehalfspacing
@@ -24,7 +26,7 @@
 \noindent \textbf{Hypothesis:} $H_0$: next-day S\&P 500 absolute abnormal return, signed abnormal return and VIX change after a tariff-related post equal those of ordinary days; $H_1$: they differ \\
 \textbf{Data:} 428 Truth Social posts matching the keyword `tariff', 237 distinct reaction days among 1,117 sessions (2022-05-12 to 2026-10-23) \\
 \textbf{Method:} Reaction window is the first session strictly after the post; baseline is the trailing 250-day mean; 5000-draw placebo over non-event days; Bonferroni $\alpha=0.0167$ \\
-\textbf{Results:} abs return: event 0.736\% vs other 0.724\% (placebo $p=0.772$); signed return: event -0.023\% vs other 0.026\% (placebo $p=0.375$); vix change: event 0.810\% vs other 0.073\% (placebo $p=0.070$). Decision: \textbf{REJECTED}
+\textbf{Results:} abs return: event 0.736\% vs other 0.724\% (placebo $p=0.772$); signed return: event -0.023\% vs other 0.026\% (placebo $p=0.375$); vix change: event 0.810\% vs other 0.073\% (placebo $p=0.070$).
 \end{abstract}
 
 \section{Design}
@@ -33,7 +35,7 @@ Posts are selected by keyword only, so no text classifier can leak sentiment. Us
 \section{Results}
 \input{results/table1_event_study.tex}
 
-\begin{figure}[h!]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{fig1_tariff_event_placebo.png}
 \caption{Observed event-day mean (red) against the placebo distribution.}

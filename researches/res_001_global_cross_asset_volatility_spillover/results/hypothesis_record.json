@@ -1,0 +1,58 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Cross-Border Return Transmission from the US Session to European and Japanese Equity Markets",
+    "statement": "The previous US session predicts the next European and Japanese session returns.",
+    "null_hypothesis": "beta = 0 for US(t-1) -> JP(t) and US(t-1) -> EU(t).",
+    "alt_hypothesis": "beta > 0 for both targets (Bonferroni alpha 0.025 and placebo p < 0.05).",
+    "domain": "macro_transmission",
+    "dataset_dependencies": [
+      "data/market/us_indices_daily.parquet",
+      "data/market/eu_indices_daily.parquet",
+      "data/market/asia_indices_daily.parquet"
+    ],
+    "methodology": "HAC lead-lag OLS, circular-shift placebo, Cholesky FEVD spillover index",
+    "metric_name": "HAC t-stat (Nikkei)",
+    "metric_value": 7.700727782870037,
+    "p_value": 6.764671673002065e-15,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "Nikkei beta=0.500 (t=7.70); Euro Stoxx beta=0.118 (t=1.93); FEVD spillover 22.4%.",
+    "report_dir": "researches/res_001_global_cross_asset_volatility_spillover",
+    "pdf_path": "researches/res_001_global_cross_asset_volatility_spillover/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_001_global_cross_asset_volatility_spillover/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Cross-Border Return Transmission from the US Session to European and Japanese Equity Markets",
+      "decision": "REJECTED",
+      "alpha_bonferroni": 0.025,
+      "japan": {
+        "beta": 0.5004499320001973,
+        "t": 7.700727782870037,
+        "p": 6.764671673002065e-15,
+        "r2": 0.179937715953307,
+        "n": 2303,
+        "placebo_p": 0.0004997501249375312
+      },
+      "europe": {
+        "beta": 0.11815491338711737,
+        "t": 1.9337428608681946,
+        "p": 0.026572375612435736,
+        "r2": 0.014197457689209658,
+        "n": 2303,
+        "placebo_p": 0.028985507246376812
+      },
+      "fevd_total_spillover_pct": {
+        "order_us_eu_jp": 22.365649552116537,
+        "order_jp_eu_us": 24.49009559151345
+      },
+      "var_lag_order": 1,
+      "sample_start": "2016-10-25",
+      "sample_end": "2026-10-23"
+    }
+  }
+}

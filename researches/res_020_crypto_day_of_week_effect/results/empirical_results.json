@@ -1,0 +1,19 @@
+{
+  "title": "Day-of-the-Week Effects in Cryptocurrency Returns",
+  "decision": "REJECTED",
+  "n_obs": 3272,
+  "sample": "2017-11-10 to 2026-10-25",
+  "wald_chi2": 10.695230045203145,
+  "wald_p": 0.09826491982591459,
+  "weekday_means": {
+    "Mon": 0.0014222558002538563,
+    "Tue": 0.0010554076487237977,
+    "Wed": 0.0035186706080919893,
+    "Thu": 9.792993311409342e-05,
+    "Fri": 0.005061296879696438,
+    "Sat": 0.0060675044544114985,
+    "Sun": 0.0002833959191050364
+  },
+  "best_day": "Sat",
+  "worst_day": "Thu"
+}

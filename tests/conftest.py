@@ -18,7 +18,7 @@ def fake_embeddings(monkeypatch):
         return rng.normal(size=16).astype("float32")
 
     monkeypatch.setattr(db, "get_embedding", fake)
-    monkeypatch.setattr(db, "get_active_provider", lambda: "test")
+    monkeypatch.setattr(db, "get_model_id", lambda: "test:fake-16")
 
 
 @pytest.fixture

@@ -1,0 +1,37 @@
+{
+  "title": "Federal Reserve Announcement Days and US Equity Volatility: An Event Study of FOMC Statements, 2016--2026",
+  "decision": "REJECTED",
+  "n_events": 81,
+  "sample": "2016-11-02 to 2026-09-16",
+  "mean_abs_return_event": 0.008458897711678272,
+  "mean_abs_return_placebo": 0.007239617872512045,
+  "p_abs_return_one_sided": 0.10208979102089791,
+  "mean_dvix_event": 0.006355121666244677,
+  "mean_dvix_placebo": 0.003630937937517571,
+  "p_dvix_larger_fall_one_sided": 0.6275372462753724,
+  "signed_mean_return": -0.0004807707267032518,
+  "signed_t": -0.3618290062254323,
+  "by_action": [
+    {
+      "action": "HOLD",
+      "n": 51,
+      "abs": 0.007309305737863505,
+      "ret": 0.0002795286249294367,
+      "dvix": 0.0013863052487318324
+    },
+    {
+      "action": "HIKE",
+      "n": 20,
+      "abs": 0.01111114011678766,
+      "ret": 7.106166568005557e-05,
+      "dvix": -0.017343019655839852
+    },
+    {
+      "action": "CUT",
+      "n": 10,
+      "abs": 0.00901733196791481,
+      "ret": -0.005461962204796578,
+      "dvix": 0.07909236803972922
+    }
+  ]
+}

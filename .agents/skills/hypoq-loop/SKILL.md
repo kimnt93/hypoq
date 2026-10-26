@@ -11,6 +11,11 @@ tags: [hypoq, loop, workflow, evomap, lifecycle]
 ## Overview
 This skill operationalizes the autonomous quantitative research lifecycle inspired by the AutoResearch paradigm and EvoMap architecture:
 
+## Ground rule: `hypoq/` is frozen
+The package only discovers (`search_hypotheses`, `list_hypotheses`), saves (`finalize`, `upsert_hypothesis`) and loads hypotheses. Never edit `hypoq/`, `scripts/` or `api.py` while researching.
+All study code lives in `researches/<id>/code/run_pipeline.py`. For metrics and tests use the `hypothesis-testing-stats` skill (copy from `scripts/quant_metrics.py` or write your own following its rules).
+Configuration comes from `.env` (see `.env.example`).
+
 ## The 8-Stage Lifecycle
 
 ```text
@@ -21,7 +26,7 @@ This skill operationalizes the autonomous quantitative research lifecycle inspir
  5. EXPERIMENT  ───>  Run it with Polars / Statsmodels / scikit-learn / PyTorch / Stable-Baselines3.
  6. ANALYSE     ───>  Placebo / bootstrap robustness, HAC errors, benchmarks; render PNG figures.
  7. REPORT      ───>  Format every number from the results dict into main.tex and compile main.pdf with Tectonic.
- 8. DB SYNC     ───>  Register the hypothesis and experiment in hypoq.db (idempotent).
+ 8. DB SYNC     ───>  finalize() registers the hypothesis (idempotent) and writes results/hypothesis_record.json, the raw record that `make db-import` loads into the git-ignored hypoq.db.
 ```
 
 Status vocabulary: `ACCEPTED` = H1 is supported by the pre-registered test, `REJECTED` = H1 is not supported, `INCONCLUSIVE` = the test could not decide.
@@ -55,6 +60,11 @@ mkdir -p researches/res_NNN_<slug>/{code,figures,results}
 ```bash
 python run.py --audit      # fails for any study without code, without a PDF, or whose JSON and database status disagree
 python run.py --list
+```
+
+### Step 5: Refresh the README table
+```bash
+python .agents/skills/hypoq-loop/scripts/update_study_table.py   # rebuilds the studies table in README.md from the database
 ```
 
 ### Manual registration (only when not using `finalize`)

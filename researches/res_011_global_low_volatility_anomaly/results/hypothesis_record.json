@@ -1,0 +1,65 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "The Low-Volatility Anomaly in a Pooled Universe of Large-Cap Equities from Seven Regions",
+    "statement": "Low-volatility large-cap stocks earn a higher risk-adjusted return than high-volatility large-cap stocks.",
+    "null_hypothesis": "Sharpe(lowest-volatility quintile) <= Sharpe(highest-volatility quintile).",
+    "alt_hypothesis": "Sharpe(lowest-volatility quintile) > Sharpe(highest-volatility quintile) (one-sided stationary-bootstrap p < 0.05).",
+    "domain": "fundamental_factors",
+    "dataset_dependencies": [
+      "data/market/us_equities_daily.parquet",
+      "data/market/eu_equities_daily.parquet",
+      "data/market/jp_equities_daily.parquet",
+      "data/market/hk_equities_daily.parquet",
+      "data/market/kr_equities_daily.parquet",
+      "data/market/cn_equities_daily.parquet",
+      "data/market/asia_equities_daily.parquet"
+    ],
+    "methodology": "Monthly sort on trailing 252-day volatility, equal-weight quintiles, stationary-bootstrap Sharpe difference test",
+    "metric_name": "annualised Sharpe difference (Q1 minus Q5)",
+    "metric_value": 0.23475093501379513,
+    "p_value": 0.2887422515496901,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "Sharpe Q1 0.84 vs Q5 0.61; spread -0.89%/month (p=0.2887).",
+    "report_dir": "researches/res_011_global_low_volatility_anomaly",
+    "pdf_path": "researches/res_011_global_low_volatility_anomaly/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_011_global_low_volatility_anomaly/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "The Low-Volatility Anomaly in a Pooled Universe of Large-Cap Equities from Seven Regions",
+      "decision": "REJECTED",
+      "n_months": 108,
+      "median_stocks": 126,
+      "sample": "2017-10 to 2026-09 (formation months)",
+      "performance": {
+        "Q1 low vol": {
+          "ann_return": 0.08479520996562595,
+          "ann_vol": 0.10345131913522082,
+          "sharpe": 0.8406770308965611,
+          "max_drawdown": -0.16961584619187164
+        },
+        "Q5 high vol": {
+          "ann_return": 0.15518879671110075,
+          "ann_vol": 0.31902914466514837,
+          "sharpe": 0.605926095882766,
+          "max_drawdown": -0.5181317482462411
+        },
+        "All stocks": {
+          "ann_return": 0.1443819518616627,
+          "ann_vol": 0.15561946431680757,
+          "sharpe": 0.9478492989265564,
+          "max_drawdown": -0.2028020829564674
+        }
+      },
+      "sharpe_difference": 0.23475093501379513,
+      "bootstrap_p_one_sided": 0.2887422515496901,
+      "mean_monthly_spread_q1_minus_q5": -0.008861578023903456,
+      "spread_t": -1.0306089757100794
+    }
+  }
+}

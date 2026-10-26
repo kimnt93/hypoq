@@ -4,6 +4,8 @@
 \usepackage{setspace}
 \usepackage[margin=1.25in]{geometry}
 \usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
 \graphicspath{ {./figures/} }
 \usepackage{subcaption}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -24,7 +26,7 @@
 \title{\textbf{[Research Article Title: Concise, Descriptive, and Informative]}}
 
 %%%%%% Authors & Affiliations %%%%%%
-\author[1]{hypoq autonomous research harness}
+\author[1]{SIQuant Research}
 \affil[1]{Hypothesis $\times$ Quant}
 \date{\today}
 \onehalfspacing
@@ -38,7 +40,8 @@
 \noindent \textbf{Hypothesis Formulation:} State the core falsifiable hypothesis. Specifically, test whether [Variable X] generates statistically significant predictive power or structural impact on [Target Y] ($H_0: \beta = 0$ versus $H_1: \beta \ne 0$). \\
 \textbf{Data \& Empirical Setting:} Detail the point-in-time datasets used from the quantitative data lake (e.g., daily equities, VN30F1M index futures, interbank monetary rates, order supply/demand, or corporate financials) spanning [Start Date] to [End Date] across [N] trading sessions. \\
 \textbf{Econometric Methodology:} Outline the identification strategy, zero-lookahead alignment (Polars backward \texttt{join\_asof}), estimation pipeline (e.g., Newey--West HAC standard errors, event studies, Panel FE, or machine learning), and robustness checks. \\
-\textbf{Empirical Results \& Summary:} Summarize the primary test statistics ($t$-stat, $z$-score, $p$-value, $R^2$, annualized Sharpe or Information Ratio). Explicitly report the research decision: whether the null hypothesis is \textbf{ACCEPTED}, \textbf{REJECTED}, or \textbf{INCONCLUSIVE}. Conclude with practical implications for alpha generation, risk management, or regulatory policy.
+\textbf{Empirical Results \& Summary:} Summarize the primary test statistics ($t$-stat, $z$-score, $p$-value, $R^2$, annualized Sharpe or Information Ratio). Explicitly report the research decision: whether the null hypothesis is \textbf{ACCEPTED}, \textbf{REJECTED}, or \textbf{INCONCLUSIVE}. Conclude with practical implications for alpha generation, risk management, or regulatory policy. \\
+\textbf{Research decision:} \colorbox[rgb]{0.10,0.50,0.20}{\textcolor{white}{\textbf{\,ACCEPTED\,}}} \ (use \colorbox[rgb]{0.75,0.15,0.15}{\textcolor{white}{\textbf{\,REJECTED\,}}} or \colorbox[rgb]{0.80,0.50,0.05}{\textcolor{white}{\textbf{\,INCONCLUSIVE\,}}} as computed)
 \end{abstract}
 
 \vspace{0.5em}

@@ -1,0 +1,45 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Central Bank Balance Sheet Growth and Subsequent US Equity Returns",
+    "statement": "Growth of the Fed's total assets over four weeks predicts a higher S&P 500 return over the next 20 sessions.",
+    "null_hypothesis": "The slope of the 20-session-ahead S&P 500 log return on the 4-week change in Fed total assets is zero.",
+    "alt_hypothesis": "The slope is positive (HAC one-sided p < 0.05 and circular-shift placebo p < 0.05).",
+    "domain": "macro_transmission",
+    "dataset_dependencies": [
+      "data/macro/us_fed_balance_sheet_weekly.parquet",
+      "data/market/us_indices_daily.parquet"
+    ],
+    "methodology": "Publication-lagged weekly predictive regression with Newey-West HAC errors and circular-shift placebo",
+    "metric_name": "slope of 20d forward return on 4-week change in Fed assets",
+    "metric_value": 0.2562115700667142,
+    "p_value": 0.00849575212393803,
+    "confidence_level": 0.95,
+    "status": "ACCEPTED",
+    "summary_findings": "beta=0.256, HAC t=4.53 (p=0.0000), placebo p=0.0085, R2=0.0288.",
+    "report_dir": "researches/res_021_fed_balance_sheet_growth_equity_returns",
+    "pdf_path": "researches/res_021_fed_balance_sheet_growth_equity_returns/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_021_fed_balance_sheet_growth_equity_returns/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Central Bank Balance Sheet Growth and Subsequent US Equity Returns",
+      "decision": "ACCEPTED",
+      "n_obs": 519,
+      "sample": "2016-10-24 to 2026-09-25",
+      "horizon_sessions": 20,
+      "beta": 0.2562115700667142,
+      "hac_t": 4.528558796449357,
+      "hac_p_one_sided": 2.9693678411505974e-06,
+      "placebo_p_one_sided": 0.00849575212393803,
+      "r2": 0.028814991410160418,
+      "mean_fwd_after_expansion": 0.009397985722813808,
+      "mean_fwd_after_contraction": 0.010506131924473168,
+      "beta_excluding_2020": 0.2620998860000834,
+      "t_excluding_2020": 1.1898174950732463
+    }
+  }
+}

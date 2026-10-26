@@ -1,0 +1,51 @@
+{
+  "schema": "hypoq.record/1",
+  "hypothesis": {
+    "title": "Fear Spikes and Next-Week Returns: Does an Elevated VIX Predict Higher US Equity Returns?",
+    "statement": "A VIX level that is high relative to its 60-day history predicts a higher S&P 500 return over the next five sessions.",
+    "null_hypothesis": "The slope of the 5-day-ahead S&P 500 log return on the 60-day VIX z-score is zero.",
+    "alt_hypothesis": "The slope is positive (HAC one-sided p < 0.05 and circular-shift placebo p < 0.05).",
+    "domain": "macro_transmission",
+    "dataset_dependencies": [
+      "data/macro/us_yield_curve_daily.parquet",
+      "data/market/us_indices_daily.parquet"
+    ],
+    "methodology": "Overlapping-horizon predictive regression with Newey-West HAC errors and circular-shift placebo",
+    "metric_name": "slope of 5d forward return on VIX z-score",
+    "metric_value": -0.00023017938883573982,
+    "p_value": 0.6066966516741629,
+    "confidence_level": 0.95,
+    "status": "REJECTED",
+    "summary_findings": "beta=-0.00023, HAC t=-0.22 (p=0.5858), placebo p=0.6067, R2=0.0001.",
+    "report_dir": "researches/res_013_vix_zscore_next_week_equity_return",
+    "pdf_path": "researches/res_013_vix_zscore_next_week_equity_return/main.pdf",
+    "agent_name": "hypoq-pipeline",
+    "session_id": "sess_hypoq_examples"
+  },
+  "experiment": {
+    "code_path": "researches/res_013_vix_zscore_next_week_equity_return/code/run_pipeline.py",
+    "status": "SUCCESS",
+    "metrics": {
+      "title": "Fear Spikes and Next-Week Returns: Does an Elevated VIX Predict Higher US Equity Returns?",
+      "decision": "REJECTED",
+      "n_obs": 2450,
+      "sample": "2017-01-19 to 2026-10-16",
+      "horizon_days": 5,
+      "beta": -0.00023017938883573982,
+      "hac_t": -0.21666753824828083,
+      "hac_p_one_sided": 0.585766276113745,
+      "placebo_p_one_sided": 0.6066966516741629,
+      "r2": 0.00014871262300197863,
+      "n_sessions_z_gt_2": 184,
+      "mean_fwd_after_z_gt_2": 0.0009627308554866143,
+      "mean_fwd_otherwise": 0.0026084019074863085,
+      "quintile_means": [
+        0.002753987904129079,
+        0.0036868753085001456,
+        0.0010674199566540299,
+        0.0032575264422341813,
+        0.0016582336533264672
+      ]
+    }
+  }
+}
